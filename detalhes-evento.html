@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Confira todos os detalhes, ficha técnica, bastidores e galeria completa deste evento fotografado por Rhuan Fotografia.">
+  <title>Detalhes do Evento &bull; Rhuan Fotografia</title>
+  
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>try{if(localStorage.getItem('rhuan_theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}</script>
+</head>
+<body>
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="header" id="header">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-main">RHUAN</span>
+        <span class="logo-sub">Fotografia Autoral</span>
+      </a>
+
+      <nav class="nav-menu" id="navMenu">
+        <a href="index.html" class="nav-link">Início</a>
+        <a href="agenda.html" class="nav-link">Agenda de Eventos</a>
+        <a href="ensaios.html" class="nav-link active">Ensaios &amp; Festas</a>
+        <a href="orcamentos.html" class="nav-link">Orçamentos</a>
+        <a href="index.html#sobre" class="nav-link">Sobre</a>
+        <a href="index.html#contato" class="nav-link">Contato</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Alternar tema claro/escuro" title="Alternar Modo Escuro / Claro">
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <a href="orcamentos.html" class="btn btn-primary btn-sm">Simular Orçamento</a>
+        <button class="mobile-toggle" id="mobileMenuToggle" aria-label="Abrir Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== CONTEÚDO PRINCIPAL DE DETALHES ==================== -->
+  <main id="eventDetailsPageRoot">
+
+    <!-- Barra Superior de Navegação & Seletor de Eventos -->
+    <section class="section-tint event-detail-topbar">
+      <div class="container">
+        <div class="event-topbar-flex">
+          <a href="index.html#ensaios" class="event-back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Voltar ao Portfólio de Ensaios
+          </a>
+
+          <div class="event-switcher-group" aria-label="Alternar entre eventos">
+            <button type="button" class="event-switcher-pill active" data-event-id="casamento">Casamento</button>
+            <button type="button" class="event-switcher-pill" data-event-id="15anos">15 Anos</button>
+            <button type="button" class="event-switcher-pill" data-event-id="gestante">Gestante</button>
+            <button type="button" class="event-switcher-pill" data-event-id="feminino">Ensaio Feminino</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hero do Evento -->
+    <section class="section event-hero-section">
+      <div class="container">
+        <div class="event-hero-grid">
+          <div class="event-hero-text">
+            <span class="sub-tag" id="detailCategoryTag">Casamento Real</span>
+            <h1 id="detailTitle">O Sim de Mariana &amp; Rodrigo</h1>
+            <p class="event-hero-summary" id="detailSummary">
+              Uma celebração rústico-chique ao ar livre envolta por roseiras, votos emocionantes e a luz dourada do fim de tarde.
+            </p>
+
+            <div class="event-specs-grid">
+              <div class="event-spec-card">
+                <span class="event-spec-label">Localização</span>
+                <strong id="detailLocation">Jardim Imperial &bull; Holambra, SP</strong>
+              </div>
+              <div class="event-spec-card">
+                <span class="event-spec-label">Data Realizada</span>
+                <strong id="detailDate">18 de Outubro de 2026</strong>
+              </div>
+              <div class="event-spec-card">
+                <span class="event-spec-label">Tempo de Cobertura</span>
+                <strong id="detailDuration">8 Horas de Cobertura Integral</strong>
+              </div>
+              <div class="event-spec-card">
+                <span class="event-spec-label">Equipe Técnica</span>
+                <strong id="detailTeam">2 Fotógrafos + Assistente de Luz</strong>
+              </div>
+              <div class="event-spec-card">
+                <span class="event-spec-label">Acervo Entregue</span>
+                <strong id="detailDelivery">420 Fotos Tratadas em Alta Resolução</strong>
+              </div>
+              <div class="event-spec-card">
+                <span class="event-spec-label">Iluminação &amp; Estética</span>
+                <strong id="detailLighting">Luz Natural Golden Hour</strong>
+              </div>
+            </div>
+
+            <div class="event-hero-actions">
+              <button type="button" class="btn btn-primary" id="detailOpenSlideBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Abrir Slide de Fotos
+              </button>
+              <a href="orcamentos.html?tipo=casamento" class="btn btn-outline" id="detailOrcamentoLink">
+                Simular Orçamento Deste Estilo
+              </a>
+            </div>
+          </div>
+
+          <div class="event-hero-media">
+            <div class="event-cover-frame">
+              <img id="detailCoverImg" src="assets/images/casamento.jpg" alt="Imagem de Capa do Evento">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Narrativa do Evento & O Que Foi Incluso -->
+    <section class="section section-alt">
+      <div class="container">
+        <div class="event-narrative-grid">
+          <div>
+            <span class="sub-tag">A História &amp; Direção Fotográfica</span>
+            <h2 style="margin-bottom: 1.4rem;">Como conduzimos cada momento</h2>
+            <div id="detailStoryContent">
+              <!-- Parágrafos inseridos dinamicamente via main.js -->
+            </div>
+          </div>
+
+          <div class="event-deliverables-box">
+            <span class="sub-tag">Ficha de Entrega</span>
+            <h3 style="margin-bottom: 1rem;">Serviços realizados neste evento</h3>
+            <ul class="event-highlights-list" id="detailHighlightsList">
+              <!-- Itens inseridos dinamicamente via main.js -->
+            </ul>
+
+            <div class="event-timeline-wrapper">
+              <h4 class="event-timeline-heading">Cronograma Fotográfico Registrado</h4>
+              <div class="event-timeline-list" id="detailTimelineList">
+                <!-- Cronograma inserido via main.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Galeria de Fotos do Evento -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="sub-tag">Série Fotográfica</span>
+          <h2>Momentos Capturados neste Ensaio</h2>
+          <p>Clique em qualquer fotografia abaixo para abrir o slide interativo em tela cheia.</p>
+        </div>
+
+        <div class="event-photos-grid" id="detailPhotosGrid">
+          <!-- Fotos renderizadas via main.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Depoimento do Cliente & CTA Final -->
+    <section class="section section-tint">
+      <div class="container">
+        <div class="event-testimonial-banner">
+          <div>
+            <div class="stars" style="font-size: 1.2rem;">★★★★★</div>
+            <blockquote class="event-testimonial-quote" id="detailTestimonialQuote">
+              "Depoimento do cliente sobre a experiência fotográfica."
+            </blockquote>
+            <div class="testimonial-author" style="margin-top: 1.5rem;">
+              <div class="author-avatar" id="detailTestimonialAvatar">M</div>
+              <div class="author-meta">
+                <h5 id="detailTestimonialAuthor">Nome do Cliente</h5>
+                <p id="detailTestimonialRole">Categoria do Evento</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="event-cta-side">
+            <h3>Deseja um registro como este para a sua história?</h3>
+            <p>Verifique se a data da sua celebração ou ensaio está disponível na nossa agenda oficial.</p>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.4rem;">
+              <a href="agenda.html" class="btn btn-primary">Consultar Disponibilidade na Agenda</a>
+              <a href="orcamentos.html" class="btn btn-outline">Ir para o Simulador de Orçamentos</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL LIGHTBOX COM SLIDE DE FOTOS ==================== -->
+  <div class="modal-backdrop" id="lightboxModal">
+    <div class="modal-container lightbox-modal-container">
+      <button class="modal-close-btn lightbox-close-btn" aria-label="Fechar Slide">&times;</button>
+
+      <div class="lightbox-header">
+        <div>
+          <span class="lightbox-category-badge" id="lightboxCategory">Casamento Real</span>
+          <h3 class="lightbox-title" id="lightboxTitle">O Sim de Mariana &amp; Rodrigo</h3>
+        </div>
+        <span class="lightbox-counter-pill" id="lightboxCounter">Foto 1 de 5</span>
+      </div>
+
+      <div class="lightbox-slider-stage">
+        <button type="button" class="lightbox-nav-btn prev" id="lightboxPrev" aria-label="Foto Anterior">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+
+        <div class="lightbox-img-frame">
+          <img id="lightboxImg" src="assets/images/casamento.jpg" alt="Foto do Ensaio">
+        </div>
+
+        <button type="button" class="lightbox-nav-btn next" id="lightboxNext" aria-label="Próxima Foto">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+
+      <div class="lightbox-caption-box">
+        <span class="lightbox-moment-tag" id="lightboxMoment">Foto 01 &bull; Momento</span>
+        <p id="lightboxCaption">Legenda da fotografia selecionada no slide.</p>
+      </div>
+
+      <div class="lightbox-footer-bar">
+        <div class="lightbox-dots" id="lightboxDots"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container text-center" style="text-align: center;">
+      <a href="index.html" class="logo">
+        <span class="logo-main" style="color: #FFFFFF;">RHUAN</span>
+        <span class="logo-sub">Fotografia Autoral</span>
+      </a>
+      <p style="color: #A39690; font-size: 0.9rem; margin-top: 1rem;">
+        &copy; 2026 Rhuan Fotografia. Todos os direitos reservados. &bull; 
+        <a href="admin.html" style="color: var(--color-accent); font-weight: 600;">🔒 Área Admin</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
+

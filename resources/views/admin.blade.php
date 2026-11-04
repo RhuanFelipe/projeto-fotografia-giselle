@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Painel Administrativo &bull; Rhuan Fotografia</title>
+  
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/datepicker.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>
+    try {
+      const savedTheme = localStorage.getItem('rhuan_admin_theme') || localStorage.getItem('rhuan_theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    } catch (e) {}
+  </script>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
+
+  <!-- ==================== TELA DE LOGIN / AUTH GATEWAY ==================== -->
+  <div class="admin-login-wrapper" id="adminAuthGateway">
+    <div class="admin-login-card">
+      <div class="login-brand">
+        <div class="login-brand-logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+        </div>
+        <h1>RHUAN FOTOGRAFIA</h1>
+        <p>Acesso Restrito ao Painel do Fotógrafo</p>
+        <span class="login-badge-pill">Studio Admin Pro</span>
+      </div>
+
+      <div class="admin-login-hint">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <div>
+          Credenciais: Usuário: <code>admin</code> &bull; Senha: <code>123</code>
+        </div>
+      </div>
+
+      <form id="adminLoginForm">
+        <div class="admin-form-group">
+          <label class="admin-label" for="loginUsername">Usuário</label>
+          <div class="admin-input-wrap">
+            <span class="admin-input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </span>
+            <input type="text" id="loginUsername" class="admin-input" placeholder="admin" required autofocus autocomplete="username">
+          </div>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label" for="loginPassword">Senha de Acesso</label>
+          <div class="admin-input-wrap">
+            <span class="admin-input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </span>
+            <input type="password" id="loginPassword" class="admin-input" placeholder="••••" required autocomplete="current-password">
+            <button type="button" class="admin-input-toggle-pwd" id="togglePasswordVisibility" aria-label="Mostrar ou ocultar senha">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; font-size: 0.85rem; color: var(--admin-text-muted);">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="loginRemember" checked style="accent-color: var(--admin-rose);">
+            Lembrar acesso neste computador
+          </label>
+        </div>
+
+        <button type="submit" class="admin-btn-primary">
+          <span>Entrar no Painel</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+        <div class="admin-login-error" id="loginErrorMessage"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== APP DASHBOARD LAYOUT ==================== -->
+  <div class="admin-layout" id="adminAppLayout" style="display: none;">
+
+    <!-- ==================== SIDEBAR LATERAL ==================== -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <div class="sidebar-logo-icon">RF</div>
+          <div class="sidebar-brand-text">
+            <h2>RHUAN</h2>
+            <span><div class="status-indicator-dot"></div> Studio Online</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="sidebar-nav-label">Gerenciamento</div>
+
+        <button type="button" class="sidebar-link active" data-tab="tab-overview">
+          <div class="sidebar-link-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span class="sidebar-link-title">Visão Geral</span>
+          </div>
+        </button>
+
+        <button type="button" class="sidebar-link" data-tab="tab-photos">
+          <div class="sidebar-link-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+              <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+            <span class="sidebar-link-title">Cadastrar Fotos</span>
+          </div>
+        </button>
+
+        <button type="button" class="sidebar-link" data-tab="tab-agenda">
+          <div class="sidebar-link-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span class="sidebar-link-title">Verificar Agenda</span>
+          </div>
+          <span class="sidebar-badge" id="sidebarBadgeAgenda">0</span>
+        </button>
+
+        <button type="button" class="sidebar-link" data-tab="tab-pricing">
+          <div class="sidebar-link-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            <span class="sidebar-link-title">Modificar Orçamentos</span>
+          </div>
+        </button>
+
+        <button type="button" class="sidebar-link" data-tab="tab-leads">
+          <div class="sidebar-link-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span class="sidebar-link-title">Solicitações &amp; Leads</span>
+          </div>
+          <span class="sidebar-badge" id="sidebarBadgeLeads">0</span>
+        </button>
+
+        <button type="button" class="sidebar-link" data-tab="tab-secoes" id="sidebarLinkSecoes">
+          <div class="sidebar-link-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <span class="sidebar-link-title">Visibilidade do Site</span>
+          </div>
+          <span class="sidebar-badge" id="sidebarBadgeSecoes" style="display:none; background: var(--admin-rose); color: white;">0</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="index.html" target="_blank" class="sidebar-view-site-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span>Ver Site ao Vivo</span>
+        </a>
+
+        <div class="sidebar-user">
+          <div class="sidebar-user-left">
+            <div class="sidebar-avatar">RF</div>
+            <div class="sidebar-user-info">
+              <h4>Rhuan Ferreira</h4>
+              <p>Fotógrafo Autor</p>
+            </div>
+          </div>
+          <button type="button" class="sidebar-btn-logout" id="sidebarLogoutBtn" title="Encerrar Sessão">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
+    <main class="admin-main">
+
+      <!-- TOPBAR SUPERIOR -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button type="button" class="topbar-mobile-toggle" id="mobileSidebarToggle" aria-label="Menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="topbar-breadcrumbs">
+            <span>Admin</span>
+            <span>/</span>
+            <span class="current" id="breadcrumbCurrent">Visão Geral</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="theme-toggle-admin-btn" id="adminThemeToggleBtn" aria-label="Alternar tema claro/escuro" title="Alternar Modo Escuro / Claro">
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+          <div class="sync-status-badge">
+            <div class="status-indicator-dot"></div>
+            <span>Sincronizado com Site Público</span>
+          </div>
+          <a href="index.html" target="_blank" class="topbar-btn">
+            Site Público &rarr;
+          </a>
+        </div>
+      </header>
+
+      <!-- ÁREA DE CONTEÚDO -->
+      <div class="admin-content-area">
+
+        <!-- ==================== TAB 1: VISÃO GERAL ==================== -->
+        <section class="admin-tab-pane active" id="tab-overview">
+          <div class="page-header">
+            <div class="page-header-info">
+              <h2>Painel de Controle do Fotógrafo</h2>
+              <p>Visão geral de fotos cadastradas, datas reservadas e orçamentos solicitados em tempo real.</p>
+            </div>
+          </div>
+
+          <!-- CARDS DE METRICAS (KPIs) -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-card-top">
+                <div class="metric-icon-wrap gold">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                </div>
+                <span class="metric-tag positive">+ Autoral</span>
+              </div>
+              <div class="metric-value" id="metricTotalPhotos">0</div>
+              <div class="metric-title">Fotos Cadastradas nas Séries</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-card-top">
+                <div class="metric-icon-wrap rose">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </div>
+                <span class="metric-tag positive">Agenda Ativa</span>
+              </div>
+              <div class="metric-value" id="metricBookedEvents">0</div>
+              <div class="metric-title">Eventos &amp; Ensaios na Agenda</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-card-top">
+                <div class="metric-icon-wrap blue">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                  </svg>
+                </div>
+                <span class="metric-tag neutral">Leads</span>
+              </div>
+              <div class="metric-value" id="metricNewLeads">0</div>
+              <div class="metric-title">Solicitações Pendentes do Site</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-card-top">
+                <div class="metric-icon-wrap green">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                  </svg>
+                </div>
+                <span class="metric-tag positive">Projeção</span>
+              </div>
+              <div class="metric-value" id="metricRevenue">R$ 0</div>
+              <div class="metric-title">Previsão com Datas Fechadas</div>
+            </div>
+          </div>
+
+          <!-- GRID DUPLO DE RESUMO -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem;">
+            <!-- Próximos Eventos -->
+            <div class="admin-card">
+              <div class="card-title-bar">
+                <div>
+                  <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="var(--admin-rose)">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                    </svg>
+                    Próximos Compromissos na Agenda
+                  </h3>
+                  <div class="card-subtitle">Eventos e ensaios confirmados para os próximos meses</div>
+                </div>
+              </div>
+              <div id="overviewNextEventsList"></div>
+            </div>
+
+            <!-- Últimas Solicitações do Site -->
+            <div class="admin-card">
+              <div class="card-title-bar">
+                <div>
+                  <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="var(--admin-rose)">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    Solicitações Recentes de Orçamento
+                  </h3>
+                  <div class="card-subtitle">Clientes que simularam e enviaram dados pelo site</div>
+                </div>
+              </div>
+              <div id="overviewLatestLeadsList"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 2: CADASTRAMENTO DE FOTOS ==================== -->
+        <section class="admin-tab-pane" id="tab-photos">
+          <div class="page-header">
+            <div class="page-header-info">
+              <h2>Cadastramento &amp; Gestão de Fotos</h2>
+              <p>Cadastre novas fotos nas séries autorais, adicione novas coleções e defina as capas de exibição.</p>
+            </div>
+            <div class="page-header-actions">
+              <button type="button" class="topbar-btn" id="btnResetPortfolio">
+                Restaurar Padrão
+              </button>
+              <button type="button" class="topbar-btn primary" id="btnOpenNewSeriesModal">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Nova Série de Fotos
+              </button>
+            </div>
+          </div>
+
+          <div class="portfolio-manager-grid">
+            <!-- Coluna Esquerda: Lista de Séries -->
+            <div class="series-nav-box">
+              <h3 style="font-size: 1.05rem; color: var(--admin-text-main); font-weight: 700;">Coleções Autorais</h3>
+              <p style="font-size: 0.78rem; color: var(--admin-text-muted); margin-top: 0.25rem;">
+                Selecione a série para cadastrar novas fotos
+              </p>
+              <div class="series-list" id="adminSeriesList"></div>
+            </div>
+
+            <!-- Coluna Direita: Editor de Fotos da Série Selecionada -->
+            <div>
+              <div class="admin-card">
+                <div class="series-editor-header">
+                  <div>
+                    <span class="series-badge" id="activeSeriesCategoryBadge">Casamento Real</span>
+                    <h3 style="font-size: 1.6rem; color: var(--admin-text-main); font-family: var(--admin-font-serif); margin-top: 0.5rem;" id="activeSeriesTitle">
+                      O Sim de Mariana &amp; Rodrigo
+                    </h3>
+                  </div>
+                  <span style="font-size: 0.85rem; color: var(--admin-text-muted);" id="activeSeriesPhotoCount">
+                    0 fotos na série
+                  </span>
+                </div>
+
+                <!-- Formulário de Upload e Cadastro de Foto -->
+                <div class="upload-card-box" id="photoUploadCardBox">
+                  <h4 style="font-size: 1rem; color: var(--admin-rose-dark); font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Cadastrar Nova Fotografia Nesta Série
+                  </h4>
+
+                  <div class="upload-form-grid">
+                    <!-- Drop Zone e Preview -->
+                    <div class="photo-preview-slot" id="photoPreviewSlot">
+                      <div class="photo-drop-zone" id="photoDropZone">
+                        <input type="file" id="photoFileInput" accept="image/*">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        <span class="photo-drop-hint">Clique ou arraste uma foto do seu PC</span>
+                      </div>
+                      <img id="photoPreviewImg" src="" alt="Preview da foto" style="display: none;">
+                    </div>
+
+                    <!-- Campos de Metadados da Foto -->
+                    <div>
+                      <div class="admin-form-group">
+                        <label class="admin-label">Ou informe o caminho local / link da imagem</label>
+                        <input type="text" id="photoUrlInput" class="admin-input" style="padding-left: 1rem;" placeholder="assets/images/casamento.jpg ou URL https://...">
+                      </div>
+
+                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="admin-form-group">
+                          <label class="admin-label">Momento / Título da Foto</label>
+                          <input type="text" id="photoMomentInput" class="admin-input" style="padding-left: 1rem;" placeholder="Ex: Foto 06 • Valsa dos Noivos">
+                        </div>
+                        <div class="admin-form-group">
+                          <label class="admin-label">Legenda Artística</label>
+                          <input type="text" id="photoCaptionInput" class="admin-input" style="padding-left: 1rem;" placeholder="Ex: Detalhes da iluminação e vestido.">
+                        </div>
+                      </div>
+
+                      <button type="button" class="admin-btn-primary" id="btnAddPhotoToSeries" style="margin-top: 0.5rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Salvar e Adicionar Foto à Galeria
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Grade de Fotos Existentes na Série -->
+                <h4 style="font-size: 1.15rem; color: var(--admin-text-main); font-weight: 700; margin-bottom: 1rem;">
+                  Fotografias Cadastradas nesta Série
+                </h4>
+                <div class="photos-grid" id="activeSeriesPhotosGrid"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 3: VERIFICAR & GERENCIAR AGENDAS ==================== -->
+        <section class="admin-tab-pane" id="tab-agenda">
+          <div class="page-header">
+            <div class="page-header-info">
+              <h2>Verificar Agendas &amp; Gestão de Datas</h2>
+              <p>Monitore o calendário mensal, bloqueie datas ocupadas, libere novas vagas e gerencie horários.</p>
+            </div>
+          </div>
+
+          <div class="agenda-manager-layout">
+            <!-- Calendário Mensal Interativo -->
+            <div class="calendar-box">
+              <div class="calendar-nav-bar">
+                <h3 id="adminCalendarMonthTitle">Outubro de 2026</h3>
+                <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                  <div style="min-width: 220px;">
+                    <input type="text" id="adminCalendarDatePicker" data-datepicker="true" class="custom-datepicker" placeholder="Ir para uma data...">
+                  </div>
+                  <div class="calendar-nav-buttons">
+                    <button type="button" class="calendar-nav-btn" id="adminPrevMonthBtn">&larr; Mês Anterior</button>
+                    <button type="button" class="calendar-nav-btn" id="adminNextMonthBtn">Próximo Mês &rarr;</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="calendar-legend">
+                <div class="legend-item">
+                  <div class="legend-dot booked"></div>
+                  <span>Reservado / Ocupado</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-dot limited"></div>
+                  <span>Poucas Vagas / Pré-Reserva</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-dot available"></div>
+                  <span>Data Disponível</span>
+                </div>
+              </div>
+
+              <div class="calendar-table-header">
+                <div>Dom</div>
+                <div>Seg</div>
+                <div>Ter</div>
+                <div>Qua</div>
+                <div>Qui</div>
+                <div>Sex</div>
+                <div>Sáb</div>
+              </div>
+
+              <div class="calendar-days-grid" id="adminCalendarDaysGrid"></div>
+            </div>
+
+            <!-- Painel Lateral da Data Selecionada -->
+            <div class="day-details-panel">
+              <h4 style="font-size: 1.15rem; color: var(--admin-text-main); font-weight: 700;" id="dayDetailsDateTitle">
+                Data Selecionada
+              </h4>
+              <p style="font-size: 0.8rem; color: var(--admin-text-muted); margin-top: 0.25rem;">
+                Modifique a disponibilidade do fotógrafo para este dia
+              </p>
+
+              <div class="day-status-toggles">
+                <button type="button" class="day-status-btn" data-status="booked">Reservado</button>
+                <button type="button" class="day-status-btn" data-status="limited">Poucas Vagas</button>
+                <button type="button" class="day-status-btn" data-status="available">Livre</button>
+              </div>
+
+              <div style="border-top: 1px solid var(--admin-border); padding-top: 1rem; margin-top: 1rem;">
+                <label class="admin-label" style="font-size: 0.75rem;">+ Adicionar Compromisso neste dia</label>
+                <input type="text" id="slotDescInput" class="admin-input" style="padding-left: 0.85rem; margin-bottom: 0.5rem;" placeholder="Ex: Casamento Mariana &amp; Rodrigo">
+                <input type="text" id="slotTimeInput" class="admin-input" style="padding-left: 0.85rem; margin-bottom: 0.75rem;" placeholder="Ex: 16:00 - 02:00">
+                <button type="button" class="topbar-btn primary" id="btnAddSlotToDay" style="width: 100%; justify-content: center;">
+                  Agendar neste Horário
+                </button>
+              </div>
+
+              <div style="margin-top: 1.5rem;">
+                <label class="admin-label" style="font-size: 0.75rem;">Compromissos Agendados neste Dia</label>
+                <div class="slots-list-box" id="dayDetailsSlotsList"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 4: MODIFICAR ORÇAMENTOS ==================== -->
+        <section class="admin-tab-pane" id="tab-pricing">
+          <div class="page-header">
+            <div class="page-header-info">
+              <h2>Modificar Tabela de Orçamentos</h2>
+              <p>Altere os valores base dos ensaios, valor da hora extra e preços dos opcionais da calculadora pública.</p>
+            </div>
+            <div class="page-header-actions">
+              <button type="button" class="topbar-btn" id="btnResetPricing">Restaurar Padrões</button>
+              <button type="button" class="topbar-btn primary" id="btnSavePricing">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Salvar Alterações de Preços
+              </button>
+            </div>
+          </div>
+
+          <div class="pricing-manager-grid">
+            <!-- Coluna Esquerda: Edição de Preços Base e Opcionais -->
+            <div>
+              <div class="pricing-table-card">
+                <div class="card-title-bar">
+                  <div>
+                    <h3>1. Valores Base dos Ensaios &amp; Festas</h3>
+                    <div class="card-subtitle">Define o ponto de partida do simulador e da tabela de preços</div>
+                  </div>
+                </div>
+                <div id="pricingBaseList"></div>
+              </div>
+
+              <div class="pricing-table-card">
+                <div class="card-title-bar">
+                  <div>
+                    <h3>2. Valor da Hora Adicional de Cobertura</h3>
+                    <div class="card-subtitle">Cobrado automaticamente quando o cliente solicita horas extras</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem; max-width: 300px;">
+                  <span style="font-weight: 700; color: var(--admin-rose-dark);">R$</span>
+                  <input type="number" id="pricingHourlyRateInput" class="pricing-input" step="10" value="220" style="text-align: left; font-size: 1.1rem;">
+                  <span style="font-size: 0.85rem; color: var(--admin-text-muted);">por hora</span>
+                </div>
+              </div>
+
+              <div class="pricing-table-card">
+                <div class="card-title-bar">
+                  <div>
+                    <h3>3. Upgrades &amp; Opcionais Exclusivos</h3>
+                    <div class="card-subtitle">Itens selecionáveis no simulador de propostas</div>
+                  </div>
+                </div>
+                <div id="pricingAddonsList"></div>
+              </div>
+            </div>
+
+            <!-- Coluna Direita: Simulador de Teste em Tempo Real -->
+            <div>
+              <div class="simulator-box">
+                <h3 style="font-size: 1.25rem; color: var(--admin-text-main); font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="var(--admin-rose)">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                  </svg>
+                  Testador do Simulador em Tempo Real
+                </h3>
+                <p style="font-size: 0.82rem; color: var(--admin-text-muted); margin-top: 0.25rem;">
+                  Veja exatamente como os novos valores serão calculados para os clientes no site.
+                </p>
+
+                <div style="margin-top: 1.5rem;">
+                  <label class="admin-label">Selecione o Serviço</label>
+                  <select id="simTypeSelect" class="admin-input" style="padding-left: 1rem; cursor: pointer;"></select>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label class="admin-label" style="margin-bottom: 0;">Horas de Cobertura</label>
+                    <span id="simHoursValue" style="color: var(--admin-rose-dark); font-weight: 700;">8h</span>
+                  </div>
+                  <input type="range" id="simHoursRange" min="2" max="14" step="1" value="8" style="width: 100%; margin-top: 0.5rem; accent-color: var(--admin-rose); cursor: pointer;">
+                </div>
+
+                <div class="simulator-receipt" id="simReceiptContainer"></div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.75rem;">
+                  <span style="font-weight: 600; color: var(--admin-text-main);">Total do Teste:</span>
+                  <span id="simTotalDisplay" style="font-size: 1.6rem; font-weight: 800; color: var(--admin-rose-dark);">R$ 0,00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 5: SOLICITAÇÕES E LEADS ==================== -->
+        <section class="admin-tab-pane" id="tab-leads">
+          <div class="page-header">
+            <div class="page-header-info">
+              <h2>Solicitações de Orçamento &amp; Reservas</h2>
+              <p>Histórico completo de propostas e pré-reservas recebidas diretamente pelo site.</p>
+            </div>
+            <div class="page-header-actions">
+              <select id="leadsStatusFilter" class="admin-input" style="padding-left: 1rem; width: auto; cursor: pointer;">
+                <option value="all">Todos os Status</option>
+                <option value="new">● Novos</option>
+                <option value="contacted">● Contatados</option>
+                <option value="closed">✓ Fechados</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Cliente / E-mail</th>
+                    <th>Serviço / Data Pretendida</th>
+                    <th>WhatsApp</th>
+                    <th>Data Solicitação</th>
+                    <th>Status</th>
+                    <th>Ações Rápidas</th>
+                  </tr>
+                </thead>
+                <tbody id="leadsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 6: GERENCIAMENTO DE SEÇÕES E VISIBILIDADE ==================== -->
+        <section class="admin-tab-pane" id="tab-secoes">
+          <div class="page-header">
+            <div class="page-header-info">
+              <h2>Visibilidade &amp; Boxes de Conteúdo do Site</h2>
+              <p>Oculte ou ative qualquer bloco da página inicial (como a Agenda de Eventos, Orçamentos, Portfólio, etc.) com um clique.</p>
+            </div>
+            <div class="page-header-actions">
+              <button type="button" class="admin-btn-secondary" id="btnRestaurarSecoes">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
+                Restaurar Padrão
+              </button>
+              <button type="button" class="admin-btn-primary" id="btnSalvarSecoes">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Salvar Alterações
+              </button>
+            </div>
+          </div>
+
+          <!-- Banner Informativo -->
+          <div class="secoes-info-banner">
+            <div class="icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div>
+              <h4>Controle Dinâmico de Conteúdo</h4>
+              <p>
+                Quando você desmarca um box (por exemplo, a <strong>Agenda de Eventos</strong>), essa seção inteira desaparece da página principal e seus links no menu de navegação e rodapé são ocultados automaticamente para os visitantes.
+              </p>
+            </div>
+          </div>
+
+          <!-- Barra de Estatísticas & Ações Rápidas -->
+          <div class="secoes-summary-bar">
+            <div class="secoes-summary-stats">
+              <div class="secoes-stat-pill">
+                <span class="dot green"></span>
+                <span><strong id="secoesCountAtivas">7</strong> Seções Visíveis</span>
+              </div>
+              <div class="secoes-stat-pill">
+                <span class="dot gray"></span>
+                <span><strong id="secoesCountOcultas">0</strong> Ocultas</span>
+              </div>
+            </div>
+
+            <div class="secoes-quick-actions">
+              <button type="button" class="topbar-btn" id="btnOcultarAgendaRapido" title="Ocultar ou mostrar a agenda rapidamente">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Alternar Agenda
+              </button>
+              <button type="button" class="topbar-btn" id="btnExibirTodasSecoes">
+                👁️ Exibir Todas
+              </button>
+              <a href="index.html" target="_blank" class="topbar-btn" style="text-decoration: none;">
+                Visualizar Site ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Grid dos Cards das Seções -->
+          <div class="secoes-grid" id="secoesGridContainer">
+            <!-- Renderizado via JavaScript com componentes dinâmicos -->
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== MODAL CRIAR NOVA SÉRIE ==================== -->
+  <div class="admin-modal-backdrop" id="newSeriesModal">
+    <div class="admin-modal-box">
+      <button type="button" class="admin-modal-close" onclick="document.getElementById('newSeriesModal').classList.remove('active')">&times;</button>
+      <h3 style="font-size: 1.6rem; color: var(--admin-text-main); font-family: var(--admin-font-serif); margin-bottom: 0.5rem;">
+        Criar Nova Série de Fotos
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">
+        Adicione uma nova coleção ao portfólio autoral do estúdio.
+      </p>
+
+      <form id="newSeriesForm">
+        <div class="admin-form-group">
+          <label class="admin-label">Título da Série *</label>
+          <input type="text" id="newSeriesTitle" class="admin-input" style="padding-left: 1rem;" required placeholder="Ex: Casamento Beatriz &amp; Guilherme">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="admin-form-group">
+            <label class="admin-label">Categoria *</label>
+            <input type="text" id="newSeriesCategory" class="admin-input" style="padding-left: 1rem;" required placeholder="Ex: Casamento Real, 15 Anos, Gestante">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-label">Localização</label>
+            <input type="text" id="newSeriesLocation" class="admin-input" style="padding-left: 1rem;" placeholder="Ex: Campos do Jordão, SP">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="admin-form-group">
+            <label class="admin-label">Caminho da Imagem de Capa</label>
+            <input type="text" id="newSeriesCover" class="admin-input" style="padding-left: 1rem;" placeholder="assets/images/casamento.jpg ou URL">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-label">Data de Realização do Evento</label>
+            <input type="text" id="newSeriesDate" data-datepicker="true" class="custom-datepicker" placeholder="Escolha a data do evento...">
+          </div>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Resumo Poético</label>
+          <textarea id="newSeriesSummary" class="admin-input" style="padding: 0.85rem 1rem; min-height: 80px; resize: vertical;" placeholder="Breve descrição da atmosfera do evento..."></textarea>
+        </div>
+
+        <button type="submit" class="admin-btn-primary" style="margin-top: 1rem;">
+          Criar Série &amp; Começar a Cadastrar Fotos
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="assets/js/datepicker.js"></script>
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>

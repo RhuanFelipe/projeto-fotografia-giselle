@@ -1,0 +1,341 @@
+/**
+ * DATEPICKER CUSTOMIZADO (100% VANILLA CSS)
+ * Integrado ao Design System do Rhuan Fotografia
+ * Compatível com temas Claro e Escuro
+ */
+
+.custom-datepicker-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.custom-datepicker-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.85rem 1.15rem;
+  background-color: var(--color-bg-card, #ffffff);
+  border: 1.5px solid var(--color-border, #e2dcd5);
+  border-radius: var(--radius-sm, 8px);
+  color: var(--color-text-main, #242120);
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.custom-datepicker-display:hover {
+  border-color: var(--color-primary, #b38b6d);
+  box-shadow: 0 2px 8px rgba(179, 139, 109, 0.12);
+}
+
+.custom-datepicker-display:focus-within,
+.custom-datepicker-wrapper.is-open .custom-datepicker-display {
+  border-color: var(--color-primary, #b38b6d);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(179, 139, 109, 0.2);
+}
+
+.custom-datepicker-display .datepicker-text {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-weight: 500;
+}
+
+.custom-datepicker-display .datepicker-placeholder {
+  color: var(--color-text-muted, #7c7671);
+  font-weight: 400;
+}
+
+.custom-datepicker-display .datepicker-icon {
+  color: var(--color-primary, #b38b6d);
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.custom-datepicker-wrapper.is-open .custom-datepicker-display .datepicker-icon {
+  transform: rotate(180deg);
+}
+
+/* POPUP / BOX DO CALENDÁRIO */
+.custom-datepicker-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 320px;
+  background: var(--color-bg-card, #ffffff);
+  border: 1px solid var(--color-border, #e2dcd5);
+  border-radius: 12px;
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 1.25rem;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.98);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.custom-datepicker-wrapper.is-open .custom-datepicker-popup {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* CABEÇALHO DO MÊS */
+.datepicker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.datepicker-title {
+  font-family: var(--font-serif, "Cormorant Garamond", Georgia, serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-main, #242120);
+  text-transform: capitalize;
+}
+
+.datepicker-nav-btn {
+  background: transparent;
+  border: 1px solid var(--color-border, #e2dcd5);
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-main, #242120);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.datepicker-nav-btn:hover {
+  background-color: var(--color-bg-alt, #f7f5f2);
+  border-color: var(--color-primary, #b38b6d);
+  color: var(--color-primary, #b38b6d);
+}
+
+/* DIAS DA SEMANA */
+.datepicker-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #7c7671);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+/* GRADE DE DIAS */
+.datepicker-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.datepicker-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-main, #242120);
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.datepicker-day:hover:not(.disabled):not(.empty) {
+  background-color: rgba(179, 139, 109, 0.15);
+  color: var(--color-primary, #b38b6d);
+}
+
+.datepicker-day.empty {
+  cursor: default;
+}
+
+.datepicker-day.other-month {
+  color: var(--color-border, #d1cac1);
+  opacity: 0.4;
+  cursor: default;
+}
+
+.datepicker-day.today {
+  border-color: var(--color-primary, #b38b6d);
+  font-weight: 700;
+}
+
+.datepicker-day.selected {
+  background-color: var(--color-primary, #b38b6d) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(179, 139, 109, 0.35);
+}
+
+.datepicker-day.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* PONTINHOS DE STATUS DA AGENDA */
+.datepicker-day .status-dot {
+  position: absolute;
+  bottom: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+.datepicker-day .status-dot.available {
+  background-color: #10b981; /* Verde */
+}
+
+.datepicker-day .status-dot.limited {
+  background-color: #f59e0b; /* Âmbar */
+}
+
+.datepicker-day .status-dot.booked {
+  background-color: #ef4444; /* Vermelho */
+}
+
+.datepicker-day.selected .status-dot {
+  background-color: #ffffff;
+}
+
+/* RODAPÉ DO DATEPICKER */
+.datepicker-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--color-border, #e2dcd5);
+  font-size: 0.8rem;
+}
+
+.datepicker-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.datepicker-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--color-text-muted, #7c7671);
+  font-size: 0.72rem;
+}
+
+.datepicker-legend-item span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.datepicker-today-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-primary, #b38b6d);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.datepicker-today-btn:hover {
+  background-color: rgba(179, 139, 109, 0.12);
+}
+
+/* MODO ESCURO */
+[data-theme="dark"] .custom-datepicker-display {
+  background-color: #1a1716;
+  border-color: #383330;
+  color: #ede8e3;
+}
+
+[data-theme="dark"] .custom-datepicker-popup {
+  background: #1e1b19;
+  border-color: #383330;
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .datepicker-title,
+[data-theme="dark"] .datepicker-day {
+  color: #ede8e3;
+}
+
+[data-theme="dark"] .datepicker-nav-btn {
+  border-color: #383330;
+  color: #ede8e3;
+}
+
+[data-theme="dark"] .datepicker-nav-btn:hover {
+  background-color: #2b2624;
+}
+
+[data-theme="dark"] .datepicker-footer {
+  border-top-color: #383330;
+}
+
+/* =========================================================================
+   INTEGRAÇÃO ESPECÍFICA COM O PAINEL ADMINISTRATIVO (ADMIN STUDIO)
+   ========================================================================= */
+.admin-app-layout .custom-datepicker-display {
+  background-color: var(--admin-bg-alt, #fcfbfa);
+  border-color: var(--admin-border, #e5dfd8);
+  color: var(--admin-text-main, #211e1c);
+  border-radius: var(--admin-radius-sm, 8px);
+  padding: 0.65rem 0.95rem;
+  font-size: 0.88rem;
+}
+
+.admin-app-layout .custom-datepicker-display:hover,
+.admin-app-layout .custom-datepicker-wrapper.is-open .custom-datepicker-display {
+  border-color: var(--admin-rose, #c2957b);
+  box-shadow: 0 0 0 3px rgba(194, 149, 123, 0.2);
+}
+
+.admin-app-layout .custom-datepicker-popup {
+  background: var(--admin-bg-card, #ffffff);
+  border-color: var(--admin-border, #e5dfd8);
+  border-radius: var(--admin-radius-md, 12px);
+}
+
+.admin-app-layout .datepicker-title {
+  font-family: var(--admin-font-serif, "Cormorant Garamond", serif);
+  color: var(--admin-text-main, #211e1c);
+}
+
+.admin-app-layout .datepicker-day.selected {
+  background-color: var(--admin-rose, #c2957b) !important;
+}
+
+[data-theme="dark"] .admin-app-layout .custom-datepicker-display {
+  background-color: var(--admin-bg-alt, #1e1b19);
+  border-color: var(--admin-border, #3b3531);
+  color: var(--admin-text-main, #f0eae4);
+}
+
+[data-theme="dark"] .admin-app-layout .custom-datepicker-popup {
+  background: var(--admin-bg-card, #191614);
+  border-color: var(--admin-border, #3b3531);
+}
+

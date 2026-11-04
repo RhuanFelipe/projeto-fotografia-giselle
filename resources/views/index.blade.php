@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fotografia autoral de eventos, casamentos, festas de 15 anos e ensaios femininos. Consulte nossa agenda online e simule seu orçamento em tempo real.">
+  <meta name="keywords" content="fotografo, agenda fotografo, orcamento fotografia, ensaios femininos, fotos casamento, fotos 15 anos, ensaio gestante">
+  <title>Rhuan Fotografia &bull; Agenda de Eventos & Ensaios Autorais</title>
+  
+  <!-- Estilos & Tipografia -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/datepicker.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>try{if(localStorage.getItem('rhuan_theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}</script>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
+
+  <!-- ==================== HEADER / NAVEGAÇÃO ==================== -->
+  <header class="header" id="header">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-main">RHUAN</span>
+        <span class="logo-sub">Fotografia Autoral</span>
+      </a>
+
+      <nav class="nav-menu" id="navMenu">
+        <a href="#inicio" class="nav-link active" data-nav-target="inicio" {{ !($secoes['inicio'] ?? true) ? 'style=display:none!important;' : '' }}>Início</a>
+        <a href="#agenda" class="nav-link" data-nav-target="agenda" {{ !($secoes['agenda'] ?? true) ? 'style=display:none!important;' : '' }}>Agenda de Eventos</a>
+        <a href="#ensaios" class="nav-link" data-nav-target="ensaios" {{ !($secoes['ensaios'] ?? true) ? 'style=display:none!important;' : '' }}>Ensaios & Festas</a>
+        <a href="#orcamentos" class="nav-link" data-nav-target="orcamentos" {{ !($secoes['orcamentos'] ?? true) ? 'style=display:none!important;' : '' }}>Orçamentos</a>
+        <a href="#sobre" class="nav-link" data-nav-target="sobre" {{ !($secoes['sobre'] ?? true) ? 'style=display:none!important;' : '' }}>Sobre o Estúdio</a>
+        <a href="#contato" class="nav-link" data-nav-target="contato" {{ !($secoes['contato'] ?? true) ? 'style=display:none!important;' : '' }}>Contato</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Alternar tema claro/escuro" title="Alternar Modo Escuro / Claro">
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <a href="#orcamentos" class="btn btn-primary btn-sm" data-nav-target="orcamentos" {{ !($secoes['orcamentos'] ?? true) ? 'style=display:none!important;' : '' }}>Simular Orçamento</a>
+        <button class="mobile-toggle" id="mobileMenuToggle" aria-label="Abrir Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== HERO SECTION ==================== -->
+  <section class="hero" id="inicio" {{ !($secoes['inicio'] ?? true) ? 'style=display:none!important; data-secao-oculta=true' : '' }}>
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <span class="sub-tag">Luz &bull; Sensibilidade &bull; Elegância</span>
+          <h1>Eternizando momentos com <span>delicadeza</span> e seriedade.</h1>
+          <p class="hero-desc">
+            Especialista em registrar a autenticidade de casamentos, festas de 15 anos, ensaios femininos e gestantes. 
+            Consulte a disponibilidade de datas na agenda e simule o investimento do seu evento de forma transparente.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="#agenda" class="btn btn-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              Ver Agenda de Datas
+            </a>
+            <a href="#orcamentos" class="btn btn-outline">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Calcular Orçamento
+            </a>
+          </div>
+
+          <div class="hero-highlights">
+            <div class="highlight-item">
+              <h4>8+ Anos</h4>
+              <p>De experiência</p>
+            </div>
+            <div class="highlight-item">
+              <h4>400+</h4>
+              <p>Histórias contadas</p>
+            </div>
+            <div class="highlight-item">
+              <h4>100%</h4>
+              <p>Clientes felizes</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-image-wrapper">
+            <img src="assets/images/hero.jpg" alt="Retrato Editorial Sofisticado por Rhuan Fotografia">
+          </div>
+          <div class="hero-badge-floating">
+            <div class="hero-badge-icon">📅</div>
+            <div class="hero-badge-text">
+              <h5>Agenda 2026/2027</h5>
+              <p>Datas abertas para reservas</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== AGENDA DE EVENTOS E FESTAS ==================== -->
+  <section class="section section-alt" id="agenda" {{ !($secoes['agenda'] ?? true) ? 'style=display:none!important; data-secao-oculta=true' : '' }}>
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-tag">Disponibilidade em Tempo Real</span>
+        <h2>Agenda de Eventos & Festas</h2>
+        <p>
+          Acompanhe os dias com agendamentos confirmados e os finais de semana ainda livres para a sua celebração ou ensaio.
+        </p>
+      </div>
+
+      <div class="agenda-card-wrapper">
+        <div class="agenda-top-bar">
+          <div class="agenda-current-month">
+            <button class="month-nav-btn" id="prevMonthBtn" aria-label="Mês anterior">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h3 id="agendaMonthTitle" class="font-serif">Outubro de 2026</h3>
+            <button class="month-nav-btn" id="nextMonthBtn" aria-label="Próximo mês">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+
+          <div class="agenda-legend">
+            <div class="legend-item">
+              <span class="legend-dot available"></span>
+              <span>Data Livre</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot limited"></span>
+              <span>Poucas Vagas / Ensaio</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot booked"></span>
+              <span>Evento Confirmado</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="agenda-layout-grid">
+          <!-- Grade do Calendário -->
+          <div class="agenda-calendar-pane">
+            <div class="calendar-weekdays">
+              <span><span class="weekday-full">Dom</span><span class="weekday-short">D</span></span>
+              <span><span class="weekday-full">Seg</span><span class="weekday-short">S</span></span>
+              <span><span class="weekday-full">Ter</span><span class="weekday-short">T</span></span>
+              <span><span class="weekday-full">Qua</span><span class="weekday-short">Q</span></span>
+              <span><span class="weekday-full">Qui</span><span class="weekday-short">Q</span></span>
+              <span><span class="weekday-full">Sex</span><span class="weekday-short">S</span></span>
+              <span><span class="weekday-full">Sáb</span><span class="weekday-short">S</span></span>
+            </div>
+            <div class="calendar-days-grid" id="calendarDaysGrid">
+              <!-- Dias gerados via agenda.js -->
+            </div>
+          </div>
+
+          <!-- Detalhes do Dia Selecionado -->
+          <div class="agenda-sidebar-pane">
+            <div>
+              <div class="selected-date-card">
+                <span class="sub-tag" id="selectedDateStatus">Dia Selecionado</span>
+                <h4 id="selectedDateFormatted">25 de Outubro, 2026</h4>
+                <p style="font-size: 0.85rem; color: var(--color-text-muted);">
+                  Status e agendamentos cadastrados para este dia:
+                </p>
+
+                <div class="event-slot-list" id="agendaSlotList">
+                  <!-- Carregado via agenda.js -->
+                </div>
+              </div>
+
+              <div class="agenda-note">
+                <strong>Nota Importante:</strong> Para datas de casamento e festas de 15 anos, recomendamos a reserva com 6 a 12 meses de antecedência para garantir exclusividade da data.
+              </div>
+            </div>
+
+            <div style="margin-top: 2rem;">
+              <button class="btn btn-primary" id="requestDateBtn" style="width: 100%;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                Solicitar Reserva Desta Data
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PORTFÓLIO / ENSAIOS ==================== -->
+  <section class="section" id="ensaios" {{ !($secoes['ensaios'] ?? true) ? 'style=display:none!important; data-secao-oculta=true' : '' }}>
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-tag">Galeria Autoral</span>
+        <h2>Ensaios & Celebrações</h2>
+        <p>
+          Cada sessão é conduzida com calma, respeito e olhar apurado para a luz natural, revelando a beleza genuína de cada história.
+        </p>
+      </div>
+
+      <!-- Filtros -->
+      <div class="portfolio-filters">
+        <button class="filter-btn active" data-filter="all">Todos os Trabalhos</button>
+        <button class="filter-btn" data-filter="casamento">Casamentos</button>
+        <button class="filter-btn" data-filter="15anos">Festas de 15 Anos</button>
+        <button class="filter-btn" data-filter="gestante">Gestantes</button>
+        <button class="filter-btn" data-filter="feminino">Ensaios Femininos</button>
+      </div>
+
+      <!-- Grid de Fotos -->
+      <div class="gallery-grid" id="galleryGrid">
+        <!-- Item 1: Casamento -->
+        <article class="gallery-card" data-category="casamento" data-id="casamento">
+          <div class="gallery-img-container">
+            <img src="{{ isset($series['casamento']) ? $series['casamento']->imagem_capa : 'assets/images/casamento.jpg' }}" alt="Casamento Romântico ao Pôr do Sol">
+            <div class="gallery-overlay">
+              <button type="button" class="gallery-overlay-btn btn-ver-ensaio" data-id="casamento" data-action="slide" aria-label="Ver ensaio de casamento">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Ver Ensaio
+              </button>
+              <a href="detalhes-evento.html?id=casamento" class="gallery-overlay-btn gallery-overlay-btn-secondary" aria-label="Ver detalhes do casamento">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                Ver Detalhes
+              </a>
+            </div>
+          </div>
+          <div class="gallery-info">
+            <div class="gallery-meta">
+              <span class="gallery-cat">Casamento</span>
+              <span class="gallery-date">Jardim Imperial</span>
+            </div>
+            <h3 class="gallery-title">Mariana & Rodrigo</h3>
+            <p class="gallery-desc">Cobertura completa com cerimônia ao ar livre, fotos espontâneas e recepção intimista.</p>
+            <div class="gallery-card-actions">
+              <button type="button" class="btn-card-action btn-ver-ensaio" data-id="casamento">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Ver Ensaio
+              </button>
+              <a href="detalhes-evento.html?id=casamento" class="btn-card-action btn-ver-detalhes">
+                Ver Detalhes
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 2: 15 Anos -->
+        <article class="gallery-card" data-category="15anos" data-id="15anos">
+          <div class="gallery-img-container">
+            <img src="{{ isset($series['15anos']) ? $series['15anos']->imagem_capa : 'assets/images/15anos.jpg' }}" alt="Festa de 15 anos com valsa e luzes">
+            <div class="gallery-overlay">
+              <button type="button" class="gallery-overlay-btn btn-ver-ensaio" data-id="15anos" data-action="slide" aria-label="Ver ensaio de 15 anos">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Ver Ensaio
+              </button>
+              <a href="detalhes-evento.html?id=15anos" class="gallery-overlay-btn gallery-overlay-btn-secondary" aria-label="Ver detalhes da festa de 15 anos">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                Ver Detalhes
+              </a>
+            </div>
+          </div>
+          <div class="gallery-info">
+            <div class="gallery-meta">
+              <span class="gallery-cat">Festa de 15 Anos</span>
+              <span class="gallery-date">Salão Villa Real</span>
+            </div>
+            <h3 class="gallery-title">O Baile da Clara</h3>
+            <p class="gallery-desc">Uma noite de pura emoção, dança dos 15 anos e celebração com amigos sob luzes acolhedoras.</p>
+            <div class="gallery-card-actions">
+              <button type="button" class="btn-card-action btn-ver-ensaio" data-id="15anos">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Ver Ensaio
+              </button>
+              <a href="detalhes-evento.html?id=15anos" class="btn-card-action btn-ver-detalhes">
+                Ver Detalhes
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 3: Gestante -->
+        <article class="gallery-card" data-category="gestante" data-id="gestante">
+          <div class="gallery-img-container">
+            <img src="{{ isset($series['gestante']) ? $series['gestante']->imagem_capa : 'assets/images/gestante.jpg' }}" alt="Ensaio gestante fine art minimalista">
+            <div class="gallery-overlay">
+              <button type="button" class="gallery-overlay-btn btn-ver-ensaio" data-id="gestante" data-action="slide" aria-label="Ver ensaio gestante">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Ver Ensaio
+              </button>
+              <a href="detalhes-evento.html?id=gestante" class="gallery-overlay-btn gallery-overlay-btn-secondary" aria-label="Ver detalhes do ensaio gestante">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                Ver Detalhes
+              </a>
+            </div>
+          </div>
+          <div class="gallery-info">
+            <div class="gallery-meta">
+              <span class="gallery-cat">Ensaio Gestante</span>
+              <span class="gallery-date">Luz Natural em Estúdio</span>
+            </div>
+            <h3 class="gallery-title">A Espera por Lívia</h3>
+            <p class="gallery-desc">Fotografia artística com tons terrosos e tecido de seda, celebrando a maternidade com nobreza.</p>
+            <div class="gallery-card-actions">
+              <button type="button" class="btn-card-action btn-ver-ensaio" data-id="gestante">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Ver Ensaio
+              </button>
+              <a href="detalhes-evento.html?id=gestante" class="btn-card-action btn-ver-detalhes">
+                Ver Detalhes
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 4: Ensaio Feminino -->
+        <article class="gallery-card" data-category="feminino" data-id="feminino">
+          <div class="gallery-img-container">
+            <img src="{{ isset($series['feminino']) ? $series['feminino']->imagem_capa : 'assets/images/feminino.jpg' }}" alt="Ensaio feminino autoral na natureza">
+            <div class="gallery-overlay">
+              <button type="button" class="gallery-overlay-btn btn-ver-ensaio" data-id="feminino" data-action="slide" aria-label="Ver ensaio feminino">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Ver Ensaio
+              </button>
+              <a href="detalhes-evento.html?id=feminino" class="gallery-overlay-btn gallery-overlay-btn-secondary" aria-label="Ver detalhes do ensaio feminino">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                Ver Detalhes
+              </a>
+            </div>
+          </div>
+          <div class="gallery-info">
+            <div class="gallery-meta">
+              <span class="gallery-cat">Ensaio Feminino</span>
+              <span class="gallery-date">Campo & Luz Dourada</span>
+            </div>
+            <h3 class="gallery-title">Retrato de Helena</h3>
+            <p class="gallery-desc">Sessão ao pôr do sol explorando a espontaneidade, serenidade e a essência feminina.</p>
+            <div class="gallery-card-actions">
+              <button type="button" class="btn-card-action btn-ver-ensaio" data-id="feminino">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Ver Ensaio
+              </button>
+              <a href="detalhes-evento.html?id=feminino" class="btn-card-action btn-ver-detalhes">
+                Ver Detalhes
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ORÇAMENTOS & PACOTES ==================== -->
+  <section class="section section-tint" id="orcamentos" {{ !($secoes['orcamentos'] ?? true) ? 'style=display:none!important; data-secao-oculta=true' : '' }}>
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-tag">Investimento Transparente</span>
+        <h2>Valores & Orçamentos</h2>
+        <p>
+          Escolha um dos pacotes clássicos ou personalize seu orçamento sob medida com nossa calculadora em tempo real.
+        </p>
+      </div>
+
+      <!-- Abas de Alternância -->
+      <div class="pricing-tabs">
+        <button class="pricing-tab-btn active" data-target="tabPacotes">Pacotes Prontos</button>
+        <button class="pricing-tab-btn" data-target="tabSimulador">Simulador Personalizado</button>
+      </div>
+
+      <!-- ABA 1: PACOTES PRONTOS -->
+      <div class="pricing-tab-pane" id="tabPacotes">
+        <div class="pricing-cards-grid">
+          <!-- Pacote 1 -->
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <span class="sub-tag">Individual / Casal</span>
+              <h3>Ensaio Essencial</h3>
+              <p class="pricing-subtitle">Ideal para retratos femininos, gestantes ou pré-evento.</p>
+            </div>
+            <div class="pricing-price">
+              <span class="pricing-currency">R$</span>
+              <span class="pricing-value">650</span>
+              <span class="pricing-period">/ sessão</span>
+            </div>
+            <div class="pricing-features">
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>Até 2 horas de sessão fotográfica</span>
+              </div>
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>25 fotos digitais em alta resolução tratadas</span>
+              </div>
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>Galeria online privativa para seleção</span>
+              </div>
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>Consultoria de figurino e locação</span>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-pacote-select" data-pacote="Ensaio Essencial" data-valor="R$ 650">
+              Escolher Este Pacote
+            </button>
+          </div>
+
+          <!-- Pacote 2 (Destaque) -->
+          <div class="pricing-card featured">
+            <span class="popular-badge">Mais Escolhido</span>
+            <div class="pricing-header">
+              <span class="sub-tag">15 Anos & Celebrações</span>
+              <h3>Baile de Debutante</h3>
+              <p class="pricing-subtitle">Cobertura completa da festa de 15 anos com making-of.</p>
+            </div>
+            <div class="pricing-price">
+              <span class="pricing-currency">R$</span>
+              <span class="pricing-value">1.800</span>
+              <span class="pricing-period">/ evento</span>
+            </div>
+            <div class="pricing-features">
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>5 horas de cobertura contínua</span>
+              </div>
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>150+ fotos tratadas minuciosamente</span>
+              </div>
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>Making-of da debutante incluso</span>
+              </div>
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>Mini-vídeo com melhores momentos para Reels</span>
+              </div>
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>Entrega em estojo personalizado</span>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-pacote-select" data-pacote="Baile de Debutante (15 Anos)" data-valor="R$ 1.800">
+              Escolher Este Pacote
+            </button>
+          </div>
+
+          <!-- Pacote 3 -->
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <span class="sub-tag">Exclusivo</span>
+              <h3>Casamento Completo</h3>
+              <p class="pricing-subtitle">História contada do making-of até o final da pista.</p>
+            </div>
+            <div class="pricing-price">
+              <span class="pricing-currency">R$</span>
+              <span class="pricing-value">3.200</span>
+              <span class="pricing-period">/ evento</span>
+            </div>
+            <div class="pricing-features">
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>8 horas de cobertura integral</span>
+              </div>
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>350+ fotos tratadas com estética autoral</span>
+              </div>
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>2 fotógrafos no evento (sem perder nenhum ângulo)</span>
+              </div>
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>Ensaio Pré-Wedding de presente incluso</span>
+              </div>
+              <div class="pricing-feature-item">
+                <span class="pricing-check-icon">✓</span>
+                <span>Galeria em nuvem por 12 meses</span>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-pacote-select" data-pacote="Casamento Completo" data-valor="R$ 3.200">
+              Escolher Este Pacote
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 2: SIMULADOR PERSONALIZADO -->
+      <div class="pricing-tab-pane" id="tabSimulador" style="display: none;">
+        <div class="calculator-box">
+          <div class="calculator-grid">
+            <!-- Controles do Simulador -->
+            <div>
+              <div class="form-group">
+                <label class="form-label">1. Escolha o Tipo de Sessão ou Evento</label>
+                <div class="options-pill-group">
+                  <label>
+                    <input type="radio" name="tipoEnsaio" value="ensaio-feminino" class="option-pill-input" checked>
+                    <span class="option-pill-label">
+                      <strong>Ensaio Feminino</strong>
+                      <small style="color: var(--color-text-muted);">A partir de R$ 650</small>
+                    </span>
+                  </label>
+                  <label>
+                    <input type="radio" name="tipoEnsaio" value="ensaio-gestante" class="option-pill-input">
+                    <span class="option-pill-label">
+                      <strong>Gestante</strong>
+                      <small style="color: var(--color-text-muted);">A partir de R$ 750</small>
+                    </span>
+                  </label>
+                  <label>
+                    <input type="radio" name="tipoEnsaio" value="festa-15anos" class="option-pill-input">
+                    <span class="option-pill-label">
+                      <strong>Festa 15 Anos</strong>
+                      <small style="color: var(--color-text-muted);">A partir de R$ 1.800</small>
+                    </span>
+                  </label>
+                  <label>
+                    <input type="radio" name="tipoEnsaio" value="casamento" class="option-pill-input">
+                    <span class="option-pill-label">
+                      <strong>Casamento</strong>
+                      <small style="color: var(--color-text-muted);">A partir de R$ 3.200</small>
+                    </span>
+                  </label>
+                  <label>
+                    <input type="radio" name="tipoEnsaio" value="evento-social" class="option-pill-input">
+                    <span class="option-pill-label">
+                      <strong>Evento Social</strong>
+                      <small style="color: var(--color-text-muted);">A partir de R$ 1.200</small>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <label class="form-label" style="margin-bottom: 0;">2. Duração da Cobertura Fotográfica</label>
+                  <span id="calcHorasDisplay" style="font-weight: 700; color: var(--color-primary-dark);">2 horas</span>
+                </div>
+                <input type="range" id="calcHoras" min="2" max="10" step="1" value="2" class="form-control" style="cursor: pointer; padding: 0.5rem 0;">
+                <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.3rem;">
+                  Adicione mais horas caso queira registrar recepção estendida ou pós-festa.
+                </p>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">3. Itens e Serviços Opcionais</label>
+                <div class="addons-list">
+                  <label class="addon-checkbox-label">
+                    <div class="addon-left">
+                      <input type="checkbox" class="addon-check" value="album-fineart">
+                      <span>Álbum Fine Art Luxo (Capa em Linho 30x30cm)</span>
+                    </div>
+                    <span class="addon-price-tag">+ R$ 780</span>
+                  </label>
+
+                  <label class="addon-checkbox-label">
+                    <div class="addon-left">
+                      <input type="checkbox" class="addon-check" value="segundo-fotografo">
+                      <span>Segundo Fotógrafo (Recomendado para eventos com mais de 80 convidados)</span>
+                    </div>
+                    <span class="addon-price-tag">+ R$ 600</span>
+                  </label>
+
+                  <label class="addon-checkbox-label">
+                    <div class="addon-left">
+                      <input type="checkbox" class="addon-check" value="ensaio-pre">
+                      <span>Ensaio Pré-Evento Externo (Pré-15 anos ou Ensaio Casal)</span>
+                    </div>
+                    <span class="addon-price-tag">+ R$ 550</span>
+                  </label>
+
+                  <label class="addon-checkbox-label">
+                    <div class="addon-left">
+                      <input type="checkbox" class="addon-check" value="drone">
+                      <span>Cobertura Aérea com Drone (Locação aberta)</span>
+                    </div>
+                    <span class="addon-price-tag">+ R$ 450</span>
+                  </label>
+
+                  <label class="addon-checkbox-label">
+                    <div class="addon-left">
+                      <input type="checkbox" class="addon-check" value="express">
+                      <span>Entrega Expressa de Prévia em 48 Horas</span>
+                    </div>
+                    <span class="addon-price-tag">+ R$ 350</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Resumo e Ação de Contato -->
+            <div class="summary-receipt-card">
+              <div>
+                <h4 class="receipt-title">Resumo da Estimativa</h4>
+                <div class="receipt-line-items" id="calcReceiptItems">
+                  <!-- Gerado dinamicamente via orcamento.js -->
+                </div>
+                <div class="receipt-item total">
+                  <span>Investimento Previsto:</span>
+                  <div class="receipt-total-value" id="calcTotalValue">R$ 650</div>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 1rem; line-height: 1.4;">
+                  Valores válidos para eventos no ano vigente. Parcelamento facilitado em até 6x sem juros ou desconto à vista.
+                </p>
+              </div>
+
+              <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 0.8rem;">
+                <button class="btn btn-primary" id="sendOrcamentoWhatsApp">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                  Enviar Proposta por WhatsApp
+                </button>
+                <a href="#contato" class="btn btn-outline" style="text-align: center;">
+                  Solicitar via Formulário Formal
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SOBRE O FOTÓGRAFO ==================== -->
+  <section class="section section-alt" id="sobre" {{ !($secoes['sobre'] ?? true) ? 'style=display:none!important; data-secao-oculta=true' : '' }}>
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-img-frame">
+          <img src="assets/images/hero.jpg" alt="Rhuan Fotógrafo no estúdio">
+        </div>
+
+        <div>
+          <span class="sub-tag">Nosso Olhar & Filosofia</span>
+          <h2>A arte de capturar aquilo que as palavras não alcançam.</h2>
+          
+          <div class="about-quote">
+            “Não criamos poses forçadas. Cultivamos um ambiente onde você se sente livre, confiante e verdadeiramente você.”
+          </div>
+
+          <p class="about-text">
+            Com uma abordagem refinada e cuidadosa, meu compromisso é proporcionar uma experiência leve e inesquecível.
+            Especializado em fotografia de eventos marcantes e ensaios com estética feminina e atemporal, busco transformar
+            pequenos gestos, sorrisos sutis e grandes celebrações em obras que atravessarão gerações.
+          </p>
+
+          <div class="about-pillars">
+            <div class="pillar-item">
+              <h5>Luz Natural & Sensibilidade</h5>
+              <p>Trabalhamos com o melhor da iluminação para tons de pele naturais e fotos poéticas.</p>
+            </div>
+            <div class="pillar-item">
+              <h5>Pontualidade & Compromisso</h5>
+              <p>Rigor absoluto nos prazos de entrega e na dedicação integral à sua data.</p>
+            </div>
+            <div class="pillar-item">
+              <h5>Direção Leve e Tranquila</h5>
+              <p>Mesmo quem nunca foi fotografada se sente segura e à vontade em minutos.</p>
+            </div>
+            <div class="pillar-item">
+              <h5>Acabamento de Belas Artes</h5>
+              <p>Tratamento de cor individualizado que valoriza a elegância sem excessos de filtro.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== DEPOIMENTOS ==================== -->
+  <section class="section" id="depoimentos" {{ !($secoes['depoimentos'] ?? true) ? 'style=display:none!important; data-secao-oculta=true' : '' }}>
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-tag">Palavras de Quem Já Viveu</span>
+        <h2>Depoimentos & Experiências</h2>
+        <p>A satisfação e o carinho dos nossos clientes são o nosso maior legado.</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div>
+            <div class="stars">★★★★★</div>
+            <p class="testimonial-text">
+              "Ver a agenda online facilitou muito quando estávamos planejando o casamento. No grande dia, a discrição e a sensibilidade foram impecáveis. As fotos parecem saídas de uma revista europeia!"
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">M</div>
+            <div class="author-meta">
+              <h5>Mariana Vasconcelos</h5>
+              <p>Noiva &bull; Casamento no Campo</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div>
+            <div class="stars">★★★★★</div>
+            <p class="testimonial-text">
+              "O aniversário de 15 anos da minha filha foi mágico! O Rhuan conseguiu captar toda a empolgação dos jovens e a emoção dos avós. A entrega foi antes do prazo prometido. Recomendo de olhos fechados."
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">P</div>
+            <div class="author-meta">
+              <h5>Patrícia Almeida</h5>
+              <p>Mãe da Debutante Clara</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div>
+            <div class="stars">★★★★★</div>
+            <p class="testimonial-text">
+              "Eu tinha muita vergonha de fazer ensaio feminino, mas o acolhimento me fez esquecer que havia uma câmera ali. Foi um momento de reencontro com minha autoestima. O resultado ficou deslumbrante!"
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">L</div>
+            <div class="author-meta">
+              <h5>Luciana Prado</h5>
+              <p>Ensaio Feminino Autoral</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FORMULÁRIO DE CONTATO & AGENDAMENTO ==================== -->
+  <section class="section section-tint" id="contato" {{ !($secoes['contato'] ?? true) ? 'style=display:none!important; data-secao-oculta=true' : '' }}>
+    <div class="container">
+      <div class="contact-grid">
+        <!-- Painel Esquerdo -->
+        <div class="contact-info-panel">
+          <span class="sub-tag">Vamos Conversar</span>
+          <h3>Reserve sua data ou tire suas dúvidas</h3>
+          <p>
+            Preencha os campos ao lado com as informações do seu evento ou ensaio. 
+            Retornamos com proposta formal e disponibilidade em até 24 horas úteis.
+          </p>
+
+          <div class="contact-channels">
+            <div class="channel-item">
+              <div class="channel-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </div>
+              <div class="channel-detail">
+                <h5>WhatsApp / Atendimento</h5>
+                <a href="https://wa.me/5511999999999" target="_blank">(11) 99999-9999</a>
+              </div>
+            </div>
+
+            <div class="channel-item">
+              <div class="channel-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              </div>
+              <div class="channel-detail">
+                <h5>E-mail Oficial</h5>
+                <a href="mailto:contato@rhuanfotografia.com.br">contato@rhuanfotografia.com.br</a>
+              </div>
+            </div>
+
+            <div class="channel-item">
+              <div class="channel-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </div>
+              <div class="channel-detail">
+                <h5>Estúdio & Localização</h5>
+                <span>Atendimento presencial com hora marcada &bull; São Paulo, SP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulário (100% JavaScript Puro) -->
+        <div>
+          <form id="formContatoOrcamento">
+            <div class="form-group">
+              <label for="orcamentoNome" class="form-label">Seu Nome Completo *</label>
+              <input type="text" id="orcamentoNome" name="nome" class="form-control" placeholder="Ex: Patrícia Silveira" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="orcamentoEmail" class="form-label">Seu E-mail *</label>
+                <input type="email" id="orcamentoEmail" name="email" class="form-control" placeholder="seu@email.com" required>
+              </div>
+              <div class="form-group">
+                <label for="orcamentoTelefone" class="form-label">Telefone / WhatsApp *</label>
+                <input type="tel" id="orcamentoTelefone" name="telefone" class="form-control" placeholder="(11) 98888-7777" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="orcamentoCategoria" class="form-label">Tipo de Trabalho *</label>
+                <select id="orcamentoCategoria" name="categoria" class="form-control" required>
+                  <option value="casamento">Casamento</option>
+                  <option value="15anos">Festa de 15 Anos</option>
+                  <option value="ensaio-feminino">Ensaio Feminino</option>
+                  <option value="ensaio-gestante">Ensaio Gestante</option>
+                  <option value="evento-social">Outro Evento Social</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="orcamentoData" class="form-label">Data Prevista *</label>
+                <input type="date" id="orcamentoData" name="data_evento" class="form-control" value="2026-10-25" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="orcamentoMensagem" class="form-label">Conte-nos sobre a ideia ou local do evento</label>
+              <textarea id="orcamentoMensagem" name="mensagem" class="form-control" rows="4" placeholder="Horário aproximado, cidade/local, preferências de cobertura..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              Enviar Solicitação de Orçamento
+            </button>
+            <p style="font-size: 0.78rem; color: var(--color-text-muted); text-align: center; margin-top: 0.8rem;">
+              Respeitamos sua privacidade. Seus dados nunca serão compartilhados com terceiros.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">
+            <span class="logo-main">RHUAN</span>
+            <span class="logo-sub">Fotografia Autoral</span>
+          </a>
+          <p>
+            Registros afetivos, alta elegância e poesia visual para momentos que merecem ser lembrados com nobreza e ternura.
+          </p>
+          <div style="display: flex; gap: 0.8rem; margin-top: 1rem;">
+            <a href="https://instagram.com" target="_blank" aria-label="Instagram" style="color: #A39690;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="https://pinterest.com" target="_blank" aria-label="Pinterest" style="color: #A39690;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line><circle cx="12" cy="12" r="10"></circle></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Navegação</h4>
+          <div class="footer-links">
+            <a href="#inicio">Início</a>
+            <a href="#agenda">Agenda do Fotógrafo</a>
+            <a href="#ensaios">Galeria de Ensaios</a>
+            <a href="#orcamentos">Tabela de Orçamentos</a>
+            <a href="#sobre">Nossa Filosofia</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Ensaios</h4>
+          <div class="footer-links">
+            <a href="#ensaios">Casamentos</a>
+            <a href="#ensaios">Festas de 15 Anos</a>
+            <a href="#ensaios">Gestantes Fine Art</a>
+            <a href="#ensaios">Retrato Feminino</a>
+            <a href="#ensaios">Eventos Sociais</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Atendimento</h4>
+          <div class="footer-links">
+            <span style="color: #A39690; font-size: 0.9rem;">Segunda a Sexta: 09h às 18h</span>
+            <span style="color: #A39690; font-size: 0.9rem;">Sábados e Domingos: Eventos agendados</span>
+            <a href="https://wa.me/5511999999999" target="_blank" style="margin-top: 0.5rem; color: var(--color-primary-light);">
+              Fale Conosco pelo WhatsApp &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          &copy; 2026 Rhuan Fotografia. Todos os direitos reservados.
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <span>Design refinado &bull; Galeria &amp; Agenda Interativa</span>
+          <span>&bull;</span>
+          <a href="admin.html" style="color: var(--color-accent); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;" title="Painel de Controle do Fotógrafo">
+            🔒 Área Admin
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODAL DE RESERVA / PACOTE ==================== -->
+  <div class="modal-backdrop" id="bookingModal">
+    <div class="modal-container">
+      <button class="modal-close-btn" aria-label="Fechar Modal">&times;</button>
+      <span class="sub-tag">Reserva de Pacote</span>
+      <h3 id="modalServiceTitle" style="font-size: 1.8rem; margin-bottom: 0.3rem;">Nome do Pacote</h3>
+      <p id="modalServicePrice" style="color: var(--color-primary-dark); font-weight: 700; font-size: 1.2rem; margin-bottom: 1.5rem;">Investimento: R$ 0,00</p>
+      
+      <form id="modalBookingForm">
+        <div class="form-group">
+          <label class="form-label">Seu Nome Completo *</label>
+          <input type="text" class="form-control" required placeholder="Nome do contratante">
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp *</label>
+          <input type="tel" class="form-control" required placeholder="(11) 99999-9999">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data Pretendida *</label>
+          <input type="date" class="form-control" required value="2026-10-25">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+          Confirmar Solicitação de Reserva
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL LIGHTBOX COM SLIDE DE FOTOS ==================== -->
+  <div class="modal-backdrop" id="lightboxModal">
+    <div class="modal-container lightbox-modal-container">
+      <button class="modal-close-btn lightbox-close-btn" aria-label="Fechar Slide">&times;</button>
+
+      <div class="lightbox-header">
+        <div>
+          <span class="lightbox-category-badge" id="lightboxCategory">Casamento Real</span>
+          <h3 class="lightbox-title" id="lightboxTitle">O Sim de Mariana &amp; Rodrigo</h3>
+        </div>
+        <span class="lightbox-counter-pill" id="lightboxCounter">Foto 1 de 5</span>
+      </div>
+
+      <div class="lightbox-slider-stage">
+        <button type="button" class="lightbox-nav-btn prev" id="lightboxPrev" aria-label="Foto Anterior">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+
+        <div class="lightbox-img-frame">
+          <img id="lightboxImg" src="assets/images/casamento.jpg" alt="Foto do Ensaio">
+        </div>
+
+        <button type="button" class="lightbox-nav-btn next" id="lightboxNext" aria-label="Próxima Foto">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+
+      <div class="lightbox-caption-box">
+        <span class="lightbox-moment-tag" id="lightboxMoment">Foto 01 &bull; Momento</span>
+        <p id="lightboxCaption">Legenda da fotografia selecionada no slide.</p>
+      </div>
+
+      <div class="lightbox-footer-bar">
+        <div class="lightbox-dots" id="lightboxDots"></div>
+        <a href="detalhes-evento.html?id=casamento" id="lightboxDetailsLink" class="btn btn-primary btn-sm">
+          Ver Todos os Detalhes do Evento &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BOTAO FLUTUANTE WHATSAPP ==================== -->
+  <a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20agenda%20e%20or%C3%A7amentos%20de%20fotografia." 
+     class="whatsapp-float" 
+     target="_blank" 
+     aria-label="Falar no WhatsApp">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
+
+  <!-- SCRIPTS -->
+  <script src="assets/js/agenda.js"></script>
+  <script src="assets/js/datepicker.js"></script>
+  <script src="assets/js/orcamento.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
+
