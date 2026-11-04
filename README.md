@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -56,3 +57,7 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+=======
+# projeto-fotografia-giselle
+Projeto de fotografia profissional desenvolvido para divulgação e apresentação de serviços fotográficos, com foco na cobertura de eventos e registro de momentos especiais.  **Tecnologias utilizadas:** Laravel, CSS, JavaScript e MySQL.
+>>>>>>> 675dcba20607b849064e34f56c6666b4606e5988
