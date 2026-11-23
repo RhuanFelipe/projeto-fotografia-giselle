@@ -40,7 +40,7 @@ const PORTFOLIO_ITEMS = {
       'Prévia expressa com 30 fotos entregue em 48 horas'
     ],
     testimonial: {
-      quote: 'Quando abrimos a galeria pela primeira vez, choramos tudo de novo! O Rhuan capturou sorrisos e abraços que nem tínhamos visto acontecer no dia. As fotos do pôr do sol parecem pinturas.',
+      quote: 'Quando abrimos a galeria pela primeira vez, choramos tudo de novo! A Giselle capturou sorrisos e abraços que nem tínhamos visto acontecer no dia. As fotos do pôr do sol parecem pinturas.',
       author: 'Mariana & Rodrigo Vasconcelos',
       role: 'Noivos • Casamento em Holambra'
     },
@@ -112,7 +112,7 @@ const PORTFOLIO_ITEMS = {
       'Entrega em estojo personalizado e galeria em nuvem'
     ],
     testimonial: {
-      quote: 'O aniversário de 15 anos da minha filha foi mágico! O Rhuan conseguiu captar toda a empolgação dos jovens e a emoção dos avós na valsa. A entrega foi antes do prazo prometido.',
+      quote: 'O aniversário de 15 anos da minha filha foi mágico! A Giselle conseguiu captar toda a empolgação dos jovens e a emoção dos avós na valsa. A entrega foi antes do prazo prometido.',
       author: 'Patrícia Almeida',
       role: 'Mãe da Debutante Clara'
     },
@@ -184,7 +184,7 @@ const PORTFOLIO_ITEMS = {
       'Opção de impressão em papel algodão museológico'
     ],
     testimonial: {
-      quote: 'Me senti acolhida do início ao fim! Estava insegura com as mudanças do corpo na gravidez, mas o olhar delicado do Rhuan me fez enxergar a fase mais linda da minha vida. A Lívia terá uma lembrança eterna.',
+      quote: 'Me senti acolhida do início ao fim! Estava insegura com as mudanças do corpo na gravidez, mas o olhar delicado da Giselle me fez enxergar a fase mais linda da minha vida. A Lívia terá uma lembrança eterna.',
       author: 'Camila & Bruno Fontes',
       role: 'Pais da Lívia • Ensaio 30 Semanas'
     },
@@ -297,7 +297,7 @@ const PORTFOLIO_ITEMS = {
 
 // Sincronização com dados do Painel Administrativo via localStorage
 try {
-  const savedPortfolio = localStorage.getItem('rhuan_portfolio_items');
+  const savedPortfolio = localStorage.getItem('giselle_portfolio_items');
   if (savedPortfolio) {
     const parsed = JSON.parse(savedPortfolio);
     Object.assign(PORTFOLIO_ITEMS, parsed);
@@ -313,7 +313,7 @@ window.PORTFOLIO_ITEMS = PORTFOLIO_ITEMS;
 // =========================================================================
 (function initTheme() {
   try {
-    const savedTheme = localStorage.getItem('rhuan_theme') || 'light';
+    const savedTheme = localStorage.getItem('giselle_theme') || 'light';
     if (savedTheme === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
       if (document.body) document.body.classList.add('dark-mode');
@@ -341,7 +341,7 @@ function setupThemeToggle() {
       }
 
       try {
-        localStorage.setItem('rhuan_theme', newTheme);
+        localStorage.setItem('giselle_theme', newTheme);
       } catch (e) {}
 
       if (window.showToast) {
@@ -593,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderEventDetailsPage(eventId) {
       const data = PORTFOLIO_ITEMS[eventId] || PORTFOLIO_ITEMS.casamento;
-      document.title = `${data.title} • Detalhes do Evento • Rhuan Fotografia`;
+      document.title = `${data.title} • Detalhes do Evento • Giselle Fotografia`;
 
       // Atualiza pílulas seletoras de evento no topo
       document.querySelectorAll('.event-switcher-pill').forEach(pill => {
@@ -756,9 +756,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       setTimeout(() => {
         try {
-          const historico = JSON.parse(localStorage.getItem('rhuan_orcamentos_enviados') || '[]');
+          const historico = JSON.parse(localStorage.getItem('giselle_orcamentos_enviados') || '[]');
           historico.push(payload);
-          localStorage.setItem('rhuan_orcamentos_enviados', JSON.stringify(historico));
+          localStorage.setItem('giselle_orcamentos_enviados', JSON.stringify(historico));
         } catch (err) {
           // Ignora se localStorage estiver bloqueado
         }
@@ -790,7 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const pacoteTitulo = document.getElementById('modalServiceTitle')?.textContent || 'Pacote';
 
       try {
-        const reservas = JSON.parse(localStorage.getItem('rhuan_pacotes_reservados') || '[]');
+        const reservas = JSON.parse(localStorage.getItem('giselle_pacotes_reservados') || '[]');
         reservas.push({
           id: Date.now(),
           nome,
@@ -799,7 +799,7 @@ document.addEventListener('DOMContentLoaded', () => {
           pacote: pacoteTitulo,
           criado_em: new Date().toISOString()
         });
-        localStorage.setItem('rhuan_pacotes_reservados', JSON.stringify(reservas));
+        localStorage.setItem('giselle_pacotes_reservados', JSON.stringify(reservas));
       } catch (err) {
         // Ignora erro de armazenamento
       }

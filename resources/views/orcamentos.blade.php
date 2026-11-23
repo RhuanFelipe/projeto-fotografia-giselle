@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Simulador de orçamento de fotografia para festas, casamentos, 15 anos e ensaios. Veja pacotes, preços transparentes e envie sua proposta online.">
-  <title>Simulador de Orçamento & Pacotes &bull; Rhuan Fotografia</title>
+  <title>Simulador de Orçamento & Pacotes &bull; Giselle Fotografia</title>
   
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/datepicker.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <script>try{if(localStorage.getItem('rhuan_theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}</script>
+  <script>try{if(localStorage.getItem('giselle_theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}</script>
   <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
@@ -19,8 +19,8 @@
   <header class="header" id="header">
     <div class="container nav-container">
       <a href="index.html" class="logo">
-        <span class="logo-main">RHUAN</span>
-        <span class="logo-sub">Fotografia Autoral</span>
+        <span class="logo-main">GISELLE</span>
+        <span class="logo-sub">Fotografia</span>
       </a>
 
       <nav class="nav-menu" id="navMenu">
@@ -348,11 +348,11 @@
   <footer class="footer">
     <div class="container text-center" style="text-align: center;">
       <a href="index.html" class="logo">
-        <span class="logo-main" style="color: #FFFFFF;">RHUAN</span>
-        <span class="logo-sub">Fotografia Autoral</span>
+        <span class="logo-main" style="color: #FFFFFF;">GISELLE</span>
+        <span class="logo-sub">Fotografia</span>
       </a>
       <p style="color: #A39690; font-size: 0.9rem; margin-top: 1rem;">
-        &copy; 2026 Rhuan Fotografia. Orçamentos transparentes e personalizados. &bull; 
+        &copy; 2026 Giselle Fotografia. Orçamentos transparentes e personalizados. &bull; 
         <a href="admin.html" style="color: var(--color-accent); font-weight: 600;">🔒 Área Admin</a>
       </p>
     </div>

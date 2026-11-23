@@ -13,8 +13,8 @@ class DadosIniciaisSeeder extends Seeder
         // 1. Usuário Administrador
         DB::table('usuarios')->insertOrIgnore([
             'id' => 1,
-            'nome' => 'Rhuan Administrador',
-            'email' => 'admin@rhuanfotografia.com.br',
+            'nome' => 'Giselle Administrador',
+            'email' => 'admin@gisellefotografia.com.br',
             'senha' => Hash::make('123'),
             'created_at' => now(),
             'updated_at' => now(),
@@ -23,9 +23,9 @@ class DadosIniciaisSeeder extends Seeder
         // 2. Configurações Globais do Estúdio
         $configs = [
             ['chave' => 'valor_hora_adicional', 'valor' => '220', 'tipo_dado' => 'decimal'],
-            ['chave' => 'nome_estudio', 'valor' => 'Rhuan Fotografia Autoral', 'tipo_dado' => 'string'],
+            ['chave' => 'nome_estudio', 'valor' => 'Giselle Fotografia', 'tipo_dado' => 'string'],
             ['chave' => 'telefone_whatsapp', 'valor' => '(11) 99876-5432', 'tipo_dado' => 'string'],
-            ['chave' => 'email_contato', 'valor' => 'contato@rhuanfotografia.com.br', 'tipo_dado' => 'string'],
+            ['chave' => 'email_contato', 'valor' => 'contato@gisellefotografia.com.br', 'tipo_dado' => 'string'],
             ['chave' => 'endereco_estudio', 'valor' => 'Jardim Imperial • Holambra, SP', 'tipo_dado' => 'string'],
             ['chave' => 'secoes_visibilidade', 'valor' => json_encode([
                 'inicio' => true,
@@ -112,7 +112,7 @@ class DadosIniciaisSeeder extends Seeder
             'estilo_iluminacao' => 'Luz Natural Golden Hour & Flash Difuso Quente',
             'imagem_capa' => 'assets/images/casamento.jpg',
             'resumo' => 'Uma celebração rústico-chique ao ar livre envolta por roseiras, votos emocionantes e a luz dourada do fim de tarde no interior paulista.',
-            'depoimento_texto' => 'Quando abrimos a galeria pela primeira vez, choramos tudo de novo! O Rhuan capturou sorrisos e abraços que nem tínhamos visto acontecer no dia. As fotos do pôr do sol parecem pinturas.',
+            'depoimento_texto' => 'Quando abrimos a galeria pela primeira vez, choramos tudo de novo! A Giselle capturou sorrisos e abraços que nem tínhamos visto acontecer no dia. As fotos do pôr do sol parecem pinturas.',
             'depoimento_autor' => 'Mariana & Rodrigo Vasconcelos',
             'depoimento_papel' => 'Noivos • Casamento em Holambra',
             'ativo' => true,
@@ -212,7 +212,7 @@ class DadosIniciaisSeeder extends Seeder
             'quantidade_entrega' => '240 Fotos Tratadas',
             'imagem_capa' => 'assets/images/15anos.jpg',
             'resumo' => 'Cenas vibrantes com luzes pontuais, vestido rodado champanhe e valsa emocionante com família e amigos.',
-            'depoimento_texto' => 'Fiquei encantada com cada foto! O Rhuan conseguiu captar minha felicidade e a energia da festa do começo ao fim.',
+            'depoimento_texto' => 'Fiquei encantada com cada foto! A Giselle conseguiu captar minha felicidade e a energia da festa do começo ao fim.',
             'depoimento_autor' => 'Clara & Família',
             'depoimento_papel' => 'Debutante',
             'ativo' => true,

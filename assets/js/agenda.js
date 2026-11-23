@@ -105,7 +105,7 @@ class AgendaController {
 
   loadLocalAgenda() {
     try {
-      const saved = localStorage.getItem('rhuan_agenda_reservas');
+      const saved = localStorage.getItem('giselle_agenda_reservas');
       if (saved) {
         const parsed = JSON.parse(saved);
         Object.assign(AgendaData, parsed);
@@ -139,9 +139,9 @@ class AgendaController {
     }
 
     try {
-      const saved = JSON.parse(localStorage.getItem('rhuan_agenda_reservas') || '{}');
+      const saved = JSON.parse(localStorage.getItem('giselle_agenda_reservas') || '{}');
       saved[dateStr] = AgendaData[dateStr];
-      localStorage.setItem('rhuan_agenda_reservas', JSON.stringify(saved));
+      localStorage.setItem('giselle_agenda_reservas', JSON.stringify(saved));
     } catch (e) {
       // Ignora erro de quota
     }

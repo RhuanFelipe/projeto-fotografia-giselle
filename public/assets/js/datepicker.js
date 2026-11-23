@@ -1,6 +1,6 @@
 /**
  * DATEPICKER CUSTOMIZADO (100% VANILLA JAVASCRIPT)
- * Estúdio Rhuan Fotografia
+ * Estúdia Giselle Fotografia
  * Não requer dependências externas (Zero jQuery, Zero NPM).
  */
 

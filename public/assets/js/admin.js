@@ -1,5 +1,5 @@
 /**
- * RHUAN FOTOGRAFIA - MOTOR JAVASCRIPT DO PAINEL ADMINISTRATIVO (100% JS PURO)
+ * GISELLE FOTOGRAFIA - MOTOR JAVASCRIPT DO PAINEL ADMINISTRATIVO (100% JS PURO)
  * Controle de Fotos & Portfólio, Agenda & Pré-reservas, e Modificação de Orçamentos
  * Credenciais: usuario: 'admin', senha: '123'
  */
@@ -360,7 +360,7 @@
             title: "Sobre o Fotógrafo & Filosofia",
             tag: "#sobre",
             page: "Página Inicial",
-            desc: "Apresentação biográfica do Rhuan, proposta de fotografia autoral e acolhedora, contadores de experiência e prêmios do estúdio.",
+            desc: "Apresentação biográfica da Giselle, proposta de fotografia autoral e acolhedora, contadores de experiência e prêmios do estúdio.",
             icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`,
         },
         {
@@ -439,7 +439,7 @@
         loadStorage() {
             // 1. Portfólio
             try {
-                const savedPort = localStorage.getItem("rhuan_portfolio_items");
+                const savedPort = localStorage.getItem("giselle_portfolio_items");
                 this.portfolio = savedPort
                     ? JSON.parse(savedPort)
                     : JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO));
@@ -450,7 +450,7 @@
             // 2. Agenda
             try {
                 const savedAgenda = localStorage.getItem(
-                    "rhuan_agenda_reservas",
+                    "giselle_agenda_reservas",
                 );
                 this.agenda = savedAgenda
                     ? JSON.parse(savedAgenda)
@@ -462,7 +462,7 @@
             // 3. Preços
             try {
                 const savedPricing = localStorage.getItem(
-                    "rhuan_precos_orcamento",
+                    "giselle_precos_orcamento",
                 );
                 this.pricing = savedPricing
                     ? JSON.parse(savedPricing)
@@ -474,10 +474,10 @@
             // 4. Leads / Solicitações do site
             try {
                 const orcamentos = JSON.parse(
-                    localStorage.getItem("rhuan_orcamentos_enviados") || "[]",
+                    localStorage.getItem("giselle_orcamentos_enviados") || "[]",
                 );
                 const pacotes = JSON.parse(
-                    localStorage.getItem("rhuan_pacotes_reservados") || "[]",
+                    localStorage.getItem("giselle_pacotes_reservados") || "[]",
                 );
 
                 // Se ainda não houver leads do site, gera exemplos elegantes
@@ -524,7 +524,7 @@
                         },
                     ];
                     localStorage.setItem(
-                        "rhuan_orcamentos_enviados",
+                        "giselle_orcamentos_enviados",
                         JSON.stringify(this.leads),
                     );
                 } else {
@@ -559,7 +559,7 @@
 
             // 5. Visibilidade de Seções do Site
             try {
-                const savedSecoes = localStorage.getItem("rhuan_secoes_visibilidade");
+                const savedSecoes = localStorage.getItem("giselle_secoes_visibilidade");
                 this.secoes = savedSecoes
                     ? Object.assign({}, DEFAULT_SECOES, JSON.parse(savedSecoes))
                     : Object.assign({}, DEFAULT_SECOES);
@@ -611,7 +611,7 @@
                         typeof resSecoes.value === "object"
                     ) {
                         this.secoes = Object.assign({}, DEFAULT_SECOES, resSecoes.value);
-                        localStorage.setItem("rhuan_secoes_visibilidade", JSON.stringify(this.secoes));
+                        localStorage.setItem("giselle_secoes_visibilidade", JSON.stringify(this.secoes));
                         changed = true;
                     }
                     if (changed) {
@@ -631,7 +631,7 @@
 
         savePortfolio() {
             localStorage.setItem(
-                "rhuan_portfolio_items",
+                "giselle_portfolio_items",
                 JSON.stringify(this.portfolio),
             );
             const current = this.portfolio[this.activeSeriesId];
@@ -667,7 +667,7 @@
 
         saveAgenda() {
             localStorage.setItem(
-                "rhuan_agenda_reservas",
+                "giselle_agenda_reservas",
                 JSON.stringify(this.agenda),
             );
             const selectedDate = this.selectedCalendarDate;
@@ -694,7 +694,7 @@
 
         savePricing() {
             localStorage.setItem(
-                "rhuan_precos_orcamento",
+                "giselle_precos_orcamento",
                 JSON.stringify(this.pricing),
             );
             fetch("/api/admin/precos", {
@@ -714,14 +714,14 @@
 
         saveLeads() {
             localStorage.setItem(
-                "rhuan_orcamentos_enviados",
+                "giselle_orcamentos_enviados",
                 JSON.stringify(this.leads),
             );
         }
 
         saveSecoes(showToast = true) {
             localStorage.setItem(
-                "rhuan_secoes_visibilidade",
+                "giselle_secoes_visibilidade",
                 JSON.stringify(this.secoes),
             );
 
@@ -758,8 +758,8 @@
         // ---------- AUTENTICAÇÃO ----------
         checkAuth() {
             const isAuth =
-                sessionStorage.getItem("rhuan_admin_auth") === "true" ||
-                localStorage.getItem("rhuan_admin_auth") === "true";
+                sessionStorage.getItem("giselle_admin_auth") === "true" ||
+                localStorage.getItem("giselle_admin_auth") === "true";
             const authGateway = document.getElementById("adminAuthGateway");
             const adminLayout = document.getElementById("adminAppLayout");
 
@@ -822,12 +822,12 @@
                                 if (errorMsg) errorMsg.style.display = "none";
                                 if (remember) {
                                     localStorage.setItem(
-                                        "rhuan_admin_auth",
+                                        "giselle_admin_auth",
                                         "true",
                                     );
                                 } else {
                                     sessionStorage.setItem(
-                                        "rhuan_admin_auth",
+                                        "giselle_admin_auth",
                                         "true",
                                     );
                                 }
@@ -844,12 +844,12 @@
                                         errorMsg.style.display = "none";
                                     if (remember) {
                                         localStorage.setItem(
-                                            "rhuan_admin_auth",
+                                            "giselle_admin_auth",
                                             "true",
                                         );
                                     } else {
                                         sessionStorage.setItem(
-                                            "rhuan_admin_auth",
+                                            "giselle_admin_auth",
                                             "true",
                                         );
                                     }
@@ -872,7 +872,7 @@
                             if (user === "admin" && pass === "123") {
                                 if (errorMsg) errorMsg.style.display = "none";
                                 localStorage.setItem(
-                                    "rhuan_admin_auth",
+                                    "giselle_admin_auth",
                                     "true",
                                 );
                                 this.showToast(
@@ -903,8 +903,8 @@
                                 "X-CSRF-TOKEN": this.getCsrfToken(),
                             },
                         }).catch(() => {});
-                        sessionStorage.removeItem("rhuan_admin_auth");
-                        localStorage.removeItem("rhuan_admin_auth");
+                        sessionStorage.removeItem("giselle_admin_auth");
+                        localStorage.removeItem("giselle_admin_auth");
                         this.checkAuth();
                         this.showToast("Sessão encerrada com segurança.");
                     }
@@ -925,14 +925,14 @@
 
                 if (nextTheme === "dark") {
                     document.documentElement.setAttribute("data-theme", "dark");
-                    localStorage.setItem("rhuan_admin_theme", "dark");
+                    localStorage.setItem("giselle_admin_theme", "dark");
                     this.showToast(
                         "Modo Escuro (Studio Dark) ativado.",
                         "info",
                     );
                 } else {
                     document.documentElement.removeAttribute("data-theme");
-                    localStorage.setItem("rhuan_admin_theme", "light");
+                    localStorage.setItem("giselle_admin_theme", "light");
                     this.showToast("Modo Claro (Atelier) ativado.", "info");
                 }
             });
@@ -1905,7 +1905,7 @@
                         : "Hoje";
                     const phoneClean = (lead.telefone || "").replace(/\D/g, "");
                     const whatsappMsg = encodeURIComponent(
-                        `Olá ${lead.nome}! Aqui é o Rhuan Fotógrafo. Vi sua solicitação para ${lead.categoria} no dia ${lead.data_evento || "a combinar"}. Como posso te ajudar?`,
+                        `Olá ${lead.nome}! Aqui é a Giselle Fotógrafo. Vi sua solicitação para ${lead.categoria} no dia ${lead.data_evento || "a combinar"}. Como posso te ajudar?`,
                     );
 
                     return `

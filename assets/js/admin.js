@@ -1,5 +1,5 @@
 /**
- * RHUAN FOTOGRAFIA - MOTOR JAVASCRIPT DO PAINEL ADMINISTRATIVO (100% JS PURO)
+ * GISELLE FOTOGRAFIA - MOTOR JAVASCRIPT DO PAINEL ADMINISTRATIVO (100% JS PURO)
  * Controle de Fotos & Portfólio, Agenda & Pré-reservas, e Modificação de Orçamentos
  * Credenciais: usuario: 'admin', senha: '123'
  */
@@ -155,7 +155,7 @@
     loadStorage() {
       // 1. Portfólio
       try {
-        const savedPort = localStorage.getItem('rhuan_portfolio_items');
+        const savedPort = localStorage.getItem('giselle_portfolio_items');
         this.portfolio = savedPort ? JSON.parse(savedPort) : JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO));
       } catch (e) {
         this.portfolio = JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO));
@@ -163,7 +163,7 @@
 
       // 2. Agenda
       try {
-        const savedAgenda = localStorage.getItem('rhuan_agenda_reservas');
+        const savedAgenda = localStorage.getItem('giselle_agenda_reservas');
         this.agenda = savedAgenda ? JSON.parse(savedAgenda) : JSON.parse(JSON.stringify(DEFAULT_AGENDA));
       } catch (e) {
         this.agenda = JSON.parse(JSON.stringify(DEFAULT_AGENDA));
@@ -171,7 +171,7 @@
 
       // 3. Preços
       try {
-        const savedPricing = localStorage.getItem('rhuan_precos_orcamento');
+        const savedPricing = localStorage.getItem('giselle_precos_orcamento');
         this.pricing = savedPricing ? JSON.parse(savedPricing) : JSON.parse(JSON.stringify(DEFAULT_PRICING));
       } catch (e) {
         this.pricing = JSON.parse(JSON.stringify(DEFAULT_PRICING));
@@ -179,8 +179,8 @@
 
       // 4. Leads / Solicitações do site
       try {
-        const orcamentos = JSON.parse(localStorage.getItem('rhuan_orcamentos_enviados') || '[]');
-        const pacotes = JSON.parse(localStorage.getItem('rhuan_pacotes_reservados') || '[]');
+        const orcamentos = JSON.parse(localStorage.getItem('giselle_orcamentos_enviados') || '[]');
+        const pacotes = JSON.parse(localStorage.getItem('giselle_pacotes_reservados') || '[]');
         
         // Se ainda não houver leads do site, gera exemplos elegantes
         if (orcamentos.length === 0 && pacotes.length === 0) {
@@ -222,7 +222,7 @@
               criado_em: '2026-10-25T16:45:00.000Z'
             }
           ];
-          localStorage.setItem('rhuan_orcamentos_enviados', JSON.stringify(this.leads));
+          localStorage.setItem('giselle_orcamentos_enviados', JSON.stringify(this.leads));
         } else {
           // Unifica os dados
           const combined = [
@@ -247,27 +247,27 @@
     }
 
     savePortfolio() {
-      localStorage.setItem('rhuan_portfolio_items', JSON.stringify(this.portfolio));
+      localStorage.setItem('giselle_portfolio_items', JSON.stringify(this.portfolio));
       this.showToast('Galeria de fotos sincronizada com o site público!', 'success');
     }
 
     saveAgenda() {
-      localStorage.setItem('rhuan_agenda_reservas', JSON.stringify(this.agenda));
+      localStorage.setItem('giselle_agenda_reservas', JSON.stringify(this.agenda));
       this.showToast('Agenda de eventos atualizada com sucesso!', 'success');
     }
 
     savePricing() {
-      localStorage.setItem('rhuan_precos_orcamento', JSON.stringify(this.pricing));
+      localStorage.setItem('giselle_precos_orcamento', JSON.stringify(this.pricing));
       this.showToast('Tabela de orçamentos atualizada no site!', 'success');
     }
 
     saveLeads() {
-      localStorage.setItem('rhuan_orcamentos_enviados', JSON.stringify(this.leads));
+      localStorage.setItem('giselle_orcamentos_enviados', JSON.stringify(this.leads));
     }
 
     // ---------- AUTENTICAÇÃO ----------
     checkAuth() {
-      const isAuth = sessionStorage.getItem('rhuan_admin_auth') === 'true' || localStorage.getItem('rhuan_admin_auth') === 'true';
+      const isAuth = sessionStorage.getItem('giselle_admin_auth') === 'true' || localStorage.getItem('giselle_admin_auth') === 'true';
       const authGateway = document.getElementById('adminAuthGateway');
       const adminLayout = document.getElementById('adminAppLayout');
 
@@ -307,11 +307,11 @@
           if (user === 'admin' && pass === '123') {
             if (errorMsg) errorMsg.style.display = 'none';
             if (remember) {
-              localStorage.setItem('rhuan_admin_auth', 'true');
+              localStorage.setItem('giselle_admin_auth', 'true');
             } else {
-              sessionStorage.setItem('rhuan_admin_auth', 'true');
+              sessionStorage.setItem('giselle_admin_auth', 'true');
             }
-            this.showToast('Login realizado com sucesso! Bem-vindo, Rhuan.', 'success');
+            this.showToast('Login realizado com sucesso! Bem-vindo, Giselle.', 'success');
             this.checkAuth();
             this.renderAll();
           } else {
@@ -326,8 +326,8 @@
       if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
           if (confirm('Deseja realmente sair do painel administrativo?')) {
-            sessionStorage.removeItem('rhuan_admin_auth');
-            localStorage.removeItem('rhuan_admin_auth');
+            sessionStorage.removeItem('giselle_admin_auth');
+            localStorage.removeItem('giselle_admin_auth');
             this.checkAuth();
             this.showToast('Sessão encerrada com segurança.');
           }
@@ -346,11 +346,11 @@
 
         if (nextTheme === 'dark') {
           document.documentElement.setAttribute('data-theme', 'dark');
-          localStorage.setItem('rhuan_admin_theme', 'dark');
+          localStorage.setItem('giselle_admin_theme', 'dark');
           this.showToast('Modo Escuro (Studio Dark) ativado.', 'info');
         } else {
           document.documentElement.removeAttribute('data-theme');
-          localStorage.setItem('rhuan_admin_theme', 'light');
+          localStorage.setItem('giselle_admin_theme', 'light');
           this.showToast('Modo Claro (Atelier) ativado.', 'info');
         }
       });
@@ -1108,7 +1108,7 @@
 
         const dateStr = lead.criado_em ? new Date(lead.criado_em).toLocaleDateString('pt-BR') : 'Hoje';
         const phoneClean = (lead.telefone || '').replace(/\D/g, '');
-        const whatsappMsg = encodeURIComponent(`Olá ${lead.nome}! Aqui é o Rhuan Fotógrafo. Vi sua solicitação para ${lead.categoria} no dia ${lead.data_evento || 'a combinar'}. Como posso te ajudar?`);
+        const whatsappMsg = encodeURIComponent(`Olá ${lead.nome}! Aqui é a Giselle Fotógrafo. Vi sua solicitação para ${lead.categoria} no dia ${lead.data_evento || 'a combinar'}. Como posso te ajudar?`);
 
         return `
           <tr>

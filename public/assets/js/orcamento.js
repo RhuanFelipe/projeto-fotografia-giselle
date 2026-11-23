@@ -35,7 +35,7 @@ class OrcamentoCalculator {
 
   loadLocalPrices() {
     try {
-      const saved = localStorage.getItem('rhuan_precos_orcamento');
+      const saved = localStorage.getItem('giselle_precos_orcamento');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed.basePrices) this.basePrices = { ...this.basePrices, ...parsed.basePrices };
