@@ -1,65 +1,65 @@
-# Checklists for Multi-Step Operations
+# Checklists para Operações em Múltiplas Etapas
 
-Use these checklists when performing complex setups. Copy the relevant checklist and track progress as you go.
+Use estes checklists ao realizar configurações complexas. Copie o checklist relevante e acompanhe o progresso conforme avança.
 
-## Full environment setup (app + database + cache + domain)
-
-```
-- [ ] Create or select the application
-- [ ] Create the environment
-- [ ] Provision the database (`database-cluster:create` then `database:create`)
-- [ ] Provision the cache (`cache:create`)
-- [ ] Set environment variables (`environment:variables`)
-- [ ] Create and attach any secrets (`secret:create` then `environment-secret:attach`)
-- [ ] Attach custom domain (`domain:create` then `domain:verify`)
-- [ ] Deploy (`deploy` then `deploy:monitor`)
-- [ ] Verify the deployment is live
-```
-
-## New app from scratch
+## Configuração completa de ambiente (app + banco de dados + cache + domínio)
 
 ```
-- [ ] Run `cloud ship -n` with required options
-- [ ] Monitor deployment status
-- [ ] Set environment variables if needed
-- [ ] Verify the app is accessible
+- [ ] Criar ou selecionar a aplicação
+- [ ] Criar o ambiente
+- [ ] Provisionar o banco de dados (`database-cluster:create` e depois `database:create`)
+- [ ] Provisionar o cache (`cache:create`)
+- [ ] Definir variáveis de ambiente (`environment:variables`)
+- [ ] Criar e anexar quaisquer secrets (`secret:create` e depois `environment-secret:attach`)
+- [ ] Anexar domínio personalizado (`domain:create` e depois `domain:verify`)
+- [ ] Fazer deploy (`deploy` e depois `deploy:monitor`)
+- [ ] Verificar se o deploy está no ar
 ```
 
-## Adding a database to an existing environment
+## Novo app do zero
 
 ```
-- [ ] Check existing database clusters (`database-cluster:list --json -n`)
-- [ ] Create a new cluster if needed (`database-cluster:create --json -n`)
-- [ ] Create the database on the cluster (`database:create --json -n`)
-- [ ] Update environment variables with connection details if needed
-- [ ] Redeploy if the app needs to pick up new config
+- [ ] Executar `cloud ship -n` com as opções necessárias
+- [ ] Monitorar o status do deploy
+- [ ] Definir variáveis de ambiente, se necessário
+- [ ] Verificar se o app está acessível
 ```
 
-## Adding a cache to an existing environment
+## Adicionando um banco de dados a um ambiente existente
 
 ```
-- [ ] Check existing caches (`cache:list --json -n`)
-- [ ] Create the cache (`cache:create --json -n`)
-- [ ] Update environment variables with cache connection details if needed
-- [ ] Redeploy if the app needs to pick up new config
+- [ ] Verificar clusters de banco de dados existentes (`database-cluster:list --json -n`)
+- [ ] Criar um novo cluster, se necessário (`database-cluster:create --json -n`)
+- [ ] Criar o banco de dados no cluster (`database:create --json -n`)
+- [ ] Atualizar as variáveis de ambiente com os detalhes de conexão, se necessário
+- [ ] Fazer redeploy se o app precisar carregar a nova configuração
 ```
 
-## Sending email with Resend
+## Adicionando um cache a um ambiente existente
 
 ```
-- [ ] Check for verified sending domains (`resend:domains --status=verified --json -n`)
-- [ ] If there are none, send the user to the dashboard to connect Resend and verify a domain
-- [ ] Attach Resend (`resend:attach {environment} --from-address=... --json -n`)
-- [ ] Install `resend/resend-php` in the project if it is missing
-- [ ] Commit and redeploy (`deploy` then `deploy:monitor`)
+- [ ] Verificar caches existentes (`cache:list --json -n`)
+- [ ] Criar o cache (`cache:create --json -n`)
+- [ ] Atualizar as variáveis de ambiente com os detalhes de conexão do cache, se necessário
+- [ ] Fazer redeploy se o app precisar carregar a nova configuração
 ```
 
-## Custom domain setup
+## Enviando e-mail com Resend
 
 ```
-- [ ] Create the domain (`domain:create --json -n`)
-- [ ] Get DNS records to configure (`domain:get --json -n`)
-- [ ] Tell the user to add the DNS records at their registrar
-- [ ] Verify the domain (`domain:verify -n`)
-- [ ] Confirm verification passed
+- [ ] Verificar domínios de envio verificados (`resend:domains --status=verified --json -n`)
+- [ ] Se não houver nenhum, direcionar o usuário ao painel para conectar o Resend e verificar um domínio
+- [ ] Anexar o Resend (`resend:attach {environment} --from-address=... --json -n`)
+- [ ] Instalar `resend/resend-php` no projeto caso esteja faltando
+- [ ] Fazer commit e redeploy (`deploy` e depois `deploy:monitor`)
+```
+
+## Configuração de domínio personalizado
+
+```
+- [ ] Criar o domínio (`domain:create --json -n`)
+- [ ] Obter os registros DNS para configurar (`domain:get --json -n`)
+- [ ] Orientar o usuário a adicionar os registros DNS no registrador de domínio
+- [ ] Verificar o domínio (`domain:verify -n`)
+- [ ] Confirmar que a verificação foi aprovada
 ```

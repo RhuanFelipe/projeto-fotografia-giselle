@@ -1,8 +1,8 @@
-# Security best practices
+# Boas práticas de segurança
 
-## Control mass assignment
+## Controle o mass assignment
 
-Define `$fillable` when a model is populated from request-derived arrays, or deliberately guard attributes by another consistent model convention. Laravel models guard all attributes by default. `$guarded = []` opts out of that protection.
+Defina `$fillable` quando um model for preenchido a partir de arrays derivados de requisições, ou proteja atributos deliberadamente por outra convenção consistente do model. Os models do Laravel protegem todos os atributos por padrão. `$guarded = []` desativa essa proteção.
 
 ```php
 class User extends Model
@@ -15,11 +15,11 @@ class User extends Model
 }
 ```
 
-Do not pass untrusted request data to a model with `$guarded = []`. Mass-assignment protection controls which attributes `create()`, `fill()`, and `update()` may set. It does not validate values or authorize the operation.
+Não passe dados de requisição não confiáveis para um model com `$guarded = []`. A proteção de mass-assignment controla quais atributos `create()`, `fill()` e `update()` podem definir. Ela não valida valores nem autoriza a operação.
 
-## Authorize protected actions
+## Autorize ações protegidas
 
-Use policies, gates, or form request authorization for actions that depend on the current user's permissions. Authentication alone does not establish permission, and validation is not authorization.
+Use policies, gates ou autorização de form request para ações que dependem das permissões do usuário atual. A autenticação por si só não estabelece permissão, e validação não é autorização.
 
 ```php
 public function update(UpdatePostRequest $request, Post $post): RedirectResponse
@@ -32,7 +32,7 @@ public function update(UpdatePostRequest $request, Post $post): RedirectResponse
 }
 ```
 
-Authorization may instead live in the form request:
+A autorização pode, em vez disso, ficar no form request:
 
 ```php
 public function authorize(): bool
@@ -41,44 +41,44 @@ public function authorize(): bool
 }
 ```
 
-Public actions intentionally available to everyone do not need a redundant authorization check.
+Ações públicas intencionalmente disponíveis para todos não precisam de uma verificação de autorização redundante.
 
-## Bind query parameters
+## Vincule parâmetros de consulta (bind query parameters)
 
-Use Eloquent, the query builder, or explicit bindings instead of interpolating untrusted values into Structured Query Language (SQL). Bindings protect values, not identifiers such as column names or sort directions. Map user-selected identifiers to an allow-list.
+Use Eloquent, o query builder ou bindings explícitos em vez de interpolar valores não confiáveis em Structured Query Language (SQL). Bindings protegem valores, não identificadores como nomes de colunas ou direções de ordenação. Mapeie identificadores selecionados pelo usuário para uma lista de permissões (allow-list).
 
-Incorrect:
+Incorreto:
 
 ```php
 DB::select("SELECT * FROM users WHERE name = '{$request->name}'");
 ```
 
-Correct:
+Correto:
 
 ```php
 User::where('name', $request->name)->get();
 User::whereRaw('LOWER(name) = ?', [$request->string('name')->lower()->toString()])->get();
 ```
 
-## Escape output in its context
+## Escape a saída em seu contexto
 
-Blade's `{{ }}` syntax HTML-escapes output. Use `{!! !!}` only for content sanitized for the exact HTML context where it renders. Escaping rules differ for HTML, URLs, JavaScript, and Cascading Style Sheets.
+A sintaxe `{{ }}` do Blade realiza escape de HTML na saída. Use `{!! !!}` apenas para conteúdo sanitizado para o contexto HTML exato onde ele é renderizado. As regras de escape diferem para HTML, URLs, JavaScript e Cascading Style Sheets (CSS).
 
-Incorrect for untrusted content:
+Incorreto para conteúdo não confiável:
 
 ```blade
 {!! $user->bio !!}
 ```
 
-Correct:
+Correto:
 
 ```blade
 {{ $user->bio }}
 ```
 
-## Apply cross-site request forgery protection
+## Aplique proteção contra cross-site request forgery
 
-Include `@csrf` in state-changing Blade forms handled by Laravel's `web` middleware. Routes intentionally excluded from cross-site request forgery (CSRF) verification, such as validated third-party webhooks, need their own authenticity check.
+Inclua `@csrf` em formulários Blade que alteram estado tratados pelo middleware `web` do Laravel. Rotas intencionalmente excluídas da verificação de cross-site request forgery (CSRF), como webhooks validados de terceiros, precisam de sua própria verificação de autenticidade.
 
 ```blade
 <form method="POST" action="/posts">
@@ -87,11 +87,11 @@ Include `@csrf` in state-changing Blade forms handled by Laravel's `web` middlew
 </form>
 ```
 
-Inertia applications commonly use Axios, which returns the encrypted `XSRF-TOKEN` cookie in the `X-XSRF-TOKEN` header. When you use another HTTP client, confirm equivalent configuration. Do not disable CSRF protection only to fix a token mismatch.
+Aplicações Inertia comumente usam Axios, que retorna o cookie criptografado `XSRF-TOKEN` no cabeçalho `X-XSRF-TOKEN`. Ao usar outro cliente HTTP, confirme a configuração equivalente. Não desative a proteção CSRF apenas para corrigir uma incompatibilidade de token.
 
-## Rate limit sensitive endpoints
+## Limite a taxa de requisições em endpoints sensíveis
 
-Apply suitable rate limits to login attempts, password recovery, verification messages, and expensive or abuse-prone application programming interface (API) routes. Choose the limiter key deliberately. An Internet Protocol (IP) address alone can unfairly group users behind a shared network. An account identifier alone can enable targeted denial of service.
+Aplique limites de taxa (rate limits) adequados a tentativas de login, recuperação de senha, mensagens de verificação e rotas de application programming interface (API) custosas ou propensas a abuso. Escolha a chave do limitador deliberadamente. Um endereço Internet Protocol (IP) sozinho pode agrupar injustamente usuários atrás de uma rede compartilhada. Um identificador de conta sozinho pode permitir negação de serviço direcionada.
 
 ```php
 RateLimiter::for('login', function (Request $request) {
@@ -103,11 +103,11 @@ RateLimiter::for('login', function (Request $request) {
 Route::post('/login', LoginController::class)->middleware('throttle:login');
 ```
 
-Rate limiting reduces abuse. It does not replace authentication, authorization, or upstream denial-of-service protection.
+A limitação de taxa reduz abusos. Ela não substitui autenticação, autorização ou proteção contra negação de serviço upstream.
 
-## Validate and store uploads safely
+## Valide e armazene uploads com segurança
 
-Validate the expected content type, the size, and the dimensions where relevant. Laravel's `mimes` rule reads the file contents and guesses a Multipurpose Internet Mail Extensions (MIME) type corresponding to the listed extensions. It does not validate the user-assigned filename extension. The `extensions` rule checks that extension. Do not use it by itself.
+Valide o tipo de conteúdo esperado, o tamanho e as dimensões quando relevante. A regra `mimes` do Laravel lê o conteúdo do arquivo e infere um tipo Multipurpose Internet Mail Extensions (MIME) correspondente às extensões listadas. Ela não valida a extensão de nome de arquivo atribuída pelo usuário. A regra `extensions` verifica essa extensão. Não a utilize isoladamente.
 
 ```php
 public function rules(): array
@@ -118,27 +118,27 @@ public function rules(): array
 }
 ```
 
-Use Laravel's storage methods to generate a filename, and store untrusted files outside a publicly executable location. Public files can require additional controls, such as image re-encoding, content-disposition headers, and explicit blocking of active formats.
+Use os métodos de armazenamento do Laravel para gerar um nome de arquivo e armazene arquivos não confiáveis fora de um local publicamente executável. Arquivos públicos podem exigir controles adicionais, como recodificação de imagem, cabeçalhos content-disposition e bloqueio explícito de formatos ativos.
 
 ```php
 $path = $request->file('avatar')->store('avatars');
 ```
 
-## Keep secrets out of application code
+## Mantenha segredos fora do código da aplicação
 
-Do not commit populated environment files or hard-code credentials. Read environment variables in configuration files, then use `config()` in application code so configuration caching works. See the configuration rules for encrypted environment files and external secret stores.
+Não faça commit de arquivos de ambiente preenchidos nem insira credenciais diretamente no código. Leia variáveis de ambiente nos arquivos de configuração e use `config()` no código da aplicação para que o cache de configuração funcione. Consulte as regras de configuração para arquivos de ambiente criptografados e armazenamentos externos de segredos.
 
-## Audit dependencies
+## Audite dependências
 
-Run `composer audit` regularly and in continuous integration. Review findings for exploitability and update or mitigate affected packages promptly.
+Execute `composer audit` regularmente e na integração contínua. Analise as descobertas quanto à explorabilidade e atualize ou mitigue pacotes afetados prontamente.
 
 ```bash
 composer audit
 ```
 
-## Encrypt sensitive attributes when appropriate
+## Criptografe atributos sensíveis quando apropriado
 
-Use an `encrypted` cast for sensitive values that must be recoverable, and use `$hidden` to omit them from array and JavaScript Object Notation (JSON) serialization. Hidden attributes remain accessible in PHP, and encryption does not replace access control. You cannot meaningfully query encrypted values. Store them in a `TEXT` or larger column because ciphertext length varies.
+Use o cast `encrypted` para valores sensíveis que precisam ser recuperáveis e use `$hidden` para omiti-los da serialização em array e JavaScript Object Notation (JSON). Atributos ocultos permanecem acessíveis em PHP, e a criptografia não substitui o controle de acesso. Não é possível consultar valores criptografados de forma significativa. Armazene-os em uma coluna `TEXT` ou maior, pois o comprimento do texto cifrado varia.
 
 ```php
 class Integration extends Model

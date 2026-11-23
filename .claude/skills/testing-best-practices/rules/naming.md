@@ -1,25 +1,25 @@
-# Naming and structure
+# Nomenclatura e estrutura
 
-## File layout
+## Organização de arquivos
 
-- Name each test file `{ClassName}Test.php`.
-- Place each test file at the same relative path as the class under test. The class `app/Actions/DeleteTeam.php` gets the test `tests/Unit/Actions/DeleteTeamTest.php`.
-- Follow the project's convention for fixture files. If none exists, put fixtures in `tests/Fixtures/` and load them by path.
-- Move large literal values out of the test body and into fixture files.
+- Nomeie cada arquivo de teste como `{ClassName}Test.php`.
+- Coloque cada arquivo de teste no mesmo caminho relativo da classe sob teste. A classe `app/Actions/DeleteTeam.php` recebe o teste `tests/Unit/Actions/DeleteTeamTest.php`.
+- Siga a convenção do projeto para arquivos de fixture. Se não existir nenhuma, coloque as fixtures em `tests/Fixtures/` e carregue-as pelo caminho.
+- Mova valores literais grandes para fora do corpo do teste e para arquivos de fixture.
 
-## Test class and methods
+## Classe de teste e métodos
 
-- Extend the base `TestCase` of the project in each feature test class.
-- Extend `PHPUnit\Framework\TestCase` in each unit test class, as the stub of `php artisan make:test --unit` does. A unit test covers logic that does not use the framework, so it does not boot the application.
-- Give each test method the prefix `test_`, or add the `#[Test]` attribute to the method. Use the convention of the other files in the same directory.
+- Estenda a classe base `TestCase` do projeto em cada classe de teste de feature.
+- Estenda `PHPUnit\Framework\TestCase` em cada classe de teste unitário, como faz o stub de `php artisan make:test --unit`. Um teste unitário cobre lógica que não usa o framework, portanto não inicializa a aplicação.
+- Dê a cada método de teste o prefixo `test_`, ou adicione o atributo `#[Test]` ao método. Use a convenção dos outros arquivos no mesmo diretório.
 
-## Naming tests
+## Nomeando testes
 
-The name of a test method is a specification. Separate the words with underscores. State the user-visible result and the condition that causes it.
+O nome de um método de teste é uma especificação. Separe as palavras com underscores. Indique o resultado visível para o usuário e a condição que o causa.
 
-- Name the behavior, not the method under test. The file name already gives the class.
-- Give the exact status code in the name of a test for an API error.
-- Do not write `given`, `when`, or `then` in the name.
+- Nomeie o comportamento, não o método sob teste. O nome do arquivo já informa a classe.
+- Informe o código de status exato no nome de um teste para um erro de API.
+- Não escreva `given`, `when` ou `then` no nome.
 
 ```php
 public function test_unauthenticated_request_redirects_to_login(): void { ... }
@@ -27,12 +27,12 @@ public function test_returns_401_when_no_token_is_provided(): void { ... }
 public function test_valid_payload_creates_record_and_returns_201(): void { ... }
 ```
 
-Use a verb that describes a result, such as `returns`, `renders`, `creates`, `dispatches`, `rejects`, `forbids`, `falls back`, or `does not`.
+Use um verbo que descreva um resultado, como `returns`, `renders`, `creates`, `dispatches`, `rejects`, `forbids`, `falls back` ou `does not`.
 
-Do not write `test_store()`, `test_it_works()`, or `test_validation()`, because none of them gives a result.
+Não escreva `test_store()`, `test_it_works()` ou `test_validation()`, porque nenhum deles informa um resultado.
 
-## Grouping
+## Agrupamento
 
-Write one test class for each class under test. If one file covers separate actions in a lifecycle, write a separate test class for each action, such as `StoreOrderControllerTest` and `UpdateOrderControllerTest`.
+Escreva uma classe de teste para cada classe sob teste. Se um arquivo cobrir ações separadas em um ciclo de vida, escreva uma classe de teste separada para cada ação, como `StoreOrderControllerTest` e `UpdateOrderControllerTest`.
 
-Use the `#[Group]` attribute to mark the tests that a run must select or must skip. Do not use a group to give structure to a file, because a class gives the structure.
+Use o atributo `#[Group]` para marcar os testes que uma execução deve selecionar ou deve pular. Não use um grupo para dar estrutura a um arquivo, porque uma classe já fornece a estrutura.

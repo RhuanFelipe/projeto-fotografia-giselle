@@ -1,8 +1,8 @@
-# Eloquent best practices
+# Boas práticas de Eloquent
 
-## Define precise relationship types
+## Defina tipos de relacionamento precisos
 
-Define the relationship that matches the database association, and declare its concrete return type.
+Defina o relacionamento que corresponde à associação do banco de dados e declare seu tipo de retorno concreto.
 
 ```php
 public function comments(): HasMany
@@ -16,11 +16,11 @@ public function author(): BelongsTo
 }
 ```
 
-## Use local scopes for reusable queries
+## Use escopos locais para consultas reutilizáveis
 
-Extract reusable query constraints into local scopes to avoid duplication.
+Extraia restrições de consulta reutilizáveis para escopos locais para evitar duplicação.
 
-Duplicated constraints:
+Restrições duplicadas:
 
 ```php
 $active = User::where('verified', true)->whereNotNull('activated_at')->get();
@@ -29,7 +29,7 @@ $articles = Article::whereHas('user', function ($q) {
 })->get();
 ```
 
-Reusable local scope:
+Escopo local reutilizável:
 
 ```php
 #[Scope]
@@ -43,11 +43,11 @@ $active = User::active()->get();
 $articles = Article::whereHas('user', fn ($q) => $q->active())->get();
 ```
 
-## Apply global scopes sparingly
+## Aplique escopos globais com moderação
 
-A global scope silently modifies every query on the model, so queries become hard to debug. Prefer local scopes, and reserve global scopes for universal constraints such as soft deletes or multi-tenancy.
+Um escopo global modifica silenciosamente cada consulta no modelo, tornando as consultas difíceis de depurar. Prefira escopos locais e reserve escopos globais para restrições universais, como soft deletes ou multi-tenancy.
 
-Global scope tradeoff:
+Contrapartida do escopo global:
 
 ```php
 class PublishedScope implements Scope
@@ -61,7 +61,7 @@ class PublishedScope implements Scope
 // Admin panels, reports, and jobs now omit drafts unless the scope is removed.
 ```
 
-Explicit local scope:
+Escopo local explícito:
 
 ```php
 #[Scope]
@@ -74,9 +74,9 @@ Post::published()->paginate(); // Explicit
 Post::paginate(); // Admin sees all
 ```
 
-## Define attribute casts
+## Defina casts de atributos
 
-Use the `casts()` method for automatic type conversion. If the project convention is the `$casts` property, follow that convention.
+Use o método `casts()` para conversão automática de tipos. Se a convenção do projeto for a propriedade `$casts`, siga essa convenção.
 
 ```php
 protected function casts(): array
@@ -89,17 +89,17 @@ protected function casts(): array
 }
 ```
 
-## Cast date and time attributes
+## Faça cast de atributos de data e hora
 
-Cast a date or timestamp attribute when application code should treat it as a Carbon instance. Eloquent already casts the conventional `created_at` and `updated_at` timestamps.
+Faça cast de um atributo de data ou timestamp quando o código da aplicação precisar tratá-lo como uma instância de Carbon. O Eloquent já faz cast dos timestamps convencionais `created_at` e `updated_at`.
 
-Manual parsing in the template:
+Parsing manual no template:
 
 ```blade
 {{ Carbon::parse($order->ordered_at)->toDateString() }}
 ```
 
-Model cast:
+Cast no modelo:
 
 ```php
 protected function casts(): array
@@ -115,28 +115,28 @@ protected function casts(): array
 {{ $order->ordered_at->format('m-d') }}
 ```
 
-## Use `whereBelongsTo()` for relationship queries
+## Use `whereBelongsTo()` para consultas de relacionamento
 
-`whereBelongsTo()` expresses the relationship constraint without naming its foreign key.
+`whereBelongsTo()` expressa a restrição de relacionamento sem nomear sua chave estrangeira.
 
-Foreign key constraint:
+Restrição por chave estrangeira:
 
 ```php
 Post::where('user_id', $user->id)->get();
 ```
 
-Relationship-aware constraint:
+Restrição baseada no relacionamento:
 
 ```php
 Post::whereBelongsTo($user)->get();
 Post::whereBelongsTo($user, 'author')->get();
 ```
 
-## Keep application queries model-aware
+## Mantenha consultas da aplicação conscientes do modelo
 
-Prefer Eloquent models and relationships for model-backed application queries. They preserve casts, scopes, and model table configuration. The query builder and raw SQL require table names. Use them when you intend their lower-level behavior.
+Prefira modelos Eloquent e relacionamentos para consultas da aplicação baseadas em modelos. Eles preservam casts, escopos e a configuração da tabela do modelo. O query builder e o SQL bruto exigem nomes de tabelas. Use-os quando você realmente precisar do comportamento de nível mais baixo.
 
-Lower-level alternatives:
+Alternativas de nível mais baixo:
 
 ```php
 DB::table('users')->where('active', true)->get();
@@ -146,13 +146,13 @@ $query->join('companies', 'companies.id', '=', 'users.company_id');
 DB::select('SELECT * FROM orders WHERE status = ?', ['pending']);
 ```
 
-Model-aware queries:
+Consultas conscientes do modelo:
 
 ```php
 User::where('active', true)->get();
 Order::where('status', 'pending')->get();
 ```
 
-When a query builder operation should follow a model's configured table name, use `(new User)->getTable()`. For complex joins or raw SQL, explicit table names may be clearer. When the schema can change, cover those table references with tests.
+Quando uma operação do query builder precisar seguir o nome de tabela configurado de um modelo, use `(new User)->getTable()`. Para joins complexos ou SQL bruto, nomes explícitos de tabelas podem ser mais claros. Quando o schema puder mudar, cubra essas referências de tabela com testes.
 
-In migrations, use explicit table names rather than application models. Migrations are historical snapshots, but models and their scopes can change after you deploy a migration.
+Em migrations, use nomes explícitos de tabelas em vez de modelos da aplicação. Migrations são registros históricos, mas modelos e seus escopos podem mudar depois que você fizer o deploy de uma migration.

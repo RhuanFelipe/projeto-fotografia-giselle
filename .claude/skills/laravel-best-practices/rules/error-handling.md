@@ -1,10 +1,10 @@
-# Error handling best practices
+# Boas práticas de tratamento de erros
 
-## Choose where to report and render exceptions
+## Escolha onde reportar e renderizar exceções
 
-Laravel supports exception-specific methods and centralized handler callbacks. Follow the pattern the project already uses.
+O Laravel suporta métodos específicos na exceção e callbacks centralizados no handler. Siga o padrão que o projeto já utiliza.
 
-Exception methods keep behavior beside the exception definition:
+Métodos na exceção mantêm o comportamento próximo à definição da exceção:
 
 ```php
 class InvalidOrderException extends Exception
@@ -21,7 +21,7 @@ class InvalidOrderException extends Exception
 }
 ```
 
-Centralized callbacks in `bootstrap/app.php` keep the application's exception policy together:
+Callbacks centralizados em `bootstrap/app.php` mantêm junta a política de exceções da aplicação:
 
 ```php
 ->withExceptions(function (Exceptions $exceptions) {
@@ -34,27 +34,27 @@ Centralized callbacks in `bootstrap/app.php` keep the application's exception po
 })
 ```
 
-An exception's `report()` method suppresses Laravel's default reporting unless it returns `false`. A report callback allows default reporting unless it returns `false` or is chained with `stop()`. Use `ShouldntReport` or `dontReport()` when the handler should not report an exception at all. By contrast, returning `false` from a `render()` method or render callback defers to Laravel's default rendering.
+O método `report()` de uma exceção suprime o reporte padrão do Laravel, a menos que retorne `false`. Um callback de reporte permite o reporte padrão, a menos que retorne `false` ou seja encadeado com `stop()`. Use `ShouldntReport` ou `dontReport()` quando o handler não deve reportar uma exceção de forma alguma. Em contrapartida, retornar `false` de um método `render()` ou callback de renderização delega para a renderização padrão do Laravel.
 
-## Mark exceptions the handler should not report
+## Marque exceções que o handler não deve reportar
 
-Implementing `ShouldntReport` prevents Laravel's exception handler from reporting that exception type and keeps the policy visible on the class. It does not prevent application code from logging the exception explicitly.
+Implementar `ShouldntReport` impede que o handler de exceções do Laravel reporte esse tipo de exceção e mantém a política visível na classe. Isso não impede que o código da aplicação registre a exceção no log explicitamente.
 
 ```php
 class PodcastProcessingException extends Exception implements ShouldntReport {}
 ```
 
-## Throttle high-volume exception reports
+## Limite reportes de exceções de alto volume
 
-A failing integration can flood logs or error tracking. Configure `throttle()` with a `Lottery` or `Limit` result to sample or rate-limit matching exception reports. Choose keys deliberately when separate exception classes, tenants, or integrations need independent limits.
+Uma integração com falha pode inundar logs ou ferramentas de rastreamento de erros. Configure `throttle()` com um resultado `Lottery` ou `Limit` para amostrar ou limitar a taxa de reportes de exceções correspondentes. Escolha chaves deliberadamente quando classes de exceção, tenants ou integrações separadas precisarem de limites independentes.
 
-## Prevent duplicate reports of one exception instance
+## Previna reportes duplicados de uma mesma instância de exceção
 
-Enable `dontReportDuplicates()` when the same exception object may pass through multiple `report($exception)` calls. It deduplicates by object identity, not by exception class or message.
+Habilite `dontReportDuplicates()` quando o mesmo objeto de exceção puder passar por múltiplas chamadas `report($exception)`. Ele desduplica pela identidade do objeto, não pela classe ou mensagem da exceção.
 
-## Define JSON rendering for API routes
+## Defina renderização JSON para rotas de API
 
-By default, Laravel uses request content negotiation to decide whether to render an exception as JSON. If the application's API contract requires JSON regardless of the `Accept` header, define that policy explicitly for the relevant routes.
+Por padrão, o Laravel usa negociação de conteúdo da requisição para decidir se renderiza uma exceção como JSON. Se o contrato da API da aplicação exigir JSON independentemente do cabeçalho `Accept`, defina essa política explicitamente para as rotas relevantes.
 
 ```php
 $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
@@ -62,9 +62,9 @@ $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
 });
 ```
 
-## Add context to exception classes
+## Adicione contexto às classes de exceção
 
-Attach structured data to an exception through `context()`. Laravel merges that data into the exception's log context when the handler reports it.
+Anexe dados estruturados a uma exceção por meio de `context()`. O Laravel mescla esses dados no contexto de log da exceção quando o handler a reporta.
 
 ```php
 class InvalidOrderException extends Exception

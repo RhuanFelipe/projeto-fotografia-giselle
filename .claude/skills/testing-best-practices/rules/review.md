@@ -1,42 +1,42 @@
-# Reviewing tests
+# Revisando testes
 
-Check every item in this file. A test can pass and still provide no value. For each test, identify the defect it would catch.
+Verifique cada item neste arquivo. Um teste pode passar e ainda assim não fornecer valor. Para cada teste, identifique o defeito que ele capturaria.
 
-Report each finding. Do not delete or rewrite a test without the user's approval. If an issue appears throughout the suite as a convention, report the pattern once rather than once for each affected file.
+Reporte cada achado. Não exclua nem reescreva um teste sem a aprovação do usuário. Se um problema aparecer por toda a suíte como uma convenção, reporte o padrão uma vez em vez de uma vez para cada arquivo afetado.
 
-## Test value
+## Valor do teste
 
-- [ ] Each test covers observable behavior or an application contract, and passes after a change to the implementation that keeps the behavior.
-- [ ] Each tested declaration is exercised through behavior, and no test asserts the behavior of the framework. A test of what this project configures, such as a relation with a constraint, a cast, or a scope, belongs to this project.
-- [ ] Each test detects a distinct defect that no other test covers. Reduce a duplicate at the higher layer to the one case that proves the wiring.
-- [ ] Every changed decision and each applicable high-value failure mode has coverage.
+- [ ] Cada teste cobre comportamento observável ou um contrato da aplicação, e passa após uma alteração na implementação que mantenha o comportamento.
+- [ ] Cada declaração testada é exercitada por meio de comportamento, e nenhum teste faz asserção do comportamento do framework. Um teste do que este projeto configura, como um relacionamento com restrição, um cast ou um scope, pertence a este projeto.
+- [ ] Cada teste detecta um defeito distinto que nenhum outro teste cobre. Reduza uma duplicata na camada superior ao único caso que prova a conexão.
+- [ ] Cada decisão alterada e cada modo de falha de alto valor aplicável têm cobertura.
 
-## Names and structure
+## Nomes e estrutura
 
-- [ ] Each file has the name `{ClassName}Test.php` and the relative path of the class under test.
-- [ ] Each name states a result, the condition that causes it, and the status code for an API error.
-- [ ] Each feature test class extends the base `TestCase` of the project, each unit test class extends `PHPUnit\Framework\TestCase`, and each file uses either the prefix `test_` or the `#[Test]` attribute consistently.
+- [ ] Cada arquivo tem o nome `{ClassName}Test.php` e o caminho relativo da classe sob teste.
+- [ ] Cada nome informa um resultado, a condição que o causa e o código de status para um erro de API.
+- [ ] Cada classe de teste de feature estende a classe base `TestCase` do projeto, cada classe de teste unitário estende `PHPUnit\Framework\TestCase`, e cada arquivo usa consistentemente o prefixo `test_` ou o atributo `#[Test]`.
 
-## Coverage
+## Cobertura
 
-- [ ] HTTP tests cover authentication, authorization, role, scope, and validation when applicable.
-- [ ] A request for a record of a different tenant gets a status code that does not confirm that the record exists.
-- [ ] The complete permission matrix belongs in policy tests, not controller tests.
-- [ ] Each validation rule has one test that asserts the user-visible message. If a unit test covers a matrix, reduce the duplicate higher-level coverage to one case rather than deleting it.
-- [ ] Rendered user input and each dynamic part of a query have a security test.
+- [ ] Testes HTTP cobrem autenticação, autorização, papel, escopo e validação quando aplicável.
+- [ ] Uma requisição para um registro de um tenant diferente recebe um código de status que não confirma que o registro existe.
+- [ ] A matriz completa de permissões pertence aos testes de policy, não aos testes de controller.
+- [ ] Cada regra de validação tem um teste que faz asserção da mensagem visível ao usuário. Se um teste unitário cobrir uma matriz, reduza a cobertura duplicada de nível superior a um caso em vez de excluí-la.
+- [ ] Entradas de usuário renderizadas e cada parte dinâmica de uma consulta têm um teste de segurança.
 
-## Data and determinism
+## Dados e determinismo
 
-- [ ] Each test creates its mutable records directly or through a helper that it calls, and every created record arranges the behavior or supports an assertion.
-- [ ] `setUp()` holds configuration only.
-- [ ] Each factory state and each relationship gives the meaning of the data.
-- [ ] Each call to `make()` is in a test that does not need the database.
-- [ ] Each test controls time, randomness, sleep, and outbound HTTP.
-- [ ] Each test passes alone, and passes in the complete suite in any order.
+- [ ] Cada teste cria seus registros mutáveis diretamente ou por meio de um helper que ele chama, e cada registro criado prepara o comportamento ou dá suporte a uma asserção.
+- [ ] `setUp()` contém apenas configuração.
+- [ ] Cada estado de factory e cada relacionamento expressa o significado dos dados.
+- [ ] Cada chamada a `make()` está em um teste que não precisa do banco de dados.
+- [ ] Cada teste controla tempo, aleatoriedade, sleep e HTTP de saída.
+- [ ] Cada teste passa isoladamente e passa na suíte completa em qualquer ordem.
 
-## Assertions
+## Asserções
 
-- [ ] Each expected value is a known value, and the test does not calculate the value with the logic of the implementation.
-- [ ] Each test of a write operation asserts the response, the state in the database, and the side effects.
-- [ ] Each fake has one assertion, and gives the class names unless the test asserts the complete result.
-- [ ] Each group of assertions stays on one subject, and each comparison uses `assertSame()`.
+- [ ] Cada valor esperado é um valor conhecido, e o teste não calcula o valor com a lógica da implementação.
+- [ ] Cada teste de uma operação de escrita faz asserção da resposta, do estado no banco de dados e dos efeitos colaterais.
+- [ ] Cada fake tem uma asserção e informa os nomes das classes, a menos que o teste faça asserção do resultado completo.
+- [ ] Cada grupo de asserções permanece em um sujeito, e cada comparação usa `assertSame()`.

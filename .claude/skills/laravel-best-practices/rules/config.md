@@ -1,16 +1,16 @@
-# Configuration best practices
+# Boas práticas de configuração
 
-## Read environment variables in configuration files
+## Leia variáveis de ambiente em arquivos de configuração
 
-Call `env()` only from configuration files. After you cache the configuration, Laravel does not load the application's `.env` file, so read configuration values in application code through `config()`.
+Chame `env()` apenas a partir de arquivos de configuração. Depois de armazenar a configuração em cache, o Laravel não carrega o arquivo `.env` da aplicação, portanto, leia os valores de configuração no código da aplicação por meio de `config()`.
 
-Incorrect:
+Incorreto:
 
 ```php
 $key = env('API_KEY');
 ```
 
-Correct:
+Correto:
 
 ```php
 // config/services.php
@@ -22,11 +22,11 @@ return [
 $key = config('services.key');
 ```
 
-## Protect production secrets
+## Proteja segredos de produção
 
-Do not commit plaintext production secrets. Laravel can encrypt an environment file so you can store the encrypted file safely. Deployment platforms can also supply secrets through their native secret stores.
+Não faça commit de segredos de produção em texto simples. O Laravel pode criptografar um arquivo de ambiente para que você possa armazená-lo com segurança. Plataformas de implantação também podem fornecer segredos por meio de seus cofres de segredos nativos.
 
-Incorrect:
+Incorreto:
 
 ```bash
 # A plaintext .env file committed to the repository
@@ -34,18 +34,18 @@ STRIPE_SECRET=<your-stripe-secret>
 AWS_SECRET_ACCESS_KEY=<your-aws-secret>
 ```
 
-Encrypted environment file:
+Arquivo de ambiente criptografado:
 
 ```bash
 php artisan env:encrypt --env=production --readable
 php artisan env:decrypt --env=production
 ```
 
-For hosted deployments, consider the platform's native secret store, such as AWS Secrets Manager or Vault, and inject secrets at runtime.
+Para implantações hospedadas, considere o armazenamento de segredos nativo da plataforma, como AWS Secrets Manager ou Vault, e injete segredos em tempo de execução.
 
-## Use `App::environment()` for environment checks
+## Use `App::environment()` para verificações de ambiente
 
-Incorrect:
+Incorreto:
 
 ```php
 if (env('APP_ENV') === 'production') {
@@ -53,7 +53,7 @@ if (env('APP_ENV') === 'production') {
 }
 ```
 
-Correct:
+Correto:
 
 ```php
 if (app()->isProduction()) {
@@ -65,9 +65,9 @@ if (App::environment('production')) {
 }
 ```
 
-## Name repeated domain values
+## Nomeie valores de domínio repetidos
 
-Use an enum or class constant when a domain value is repeated or represents a constrained set. A one-off string literal does not always need a named constant.
+Use um enum ou constante de classe quando um valor de domínio for repetido ou representar um conjunto restrito. Um literal de string único nem sempre precisa de uma constante nomeada.
 
 ```php
 // Repeated literal
@@ -77,7 +77,7 @@ return $this->type === 'normal';
 return $this->type === self::TYPE_NORMAL;
 ```
 
-If the application supports localization, put user-facing strings in language files and retrieve them with `__()`. Simple literals are reasonable for applications that intentionally do not support multiple languages.
+Se a aplicação oferecer suporte à localização, coloque as strings voltadas para o usuário em arquivos de idioma e recupere-as com `__()`. Literais simples são razoáveis para aplicações que intencionalmente não oferecem suporte a múltiplos idiomas.
 
 ```php
 // In a localized application

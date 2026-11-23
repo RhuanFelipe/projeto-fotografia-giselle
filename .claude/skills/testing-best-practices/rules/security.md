@@ -1,14 +1,14 @@
-# Security tests
+# Testes de segurança
 
-Test each security boundary where user input affects authorization, rendered output, or query construction. A defect at such a boundary is hard to detect, because the feature can keep working.
+Teste cada fronteira de segurança onde a entrada do usuário afeta a autorização, a saída renderizada ou a construção de consultas. Um defeito nessa fronteira é difícil de detectar, porque a funcionalidade pode continuar funcionando.
 
-Write a test for each of these cases:
+Escreva um teste para cada um destes casos:
 
-- **Cross-tenant access.** Request a record of a different tenant, team, or organization. Read `rules/endpoint-tests.md` for when the response should be `404` rather than `403`.
-- **Each unprivileged role.** Use a data provider over the roles that the endpoint must refuse.
-- **Escaping user-provided content.** Test escaping in HTML and mail. Include names and every free-text field a template renders. Assert that dangerous characters are escaped and the raw value is absent. Do not assert an exact entity for a quote, because Markdown and mail CSS inliners can decode it.
-- **Injection into dynamic query components.** Examples include sort columns, filter fields, and sort directions.
-- **An unexpected key** in a payload or configuration array. A merge that accepts every key can set an attribute the user must not control.
+- **Acesso entre tenants.** Requisite um registro de um tenant, equipe ou organização diferente. Leia `rules/endpoint-tests.md` para saber quando a resposta deve ser `404` em vez de `403`.
+- **Cada papel sem privilégios.** Use um data provider sobre os papéis que o endpoint deve recusar.
+- **Escapamento de conteúdo fornecido pelo usuário.** Teste o escapamento em HTML e e-mail. Inclua nomes e cada campo de texto livre que um template renderiza. Faça asserção de que caracteres perigosos são escapados e que o valor bruto está ausente. Não faça asserção de uma entidade exata para uma aspa, porque Markdown e inliners de CSS de e-mail podem decodificá-la.
+- **Injeção em componentes dinâmicos de consulta.** Exemplos incluem colunas de ordenação, campos de filtro e direções de ordenação.
+- **Uma chave inesperada** em um payload ou array de configuração. Um merge que aceita todas as chaves pode definir um atributo que o usuário não deve controlar.
 
 ```php
 public function test_escapes_dangerous_content_in_the_notification(): void
@@ -24,4 +24,4 @@ public function test_escapes_dangerous_content_in_the_notification(): void
 }
 ```
 
-Laravel provides defenses against mass assignment, unauthorized access, and unescaped output. Test that the application applies the correct defense to each attribute, route, and template.
+O Laravel fornece defesas contra mass assignment, acesso não autorizado e saída não escapada. Teste se a aplicação aplica a defesa correta a cada atributo, rota e template.

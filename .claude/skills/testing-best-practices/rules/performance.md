@@ -1,46 +1,46 @@
-# Test suite performance
+# Desempenho da suíte de testes
 
-These settings apply to the project and CI, not to individual tests. Read `rules/isolation.md` for choices within a test.
+Estas configurações se aplicam ao projeto e ao CI, não a testes individuais. Leia `rules/isolation.md` para escolhas dentro de um teste.
 
-Fetch the PHPUnit 12.5.42 documentation at `https://phpunit.de/documentation.html` for PHPUnit options that make test runs faster.
-Verify each flag in the documentation before adding it to CI.
+Consulte a documentação do PHPUnit 12.5.42 em `https://phpunit.de/documentation.html` para opções do PHPUnit que tornam as execuções de teste mais rápidas.
+Verifique cada flag na documentação antes de adicioná-la ao CI.
 
-Measure before changing a setting. Find the slow test first, and apply a project-wide setting only after identifying the costly work.
+Meça antes de alterar uma configuração. Encontre o teste lento primeiro e aplique uma configuração global do projeto apenas após identificar o trabalho custoso.
 
-## Test environment
+## Ambiente de teste
 
-- Set `BCRYPT_ROUNDS=4` in `.env.testing` or in `phpunit.xml`. The default value is 12, and the hash then takes most of the time of each test that signs a user in.
-- Disable Xdebug. Unless the run needs coverage, disable pcov too.
-- Disable packages that perform work on every request in the test environment. Examples are Pulse, Telescope, and Nightwatch.
-- Use the `WithCachedConfig` and `WithCachedRoutes` traits, so the run does not parse the configuration and the routes for every test.
-- Call `withoutVite()`, or `withoutMix()`, so the framework does not resolve a built asset.
+- Defina `BCRYPT_ROUNDS=4` em `.env.testing` ou em `phpunit.xml`. O valor padrão é 12, e o hash então consome a maior parte do tempo de cada teste que autentica um usuário.
+- Desative o Xdebug. A menos que a execução precise de cobertura, desative o pcov também.
+- Desative pacotes que executam trabalho em cada requisição no ambiente de teste. Exemplos são Pulse, Telescope e Nightwatch.
+- Use as traits `WithCachedConfig` e `WithCachedRoutes`, para que a execução não analise a configuração e as rotas para cada teste.
+- Chame `withoutVite()`, ou `withoutMix()`, para que o framework não resolva um asset compilado.
 
-## Global fakes
+## Fakes globais
 
-Put these three calls in the `setUp()` of the base `TestCase` of the project:
+Coloque estas três chamadas no `setUp()` da classe base `TestCase` do projeto:
 
-- `Http::preventStrayRequests()`, because one request that reaches the network can slow the suite. It catches requests that go through Laravel's HTTP client. Check direct Guzzle and cURL usage separately.
-- `Sleep::fake(syncWithCarbon: true)`, so a retry and a backoff do not sleep.
-- `Exceptions::fake()`, so the suite does not report an exception to an external service.
+- `Http::preventStrayRequests()`, porque uma requisição que alcança a rede pode deixar a suíte lenta. Ela captura requisições que passam pelo cliente HTTP do Laravel. Verifique o uso direto de Guzzle e cURL separadamente.
+- `Sleep::fake(syncWithCarbon: true)`, para que um retry e um backoff não executem sleep.
+- `Exceptions::fake()`, para que a suíte não reporte uma exceção para um serviço externo.
 
-## How to run the suite in parallel
+## Como executar a suíte em paralelo
 
-Run `php artisan test --parallel`, which uses ParaTest, to spread tests across the machine's CPU cores. If the default count does not suit the machine or CI, add `--processes=N`.
+Execute `php artisan test --parallel`, que usa o ParaTest, para distribuir os testes pelos núcleos de CPU da máquina. Se a contagem padrão não for adequada para a máquina ou para o CI, adicione `--processes=N`.
 
-A parallel run gives each process a separate database. Each test must meet the conditions below. A test that fails only in parallel breaks one of them.
+Uma execução paralela dá a cada processo um banco de dados separado. Cada teste deve atender às condições abaixo. Um teste que falha apenas em paralelo viola uma delas.
 
-- The test creates each record that it reads. It does not read a record that another test creates.
-- The test does not depend on the order of the run.
-- The test does not share a file, a cache key, or a queue with another test. Give each process a separate name for such a resource.
+- O teste cria cada registro que lê. Ele não lê um registro que outro teste cria.
+- O teste não depende da ordem da execução.
+- O teste não compartilha um arquivo, uma chave de cache ou uma fila com outro teste. Dê a cada processo um nome separado para esse recurso.
 
-## How to find a slow test
+## Como encontrar um teste lento
 
-Run `php artisan test --profile` to list the slowest tests. Start with the ten slowest tests, because the same cause often applies to the complete suite.
+Execute `php artisan test --profile` para listar os testes mais lentos. Comece pelos dez testes mais lentos, porque a mesma causa frequentemente se aplica à suíte inteira.
 
-If the cause of a slow test is unclear, add an event listener or temporary log entry to identify the work the test does.
+Se a causa de um teste lento não estiver clara, adicione um event listener ou uma entrada de log temporária para identificar o trabalho que o teste realiza.
 
-## Common errors
+## Erros comuns
 
-- The run loads Xdebug for a test that does not need it.
-- `BCRYPT_ROUNDS` keeps the default value, because the project has no `.env.testing`.
-- The code under test calls the real `sleep()`, and `Sleep::fake()` then does not help.
+- A execução carrega o Xdebug para um teste que não precisa dele.
+- `BCRYPT_ROUNDS` mantém o valor padrão, porque o projeto não tem `.env.testing`.
+- O código sob teste chama o `sleep()` real, e o `Sleep::fake()` então não ajuda.

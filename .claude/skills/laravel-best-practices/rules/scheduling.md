@@ -1,8 +1,8 @@
-# Task scheduling best practices
+# Boas práticas de agendamento de tarefas
 
-## Prevent unwanted overlap
+## Evite sobreposições indesejadas
 
-Use `withoutOverlapping()` when a second run must not begin while the previous run holds the lock. Use it for variable-duration tasks that are not safe to run concurrently.
+Use `withoutOverlapping()` quando uma segunda execução não puder começar enquanto a execução anterior mantiver o bloqueio. Use-o para tarefas de duração variável que não são seguras para execução simultânea.
 
 ```php
 Schedule::command('reports:generate')
@@ -10,31 +10,31 @@ Schedule::command('reports:generate')
     ->withoutOverlapping(30);
 ```
 
-The optional value is the lock expiration time in minutes, not the task timeout. Choose the value carefully. The default is 24 hours, and an expiration that is too short can permit overlap while the first task still runs. Clear stale locks with `php artisan schedule:clear-cache`. The task itself should still tolerate retries and partial execution where practical.
+O valor opcional é o tempo de expiração do bloqueio em minutos, não o timeout da tarefa. Escolha o valor com cuidado. O padrão é 24 horas, e uma expiração muito curta pode permitir sobreposição enquanto a primeira tarefa ainda estiver em execução. Limpe bloqueios obsoletos com `php artisan schedule:clear-cache`. A própria tarefa ainda deve tolerar novas tentativas e execução parcial sempre que prático.
 
-## Run a task on one server
+## Execute uma tarefa em apenas um servidor
 
-Use `onOneServer()` when only one scheduler node should run an eligible task. Scheduler nodes must use the same default cache store, and that store must support atomic locks. Supported stores include `database`, `memcached`, `dynamodb`, and `redis`.
+Use `onOneServer()` quando apenas um nó agendador dever executar uma tarefa elegível. Os nós agendadores devem usar o mesmo cache store padrão, e esse store deve suportar bloqueios atômicos (atomic locks). Stores suportados incluem `database`, `memcached`, `dynamodb` e `redis`.
 
 ```php
 Schedule::command('billing:charge')->daily()->onOneServer();
 ```
 
-Name scheduled closures before applying `onOneServer()`, especially when scheduling the same closure with different parameters, so each task has a distinct lock identity.
+Nomeie closures agendadas antes de aplicar `onOneServer()`, especialmente ao agendar a mesma closure com parâmetros diferentes, para que cada tarefa tenha uma identidade de bloqueio distinta.
 
-## Run eligible commands in the background
+## Execute comandos elegíveis em segundo plano
 
-Tasks due at the same time run sequentially by default. Use `runInBackground()` when an independent, long-running scheduled command should not delay later tasks.
+Tarefas previstas para o mesmo horário são executadas sequencialmente por padrão. Use `runInBackground()` quando um comando agendado independente e de longa duração não dever atrasar tarefas posteriores.
 
 ```php
 Schedule::command('analytics:process')->hourly()->runInBackground();
 ```
 
-Laravel restricts `runInBackground()` to tasks scheduled with `command()` and `exec()`. It is not available for scheduled closures. Give background processes logging and failure monitoring.
+O Laravel restringe `runInBackground()` a tarefas agendadas com `command()` e `exec()`. Ele não está disponível para closures agendadas. Forneça logging e monitoramento de falhas aos processos em segundo plano.
 
-## Restrict tasks by environment
+## Restrinja tarefas por ambiente
 
-Use `environments()` when a task should run only in named application environments. Treat `environments()` as an operational safeguard, not an authorization control.
+Use `environments()` quando uma tarefa dever ser executada apenas em ambientes de aplicação nomeados. Trate `environments()` como uma salvaguarda operacional, não como um controle de autorização.
 
 ```php
 Schedule::command('billing:charge')
@@ -42,9 +42,9 @@ Schedule::command('billing:charge')
     ->environments(['production']);
 ```
 
-## Group shared configuration
+## Agrupe configurações compartilhadas
 
-Use schedule groups when several tasks share frequency or constraints.
+Use grupos de agendamento quando várias tarefas compartilharem frequência ou restrições.
 
 ```php
 Schedule::daily()
@@ -56,6 +56,6 @@ Schedule::daily()
     });
 ```
 
-## Bound work inside the task
+## Limite o trabalho dentro da tarefa
 
-The scheduler does not provide a `takeUntilTimeout()` event method or terminate arbitrary tasks at a deadline. Bound work in the command or job itself by processing finite chunks, checking a deadline, or dispatching queue jobs with suitable timeouts. Use operating-system or process controls when hard termination is required.
+O agendador não fornece um método de evento `takeUntilTimeout()` nem encerra tarefas arbitrárias em um prazo limite. Limite o trabalho no próprio comando ou job processando lotes finitos, verificando um prazo limite ou despachando jobs de fila com timeouts adequados. Use controles do sistema operacional ou de processos quando o encerramento rígido for necessário.

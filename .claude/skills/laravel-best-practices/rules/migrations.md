@@ -1,52 +1,52 @@
-# Migration best practices
+# Boas práticas de migrations
 
-## Generate migrations with Artisan
+## Gere migrations com o Artisan
 
-Use `php artisan make:migration` to generate the timestamped filename and migration structure.
+Use `php artisan make:migration` para gerar o nome de arquivo com timestamp e a estrutura da migration.
 
 ```bash
 php artisan make:migration create_posts_table
 php artisan make:migration add_slug_to_posts_table
 ```
 
-## Define foreign-key constraints deliberately
+## Defina restrições de chave estrangeira deliberadamente
 
-Use `constrained()` when its naming conventions and default actions match the relationship. Specify the table or delete behavior when they do not.
+Use `constrained()` quando suas convenções de nomenclatura e ações padrão corresponderem ao relacionamento. Especifique a tabela ou o comportamento de exclusão quando não corresponderem.
 
 ```php
 $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 $table->foreignId('author_id')->constrained('users');
 ```
 
-Do not add a duplicate single-column index without checking the database driver's treatment of foreign-key indexes and the indexes already created by the migration.
+Não adicione um índice duplicado de coluna única sem verificar como o driver do banco de dados trata os índices de chave estrangeira e os índices já criados pela migration.
 
-## Treat deployed migrations as immutable
+## Trate migrations implantadas como imutáveis
 
-After a migration has run in a shared or production environment, create a new migration for later changes. Editing the old file makes fresh installations differ from upgraded installations.
+Depois que uma migration tiver sido executada em um ambiente compartilhado ou de produção, crie uma nova migration para alterações posteriores. Editar o arquivo antigo faz com que instalações novas difiram de instalações atualizadas.
 
-For a local migration that has not been shared or deployed, editing and rerunning it may be simpler.
+Para uma migration local que não foi compartilhada ou implantada, editá-la e executá-la novamente pode ser mais simples.
 
-## Design indexes for real queries
+## Projete índices para consultas reais
 
-Add indexes based on query patterns, selectivity, write cost, and the database's ability to use composite indexes. A column that appears in `WHERE`, `ORDER BY`, or `JOIN` does not automatically need its own index.
+Adicione índices com base nos padrões de consulta, seletividade, custo de escrita e na capacidade do banco de dados de usar índices compostos. Uma coluna que aparece em `WHERE`, `ORDER BY` ou `JOIN` não precisa automaticamente de seu próprio índice.
 
-Declare each selected index in the schema migration that creates or changes the relevant table. Confirm important indexes with representative data and the database's query plan. Avoid redundant indexes whose leading columns duplicate an existing index without serving a distinct query. See the database performance and advanced query rules for index selection and column-order guidance.
+Declare cada índice selecionado na migration de esquema que cria ou altera a tabela relevante. Confirme índices importantes com dados representativos e o plano de consulta do banco de dados. Evite índices redundantes cujas colunas iniciais duplicam um índice existente sem atender a uma consulta distinta. Consulte as regras de desempenho de banco de dados e consultas avançadas para orientações sobre seleção de índices e ordem de colunas.
 
-## Stage changes that affect existing rows
+## Execute em etapas alterações que afetam linhas existentes
 
-Adding a required or unique column to a populated table often needs multiple deployment-safe steps. Add a nullable column, deploy code that can handle both states, backfill existing rows in bounded chunks, then add the required constraint or index after the data is valid.
+Adicionar uma coluna obrigatória ou única a uma tabela populada geralmente requer várias etapas seguras para implantação. Adicione uma coluna anulável (`nullable`), implante código que consiga lidar com ambos os estados, preencha as linhas existentes em lotes limitados (backfill) e, em seguida, adicione a restrição ou índice obrigatório após os dados estarem válidos.
 
-Do not assume this migration is safe on a populated table:
+Não presuma que esta migration seja segura em uma tabela populada:
 
 ```php
 $table->string('slug')->unique();
 ```
 
-Large backfills usually work better as an observable, restartable command or job than inside a schema migration. Small deterministic data changes may be reasonable in a migration when you understand their locking, transaction, and deployment behavior.
+Preenchimentos (backfills) grandes geralmente funcionam melhor como um comando ou job observável e reiniciável do que dentro de uma migration de esquema. Pequenas alterações determinísticas de dados podem ser razoáveis em uma migration quando você compreende seu comportamento de bloqueio, transação e implantação.
 
-## Mirror defaults only when unsaved models need them
+## Espelhe valores padrão apenas quando models não salvos precisarem deles
 
-The database applies a default when it inserts a row, not when you instantiate a model. Mirror the value in the model's `$attributes` only when application code must observe that default before persistence, and keep both definitions in sync.
+O banco de dados aplica um valor padrão quando insere uma linha, não quando você instancia um model. Espelhe o valor em `$attributes` do model apenas quando o código da aplicação precisar observar esse padrão antes da persistência e mantenha ambas as definições sincronizadas.
 
 ```php
 // Migration
@@ -58,10 +58,10 @@ protected $attributes = [
 ];
 ```
 
-## Make rollbacks honest
+## Torne os rollbacks honestos
 
-Implement `down()` when you can safely reverse the change. A rollback that drops populated columns or cannot restore transformed data is destructive even if it is syntactically reversible. Document that limitation and prefer a forward-fix migration in production.
+Implemente `down()` quando puder reverter a alteração com segurança. Um rollback que remove colunas populadas ou não consegue restaurar dados transformados é destrutivo, mesmo que seja sintaticamente reversível. Documente essa limitação e prefira uma migration de correção futura (forward-fix) em produção.
 
-## Keep migrations focused
+## Mantenha as migrations focadas
 
-Keep each migration small enough to reason about, deploy, and reverse. Separate long-running backfills from schema changes when the split reduces locks and supports phased deployment. Do not split related operations only to enforce a blanket separation between data definition and data manipulation.
+Mantenha cada migration pequena o suficiente para raciocinar sobre ela, implantar e reverter. Separe preenchimentos de longa duração das alterações de esquema quando a divisão reduzir bloqueios e oferecer suporte à implantação em fases. Não divida operações relacionadas apenas para impor uma separação genérica entre definição de dados e manipulação de dados.

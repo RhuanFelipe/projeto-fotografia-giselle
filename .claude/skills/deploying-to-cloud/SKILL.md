@@ -1,172 +1,172 @@
 ---
 name: deploying-to-cloud
-description: "Deploys and manages Laravel applications on Laravel Cloud using the `cloud` CLI. Use when the user wants to deploy an app, ship to Cloud, create or manage applications, environments, databases, caches, object storage, queues, domains, instances, background processes, secrets, compute, scheduled tasks, or Laravel Cloud infrastructure; or check billing, usage, or spend. Triggers on deployment, shipping, Cloud management, environment setup, database provisioning, billing or usage queries, the `cloud` CLI, and Laravel Cloud deployment troubleshooting."
+description: "Faz deploy e gerencia aplicações Laravel no Laravel Cloud usando a CLI `cloud`. Use quando o usuário quiser fazer deploy de um app, enviar para a Cloud, criar ou gerenciar aplicações, ambientes, bancos de dados, caches, object storage, filas, domínios, instâncias, processos em segundo plano, segredos, compute, tarefas agendadas ou infraestrutura do Laravel Cloud; ou consultar cobrança, uso ou gastos. Aciona em deploy, envio, gerenciamento da Cloud, configuração de ambiente, provisionamento de banco de dados, consultas de cobrança ou uso, CLI `cloud` e solução de problemas de deploy no Laravel Cloud."
 license: MIT
 metadata:
   author: laravel
 ---
 
-# Deploying with Laravel Cloud
+# Fazendo Deploy com Laravel Cloud
 
-Use the [Laravel Cloud documentation](https://cloud.laravel.com/docs/llms.txt) for detailed, current feature behavior. Use the Cloud CLI for Cloud operations rather than guessing dashboard or API workflows. Install it in the project and invoke it as `./vendor/bin/cloud` by default; use a globally installed `cloud` command only as a fallback. Commands below are written as `cloud` for brevity; run them as `./vendor/bin/cloud` unless falling back to the global installation.
+Use a [documentação do Laravel Cloud](https://cloud.laravel.com/docs/llms.txt) para obter detalhes atualizados sobre o comportamento dos recursos. Use a CLI do Cloud para operações na Cloud em vez de adivinhar fluxos de dashboard ou API. Instale-a no projeto e execute como `./vendor/bin/cloud` por padrão; use o comando `cloud` instalado globalmente apenas como alternativa. Os comandos abaixo estão escritos como `cloud` por brevidade; execute-os como `./vendor/bin/cloud`, a menos que esteja usando a instalação global.
 
-## Application Setup
+## Configuração da Aplicação
 
-- Laravel Cloud deploys from GitHub, GitLab, or Bitbucket. A new Laravel application requires PHP 8.2 or later, Laravel 9 or later, a connected Git provider, and a deployment region.
-- Cloud creates environments for applications. Use separate production, staging, and preview environments; each environment has its own compute, resources, and deployment settings.
-- Keep application compute and attached resources in the same region where possible.
-- Cloud builds a Docker image using the selected PHP version, runs the configured build and deploy commands, and switches traffic to a successful deployment with zero downtime. Push-to-deploy is enabled by default, and manual deployments and deploy hooks are also available.
+- O Laravel Cloud faz deploy a partir do GitHub, GitLab ou Bitbucket. Uma nova aplicação Laravel requer PHP 8.2 ou superior, Laravel 9 ou superior, um provedor Git conectado e uma região de deploy.
+- A Cloud cria ambientes para aplicações. Use ambientes separados de produção, staging e preview; cada ambiente possui seu próprio compute, recursos e configurações de deploy.
+- Mantenha o compute da aplicação e os recursos anexados na mesma região sempre que possível.
+- A Cloud constrói uma imagem Docker usando a versão do PHP selecionada, executa os comandos de build e deploy configurados e direciona o tráfego para um deploy bem-sucedido com zero downtime. O push-to-deploy vem habilitado por padrão, e deploys manuais e hooks de deploy também estão disponíveis.
 
-## Build and Deploy
+## Build e Deploy
 
-- A typical Laravel build command is `composer install --no-dev && npm run build`.
-- Run optimization and cache-building commands during the build, not during deployment. A typical deploy command is `php artisan migrate --force`.
-- Build and deploy commands have a 15-minute timeout. Deploy commands run immediately before the release becomes live, and filesystem changes made by deploy commands are not persisted.
-- Do not add `php artisan queue:restart`, `php artisan horizon:terminate`, `php artisan optimize:clear`, or `php artisan storage:link` to deploy commands. Cloud handles worker restarts and process management; deploy filesystem changes are not persistent.
-- After changing environment settings, attached resources, or linked secrets, redeploy the environment for the changes to take effect.
+- Um comando típico de build no Laravel é `composer install --no-dev && npm run build`.
+- Execute comandos de otimização e geração de cache durante o build, não durante o deploy. Um comando típico de deploy é `php artisan migrate --force`.
+- Comandos de build e deploy têm timeout de 15 minutos. Comandos de deploy rodam imediatamente antes de a release entrar no ar, e alterações no sistema de arquivos feitas por comandos de deploy não são persistidas.
+- Não adicione `php artisan queue:restart`, `php artisan horizon:terminate`, `php artisan optimize:clear` ou `php artisan storage:link` aos comandos de deploy. A Cloud gerencia reinicializações de workers e processos; alterações no sistema de arquivos durante o deploy não são persistentes.
+- Após alterar configurações de ambiente, recursos anexados ou segredos vinculados, faça o redeploy do ambiente para que as mudanças entrem em vigor.
 
-## Configuration and Resources
+## Configuração e Recursos
 
-- Attached databases, caches, and object storage inject their connection variables automatically. Custom environment variables take precedence over injected values.
-- Use Secrets Manager for encrypted organization-level values shared across environments. Secret values cannot be read after creation; redeploy affected environments after creating, updating, linking, unlinking, or deleting a secret.
-- Environment filesystems are ephemeral and are not shared between replicas. Use a database or Laravel Valkey for persistent cache and sessions, and Laravel Cloud Object Storage for persistent files. Do not rely on local files surviving a deployment.
+- Bancos de dados, caches e object storage anexados injetam suas variáveis de conexão automaticamente. Variáveis de ambiente personalizadas têm precedência sobre valores injetados.
+- Use o Secrets Manager para valores criptografados em nível de organização compartilhados entre ambientes. Valores de segredos não podem ser lidos após a criação; faça redeploy dos ambientes afetados após criar, atualizar, vincular, desvincular ou excluir um segredo.
+- Os sistemas de arquivos dos ambientes são efêmeros e não são compartilhados entre réplicas. Use um banco de dados ou Laravel Valkey para cache e sessões persistentes, e Laravel Cloud Object Storage para arquivos persistentes. Não dependa de arquivos locais para sobreviver a um deploy.
 
-### Object Storage and File Visibility
+### Object Storage e Visibilidade de Arquivos
 
-- Laravel Cloud Object Storage is backed by Cloudflare R2. R2 applies visibility at the bucket level; a bucket cannot contain a mix of private and public objects.
-- For private files, always use `Storage::disk()` with no arguments, such as `Storage::disk()->put(...)`, so Laravel uses the environment's default disk. Do not pass a disk name for private/default storage. Attach a private Cloud bucket as the environment's default disk.
-- For public files, use the named public disk: `Storage::disk('public')->put(...)`. Attach a second Cloud bucket configured as public and give it the `public` disk name.
-- Applications that use both private and public files therefore need two Cloud Object Storage buckets attached to the environment: a private default bucket and a public bucket named `public`.
-- Do not set per-file or Flysystem `visibility: 'public'` configuration for Cloud Object Storage. R2 does not support per-object ACL headers and rejects those requests; select the bucket visibility when creating the bucket.
-- Private buckets are not internet-accessible, but Laravel can generate temporary public URLs with `Storage::temporaryUrl(...)`. Public buckets expose all objects through their Cloud-provided public URL.
-- Install the S3 Flysystem adapter before using Cloud Object Storage: `composer require league/flysystem-aws-s3-v3 "^3.0" --with-all-dependencies`.
+- O Laravel Cloud Object Storage usa Cloudflare R2. O R2 aplica visibilidade em nível de bucket; um bucket não pode misturar objetos privados e públicos.
+- Para arquivos privados, use sempre `Storage::disk()` sem argumentos, como `Storage::disk()->put(...)`, para que o Laravel use o disco padrão do ambiente. Não passe nome de disco para armazenamento privado/padrão. Anexe um bucket Cloud privado como o disco padrão do ambiente.
+- Para arquivos públicos, use o disco público nomeado: `Storage::disk('public')->put(...)`. Anexe um segundo bucket Cloud configurado como público e dê a ele o nome de disco `public`.
+- Aplicações que usam arquivos privados e públicos precisam, portanto, de dois buckets de Cloud Object Storage anexados ao ambiente: um bucket padrão privado e um bucket público chamado `public`.
+- Não defina `visibility: 'public'` por arquivo ou no Flysystem para Cloud Object Storage. O R2 não suporta cabeçalhos ACL por objeto e rejeita essas requisições; escolha a visibilidade do bucket ao criá-lo.
+- Buckets privados não são acessíveis pela internet, mas o Laravel pode gerar URLs públicas temporárias com `Storage::temporaryUrl(...)`. Buckets públicos expõem todos os objetos por meio de sua URL pública fornecida pela Cloud.
+- Instale o adaptador S3 do Flysystem antes de usar o Cloud Object Storage: `composer require league/flysystem-aws-s3-v3 "^3.0" --with-all-dependencies`.
 
-## Queues and Scheduling
+## Filas e Agendamento
 
-- Managed queues are the recommended queue option. They provision dedicated workers and autoscale based on queued work.
-- Managed queues require a supported recent Laravel version and `aws/aws-sdk-php`; check the current Cloud documentation before changing dependencies.
-- Enable the scheduler on an App or Worker cluster to run `php artisan schedule:run` every minute. When an environment has multiple replicas, use Laravel's `onOneServer` for tasks that must run once.
-- Only Flex compute sizes can scale to zero. Scale-to-zero environments wake for Laravel scheduled tasks and queued jobs, but long-running jobs may be interrupted when the sleep timeout is reached. Use managed queues for workloads that must not be interrupted.
+- Filas gerenciadas (Managed queues) são a opção recomendada. Elas provisionam workers dedicados e escalam automaticamente conforme o trabalho na fila.
+- Filas gerenciadas exigem uma versão recente suportada do Laravel e `aws/aws-sdk-php`; consulte a documentação atual da Cloud antes de alterar dependências.
+- Habilite o agendador (scheduler) em um cluster App ou Worker para executar `php artisan schedule:run` a cada minuto. Quando um ambiente tiver múltiplas réplicas, use `onOneServer` do Laravel para tarefas que devem rodar apenas uma vez.
+- Apenas tamanhos de compute Flex podem escalar para zero. Ambientes scale-to-zero acordam para tarefas agendadas e jobs em fila do Laravel, mas jobs de longa duração podem ser interrompidos quando o timeout de inatividade for atingido. Use filas gerenciadas para cargas de trabalho que não podem ser interrompidas.
 
-## Domains and Storage
+## Domínios e Armazenamento
 
-- Each environment receives a `laravel.cloud` domain after its first successful deployment. Cloud automatically verifies custom domains and provisions SSL after the required DNS records are configured.
-- Do not use the ephemeral filesystem for persistent uploads, generated files, cache, or session data. Use the appropriate Cloud resource instead.
+- Cada ambiente recebe um domínio `laravel.cloud` após seu primeiro deploy bem-sucedido. A Cloud verifica automaticamente domínios personalizados e provisiona SSL após a configuração dos registros DNS necessários.
+- Não use o sistema de arquivos efêmero para uploads persistentes, arquivos gerados, cache ou dados de sessão. Use o recurso apropriado da Cloud.
 
 ## Cloud CLI
 
-### Setup
+### Configuração
 
 ```shell
 composer require --dev laravel/cloud-cli
 ./vendor/bin/cloud auth -n
 ```
 
-If a project-local installation is not available, install the CLI globally with `composer global require laravel/cloud-cli` and invoke it as `cloud`.
+Se uma instalação local no projeto não estiver disponível, instale a CLI globalmente com `composer global require laravel/cloud-cli` e invoque como `cloud`.
 
-`cloud auth` opens a browser. If a browser is unavailable, set `LARAVEL_CLOUD_TOKEN` in the environment. It overrides any saved token and writes nothing to disk. To save a token instead, run `cloud auth:token --add --token=<token> -n` or pipe it with `echo "$TOKEN" | cloud auth:token --add -n`.
+`cloud auth` abre um navegador. Se não houver navegador disponível, defina `LARAVEL_CLOUD_TOKEN` no ambiente. Ele sobrescreve qualquer token salvo e não grava nada em disco. Para salvar um token, execute `cloud auth:token --add --token=<token> -n` ou envie via pipe com `echo "$TOKEN" | cloud auth:token --add -n`.
 
-### Commands
+### Comandos
 
-Commands follow a CRUD pattern: `resource:list`, `resource:get`, `resource:create`, `resource:update`, `resource:delete`.
+Os comandos seguem um padrão CRUD: `resource:list`, `resource:get`, `resource:create`, `resource:update`, `resource:delete`.
 
-Available resources: `application`, `environment`, `instance`, `database-cluster`, `database`, `cache`, `bucket`, `domain`, `websocket-cluster`, `background-process`, `secret`, `command`, `deployment`.
+Recursos disponíveis: `application`, `environment`, `instance`, `database-cluster`, `database`, `cache`, `bucket`, `domain`, `websocket-cluster`, `background-process`, `secret`, `command`, `deployment`.
 
-Some resources have additional commands (e.g., `domain:verify`, `database:open`, `instance:sizes`, `cache:types`, `database:types`, `<resource>:metrics`). Discover these via `cloud -h`.
+Alguns recursos têm comandos adicionais (ex.: `domain:verify`, `database:open`, `instance:sizes`, `cache:types`, `database:types`, `<resource>:metrics`). Descubra-os via `cloud -h`.
 
-Never hardcode command signatures. Always run `cloud <command> -h` to discover options at runtime.
+Nunca fixe assinaturas de comandos no código. Execute sempre `cloud <command> -h` para descobrir as opções em tempo de execução.
 
-### CLI Flags
+### Flags da CLI
 
-- Always add `-n` to every command to prevent the CLI from hanging.
-- Never use `-q` or `--silent`; they suppress all output.
+- Sempre adicione `-n` a todos os comandos para evitar que a CLI trave esperando entrada.
+- Nunca use `-q` ou `--silent`; eles suprimem toda a saída.
 
-Flag combos per operation:
-- Read (`:list`, `:get`) → `--json -n`
-- Create (`:create`) → `--json -n`
-- Update (`:update`) → `--json -n --force`
-- Delete (`:delete`) → `-n --force` (no `--json`)
-- Environment variables → `-n --force`
-- Deploy or ship → `-n` with all options passed explicitly (no `--json`)
+Combinações de flags por operação:
+- Leitura (`:list`, `:get`) → `--json -n`
+- Criação (`:create`) → `--json -n`
+- Atualização (`:update`) → `--json -n --force`
+- Exclusão (`:delete`) → `-n --force` (sem `--json`)
+- Variáveis de ambiente → `-n --force`
+- Deploy ou ship → `-n` com todas as opções passadas explicitamente (sem `--json`)
 
-### Deployment Workflow
+### Fluxo de Deploy
 
-Determine the task and follow the matching path:
+Identifique a tarefa e siga o caminho correspondente:
 
-- First deployment: inspect `cloud ship -h`, then run `cloud ship -n` with all required values.
+- Primeiro deploy: inspecione `cloud ship -h`, depois execute `cloud ship -n` com todos os valores obrigatórios.
 
-- Existing application:
+- Aplicação existente:
   ```shell
   cloud deploy {app_name} {environment} -n --open
   cloud deploy:monitor -n
   ```
 
-- Environment variables: `cloud environment:variables -n --force`. To copy keys from the local `.env` and deploy in one step: `cloud deploy {app_name} {environment} -n --push-env-keys=KEY_ONE,KEY_TWO`
+- Variáveis de ambiente: `cloud environment:variables -n --force`. Para copiar chaves do `.env` local e fazer deploy em um passo: `cloud deploy {app_name} {environment} -n --push-env-keys=KEY_ONE,KEY_TWO`
 
-- Secrets: `echo "$VALUE" | cloud secret:create --name=NAME --json -n`, then `cloud environment-secret:attach`
+- Segredos: `echo "$VALUE" | cloud secret:create --name=NAME --json -n`, depois `cloud environment-secret:attach`
 
-- Provision infrastructure: `cloud <resource>:create --json -n`
+- Provisionar infraestrutura: `cloud <resource>:create --json -n`
 
-- Monorepo (application in a subdirectory): add `--root-directory=<subdir>` to `cloud ship` or `cloud application:create`.
+- Monorepo (aplicação em um subdiretório): adicione `--root-directory=<subdir>` ao `cloud ship` ou `cloud application:create`.
 
-- Custom domain: `cloud domain:create --json -n`, then `cloud domain:verify -n`.
+- Domínio personalizado: `cloud domain:create --json -n`, depois `cloud domain:verify -n`.
 
-- Edge cache: `cloud environment:purge-edge-cache {environment} -n` purges everything; pass one of `--path=/blog/post`, `--prefix=/blog/`, or `--tag=<cache-tag>` to purge less. Tags need a dedicated edge network.
+- Edge cache: `cloud environment:purge-edge-cache {environment} -n` limpa tudo; passe `--path=/blog/post`, `--prefix=/blog/` ou `--tag=<cache-tag>` para limpar parcialmente. Tags exigem uma edge network dedicada.
 
-- Laravel Cloud domain: `cloud environment:vanity-domain {environment} --name=<subdomain> --deploy -n --force`. Pass only the first part of the domain. The new domain takes effect on the next deploy, which `--deploy` starts and monitors. It can change only once every 30 minutes, so confirm with the user first.
+- Domínio Laravel Cloud: `cloud environment:vanity-domain {environment} --name=<subdomain> --deploy -n --force`. Passe apenas a primeira parte do domínio. O novo domínio entra em vigor no próximo deploy, que `--deploy` inicia e monitora. Só pode ser alterado uma vez a cada 30 minutos, portanto confirme antes com o usuário.
 
-- Repository defaults: `cloud repo:config {application} -n` sets repository-local application and organization defaults. Pass `--organization=<id|name|slug>` when the user has multiple organizations.
+- Padrões de repositório: `cloud repo:config {application} -n` define os padrões locais de aplicação e organização. Passe `--organization=<id|name|slug>` quando o usuário tiver múltiplas organizações.
 
-For multi-step operations, see [reference/checklists.md](reference/checklists.md).
+Para operações em várias etapas, veja [reference/checklists.md](reference/checklists.md).
 
-- If the user's needs are unclear, ask before running anything.
+- Se as necessidades do usuário não estiverem claras, pergunte antes de executar qualquer comando.
 
-### When a Command Fails
+### Quando um Comando Falhar
 
-1. Read the error output.
-2. Check the resource status with `:list --json -n` or `:get --json -n`.
-3. For authentication errors, run `cloud auth -n`.
-4. Fix the issue and rerun the command.
-5. If the same error occurs after one fix, stop and ask the user rather than repeating the operation.
+1. Leia a saída de erro.
+2. Verifique o status do recurso com `:list --json -n` ou `:get --json -n`.
+3. Para erros de autenticação, execute `cloud auth -n`.
+4. Corrija o problema e execute o comando novamente.
+5. Se o mesmo erro ocorrer após uma correção, pare e pergunte ao usuário em vez de repetir a operação.
 
-Always run `cloud deploy:monitor -n` after every deploy. If it fails, run `cloud deployment:logs {deploymentId} --json -n` to find the build or deploy step with `"status": "failed"` and read its `output`. Show the user what went wrong before attempting a fix.
+Sempre execute `cloud deploy:monitor -n` após cada deploy. Se falhar, execute `cloud deployment:logs {deploymentId} --json -n` para encontrar a etapa de build ou deploy com `"status": "failed"` e leia seu `output`. Mostre ao usuário o que deu errado antes de tentar corrigir.
 
-### Subagent Delegation
+### Delegação para Subagentes
 
-Delegate high-output operations to subagents using the Task tool to keep the main context window small. Only the summary returns; verbose output stays in the subagent's context.
+Delegue operações com saída extensa para subagentes usando a ferramenta Task para manter a janela de contexto principal pequena. Apenas o resumo retorna; a saída verbosa fica no contexto do subagente.
 
-Delegate these to a subagent:
-- `cloud deploy:monitor -n` — deployment logs can be very long
-- `cloud deployment:get --json -n` — full deployment details
-- `cloud deployment:logs --json -n` — every step's full build or deploy output
-- `cloud <resource>:list --json -n` — listing many resources produces large JSON
-- `cloud <resource>:metrics --json -n` — every data point is included; narrow it with `--fields` (e.g. `--fields=period,cpuUsage.average`)
-- `cloud command:run` — when output may be long
-- `cloud usage --detailed --json -n` — the payload includes details for every database, cache, bucket, websocket, and application
-- Fetching docs from https://cloud.laravel.com/docs/llms.txt via `WebFetch`
+Delegue estes comandos para um subagente:
+- `cloud deploy:monitor -n` — logs de deploy podem ser muito longos
+- `cloud deployment:get --json -n` — detalhes completos do deploy
+- `cloud deployment:logs --json -n` — saída completa de build ou deploy de cada etapa
+- `cloud <resource>:list --json -n` — listar muitos recursos gera um JSON grande
+- `cloud <resource>:metrics --json -n` — todos os pontos de dados são incluídos; restrinja com `--fields` (ex.: `--fields=period,cpuUsage.average`)
+- `cloud command:run` — quando a saída puder ser longa
+- `cloud usage --detailed --json -n` — o payload inclui detalhes de cada banco, cache, bucket, websocket e aplicação
+- Buscar documentação em https://cloud.laravel.com/docs/llms.txt via `WebFetch`
 
-Keep in the main context:
-- Short commands like `:create`, `:delete`, `:update` — output is small
-- `cloud deploy -n` — you need the deployment ID immediately
-- Any command where you need the result for the next step right away
+Mantenha no contexto principal:
+- Comandos curtos como `:create`, `:delete`, `:update` — a saída é pequena
+- `cloud deploy -n` — você precisa do ID do deploy imediatamente
+- Qualquer comando cujo resultado seja necessário imediatamente para o próximo passo
 
-### Rules
+### Regras
 
-Follow these rules:
-- Flag selection — always use the documented combos above
-- Deploy sequence — deploy then monitor, never skip monitoring
-- Destructive commands — always confirm with the user first, show the command and wait for approval. This includes deleting applications, environments, databases, caches, buckets, domains, or secrets, and detaching Resend.
-- Error loop — diagnose, fix once, ask user if it fails again
+Siga estas regras:
+- Seleção de flags — use sempre as combinações documentadas acima
+- Sequência de deploy — faça o deploy e depois monitore, nunca pule o monitoramento
+- Comandos destrutivos — sempre confirme com o usuário antes, mostre o comando e aguarde aprovação. Isso inclui excluir aplicações, ambientes, bancos de dados, caches, buckets, domínios ou segredos, e desvincular o Resend.
+- Loop de erros — diagnostique, corrija uma vez, pergunte ao usuário se falhar novamente
 
-Use judgment for:
-- Instance sizes, regions, cluster types — ask the user if not specified
-- Which resources to provision — based on what the user describes
-- Order of provisioning — no strict sequence required
-- How to present output — summarize, show raw, or extract fields based on context
+Use julgamento para:
+- Tamanhos de instância, regiões, tipos de cluster — pergunte ao usuário se não especificado
+- Quais recursos provisionar — com base no que o usuário descrever
+- Ordem de provisionamento — não há sequência rígida exigida
+- Como apresentar a saída — resumir, mostrar bruto ou extrair campos conforme o contexto
 
-### Secrets
+### Segredos (Secrets)
 
-Secrets are encrypted values shared across the organization and attached to environments. The CLI encrypts values locally, so plaintext never reaches the API.
+Segredos são valores criptografados compartilhados na organização e anexados a ambientes. A CLI criptografa os valores localmente, então texto plano nunca chega à API.
 
 ```shell
 cloud secret:list --json -n
@@ -176,19 +176,19 @@ cloud environment-secret:detach {environment} {secretId} --force -n
 cloud environment-secret:list {environment} --json -n
 ```
 
-Pipe the value in. `--value=` works, but leaves the plaintext in shell history and the process list.
+Envie o valor via pipe. `--value=` funciona, mas deixa o texto plano no histórico do shell e na lista de processos.
 
-`secret:update`, `secret:delete`, `environment-secret:attach`, and `environment-secret:detach` take secret IDs, not names — names are not unique. Read IDs from `cloud secret:list --json -n`.
+`secret:update`, `secret:delete`, `environment-secret:attach` e `environment-secret:detach` recebem IDs de segredo, não nomes — nomes não são únicos. Leia os IDs com `cloud secret:list --json -n`.
 
-There is no `secret:get`. `environment-secret:detach` removes a secret from one environment and keeps it; `secret:delete` deletes it and detaches it everywhere.
+Não existe `secret:get`. `environment-secret:detach` remove um segredo de um ambiente e o mantém; `secret:delete` exclui o segredo e o desvincula de todos os lugares.
 
-Secrets need the `sodium` PHP extension. No other command does.
+Segredos exigem a extensão PHP `sodium`. Nenhum outro comando exige.
 
-Redeploy affected environments after creating, updating, attaching, detaching, or deleting a secret.
+Faça redeploy dos ambientes afetados após criar, atualizar, anexar, desvincular ou excluir um segredo.
 
-### Email (Resend)
+### E-mail (Resend)
 
-Resend sends an environment's email. Connecting a Resend account and verifying sending domains happen in the dashboard; the CLI cannot do either. When `resend:attach` reports no verified sending domains, give the user the integration settings link from the error.
+O Resend envia os e-mails de um ambiente. Conectar uma conta Resend e verificar domínios de envio acontecem no dashboard; a CLI não faz nenhum dos dois. Quando `resend:attach` informar que não há domínios verificados, forneça ao usuário o link das configurações de integração retornado no erro.
 
 ```shell
 cloud resend:domains --status=verified --json -n
@@ -198,96 +198,96 @@ cloud resend:keys {environment} --json -n
 cloud resend:detach {environment} --force -n
 ```
 
-- The sender address must use a verified sending domain. `--from-name` defaults to the application name.
-- `resend:attach` creates a new sending key. To share one with another environment, pass `--reuse-key-id` with an ID from `resend:keys`.
-- Attaching makes Cloud set `RESEND_API_KEY`, `MAIL_MAILER`, `MAIL_FROM_ADDRESS`, and `MAIL_FROM_NAME`, replacing any the environment already had.
-- The application needs `resend/resend-php`. Under `-n`, `resend:attach` only warns when it is missing; run `composer require resend/resend-php` in the project.
-- Detaching deletes the sending key unless another environment uses it.
-- Redeploy the environment after attaching, updating, or detaching Resend.
+- O endereço de remetente deve usar um domínio de envio verificado. `--from-name` usa o nome da aplicação por padrão.
+- `resend:attach` cria uma nova chave de envio. Para compartilhar uma com outro ambiente, passe `--reuse-key-id` com um ID de `resend:keys`.
+- Ao anexar, a Cloud define `RESEND_API_KEY`, `MAIL_MAILER`, `MAIL_FROM_ADDRESS` e `MAIL_FROM_NAME`, substituindo os que já existiam no ambiente.
+- A aplicação precisa de `resend/resend-php`. Com `-n`, `resend:attach` apenas avisa se estiver faltando; execute `composer require resend/resend-php` no projeto.
+- Desvincular exclui a chave de envio, a menos que outro ambiente a utilize.
+- Faça redeploy do ambiente após anexar, atualizar ou desvincular o Resend.
 
-### Remote Access
+### Acesso Remoto
 
-#### Tinker (v0.2.0 or later)
+#### Tinker (v0.2.0 ou superior)
 
-Run PHP code directly in a Cloud environment:
+Execute código PHP diretamente em um ambiente Cloud:
 
 ```shell
 cloud tinker {environment} --code='Your PHP code here' --timeout=60 -n
 ```
 
-- `--code` — PHP code to execute (required in non-interactive mode)
-- `--timeout` — maximum number of seconds to wait for output (default: 60)
+- `--code` — código PHP a executar (obrigatório em modo não interativo)
+- `--timeout` — número máximo de segundos para aguardar a saída (padrão: 60)
 
-The code must explicitly output results using `echo`, `dump`, or similar; expressions alone produce no output.
+O código deve imprimir resultados explicitamente usando `echo`, `dump` ou similar; expressões isoladas não geram saída.
 
-Always pass `--code` and `-n` to avoid interactive prompts.
+Sempre passe `--code` e `-n` para evitar prompts interativos.
 
-#### Remote Commands
+#### Comandos Remotos
 
-Run shell commands on a Cloud environment:
+Execute comandos de shell em um ambiente Cloud:
 
 ```shell
 cloud command:run {environment} --cmd='your command here' -n
 ```
 
-- `--cmd` — the command to run (required in non-interactive mode)
-- `--no-monitor` — skip real-time output streaming
-- `--copy-output` — copy output to clipboard
+- `--cmd` — comando a executar (obrigatório em modo não interativo)
+- `--no-monitor` — pula o streaming de saída em tempo real
+- `--copy-output` — copia a saída para a área de transferência
 
-Review past commands:
+Revisar comandos anteriores:
 
-- `cloud command:list {environment} --json -n` — list command history
-- `cloud command:get {commandId} --json -n` — get details and output of a specific command
+- `cloud command:list {environment} --json -n` — lista o histórico de comandos
+- `cloud command:get {commandId} --json -n` — obtém detalhes e saída de um comando específico
 
-### Billing and Usage
+### Cobrança e Uso
 
-View billing and usage for the current organization:
+Visualize a cobrança e o uso da organização atual:
 
 ```shell
 cloud usage --json -n
 ```
 
-- `--period=current|previous|1|2|3` — Billing period (default: `current`; `1`, `2`, and `3` are one, two, and three periods back, respectively). Other values return an error.
-- `--environment=<id>` — filter usage to a single environment
-- `--detailed` — include per-application, per-resource, and per-add-on breakdowns
-- `--json` — machine-readable output (always pair with `-n`)
+- `--period=current|previous|1|2|3` — Período de cobrança (padrão: `current`; `1`, `2` e `3` correspondem a um, dois e três períodos atrás, respectivamente). Outros valores retornam erro.
+- `--environment=<id>` — filtra o uso para um único ambiente
+- `--detailed` — inclui detalhamento por aplicação, recurso e complemento
+- `--json` — saída legível por máquina (sempre use junto com `-n`)
 
-Common queries:
+Consultas comuns:
 
-- Current spend: `cloud usage --json -n | jq '.currentSpendCents'`
-- Last month's bill: `cloud usage --period=previous --json -n`
-- One environment, full breakdown: `cloud usage --environment=<id> --detailed --json -n`
+- Gasto atual: `cloud usage --json -n | jq '.currentSpendCents'`
+- Fatura do mês passado: `cloud usage --period=previous --json -n`
+- Um ambiente, detalhamento completo: `cloud usage --environment=<id> --detailed --json -n`
 
-All amounts are in cents. Keys are camelCase at every level (e.g., `currentSpendCents`, `bandwidth.allowanceBytes`, `databases[].totalCents`, `applications[].totalCostCents`).
+Todos os valores estão em centavos. As chaves estão em camelCase em todos os níveis (ex.: `currentSpendCents`, `bandwidth.allowanceBytes`, `databases[].totalCents`, `applications[].totalCostCents`).
 
-### Config
+### Configuração
 
-1. Environment: `LARAVEL_CLOUD_TOKEN` — an API token, taking precedence over any saved one (empty counts as unset)
-2. Global: `~/.config/cloud/config.json` — auth tokens and preferences
-3. Repo-local: `.cloud/config.json` — app and environment defaults (set by `cloud repo:config {application} -n`)
-4. CLI arguments override both config files
+1. Ambiente: `LARAVEL_CLOUD_TOKEN` — token de API, com precedência sobre qualquer token salvo (vazio conta como não definido)
+2. Global: `~/.config/cloud/config.json` — tokens de autenticação e preferências
+3. Local do repositório: `.cloud/config.json` — padrões de app e ambiente (definido por `cloud repo:config {application} -n`)
+4. Argumentos da CLI sobrescrevem ambos os arquivos de configuração
 
-Pass the application to `repo:config`. Without it, the command must prompt and fails under `-n` when the organization has more than one application. Deploy commands do not need these defaults; pass the application and environment to them directly.
+Passe a aplicação para `repo:config`. Sem ela, o comando precisa solicitar entrada e falha com `-n` quando a organização possui mais de uma aplicação. Comandos de deploy não precisam desses padrões; passe a aplicação e o ambiente diretamente para eles.
 
-Using multiple organizations requires multiple stored API tokens. Commands read `organization_id` from `.cloud/config.json` to select one and fail if it is not set. Set it with `cloud repo:config {application} --organization=<id|name|slug> -n`.
+Usar múltiplas organizações exige múltiplos tokens de API armazenados. Os comandos leem `organization_id` de `.cloud/config.json` para selecionar uma e falham se não estiver definido. Defina com `cloud repo:config {application} --organization=<id|name|slug> -n`.
 
-`LARAVEL_CLOUD_TOKEN` holds one token, so it picks the organization on its own. Naming a different one with `--organization` fails rather than falling back to the token's organization.
+`LARAVEL_CLOUD_TOKEN` armazena um token, portanto escolhe a organização por conta própria. Informar outra com `--organization` falha em vez de recorrer à organização do token.
 
-## Documentation
+## Documentação
 
-Laravel Cloud documentation: https://cloud.laravel.com/docs/llms.txt
+Documentação do Laravel Cloud: https://cloud.laravel.com/docs/llms.txt
 
-When the user asks how something works or needs an explanation of a Laravel Cloud feature, fetch the docs from the URL above using `WebFetch` and use it to provide accurate answers.
+Quando o usuário perguntar como algo funciona ou precisar de uma explicação sobre algum recurso do Laravel Cloud, busque a documentação na URL acima usando `WebFetch` e use-a para fornecer respostas precisas.
 
-## When Stuck
+## Quando Estiver Travado
 
-- Fetch https://cloud.laravel.com/docs/llms.txt for official documentation
-- Run `cloud <command> -h` for any command's options
-- Run `cloud -h` to discover commands
+- Busque https://cloud.laravel.com/docs/llms.txt para documentação oficial
+- Execute `cloud <command> -h` para ver as opções de qualquer comando
+- Execute `cloud -h` para descobrir comandos
 
-## Verification
+## Verificação
 
-1. Confirm the target application and environment before changing or deploying anything.
-2. Check staged environment changes and required resources before deployment.
-3. Monitor every deployment to completion with `cloud deploy:monitor -n`.
-4. For production changes, verify the application URL, logs, queues, scheduled tasks, and relevant resource health.
+1. Confirme a aplicação e o ambiente de destino antes de alterar ou fazer deploy de qualquer coisa.
+2. Verifique as alterações pendentes no ambiente e os recursos necessários antes do deploy.
+3. Monitore cada deploy até a conclusão com `cloud deploy:monitor -n`.
+4. Para alterações em produção, verifique a URL da aplicação, logs, filas, tarefas agendadas e a saúde dos recursos relevantes.

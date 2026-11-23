@@ -1,52 +1,52 @@
-# Fakes, mocks, and determinism
+# Fakes, mocks e determinismo
 
-Tests that depend on actual time, randomness, sleeping, or network calls can fail for reasons unrelated to the code under test. Control all four.
+Testes que dependem de tempo real, aleatoriedade, sleep ou chamadas de rede podem falhar por motivos não relacionados ao código sob teste. Controle todos os quatro.
 
-## How to isolate a dependency
+## Como isolar uma dependência
 
-Fetch `https://laravel.com/framework/docs/mocking` for Laravel's fakes, facade doubles, and fake assertions. Confirm each name before using it.
+Consulte `https://laravel.com/framework/docs/mocking` para os fakes do Laravel, dublês de facade e asserções de fakes. Confirme cada nome antes de usá-lo.
 
-Identify the dependency, then choose the first option that applies. A framework fake preserves the real code path, while a mock replaces the dependency.
+Identifique a dependência e escolha a primeira opção que se aplica. Um fake do framework preserva o caminho real do código, enquanto um mock substitui a dependência.
 
-1. Always use framework fakes for facades such as events, queues, mail, notifications, storage, the HTTP client, time, and sleep.
-2. Use a developer-defined fake implementation of a service if the application provides one.
-3. Use a mock for a container-resolved contract only when the real implementation leaves the process or is nondeterministic.
-4. Use the real implementation for everything else, including the database.
+1. Sempre use fakes do framework para facades como eventos, filas, e-mail, notificações, armazenamento, cliente HTTP, tempo e sleep.
+2. Use uma implementação fake definida pelo desenvolvedor de um serviço se a aplicação fornecer uma.
+3. Use um mock para um contrato resolvido pelo contêiner apenas quando a implementação real sair do processo ou for não determinística.
+4. Use a implementação real para todo o resto, incluindo o banco de dados.
 
-## Framework fakes
+## Fakes do framework
 
-- Create each fake inside the test method that needs it. Do not create fakes in `setUp()`.
-- Pass class names to `Event::fake()` and `Queue::fake()` when you know which classes the code dispatches. A fake without class names can hide an unexpected dispatch.
-- Use a fake without class names only when the test asserts the complete result, including a call to `assertNothingPushed()`.
-- Write one assertion for each fake. The assertion states that the code dispatches the item, or that the code does not dispatch the item.
-- If the data of a job or an event is part of the behavior, assert that data.
-- Use `Exceptions::fake()` to assert that the application reports the correct exception. Do not use `withoutExceptionHandling()`, because it changes the response under test.
+- Crie cada fake dentro do método de teste que precisa dele. Não crie fakes em `setUp()`.
+- Passe nomes de classes para `Event::fake()` e `Queue::fake()` quando você souber quais classes o código despacha. Um fake sem nomes de classes pode ocultar um despacho inesperado.
+- Use um fake sem nomes de classes apenas quando o teste fizer asserção do resultado completo, incluindo uma chamada a `assertNothingPushed()`.
+- Escreva uma asserção para cada fake. A asserção declara que o código despacha o item ou que o código não despacha o item.
+- Se os dados de um job ou evento fizerem parte do comportamento, faça asserção desses dados.
+- Use `Exceptions::fake()` para fazer asserção de que a aplicação reporta a exceção correta. Não use `withoutExceptionHandling()`, porque isso altera a resposta sob teste.
 
-Create prerequisite factory records before calling `Event::fake()`. Factories use model events, such as a `creating` hook that generates a UUID. A fake without class names suppresses those events, and the factory can then produce an invalid model. Call the fake first only when a factory event is under test, and pass that event's class name.
+Crie registros pré-requisito de factory antes de chamar `Event::fake()`. Factories usam eventos de model, como um hook `creating` que gera um UUID. Um fake sem nomes de classes suprime esses eventos, e a factory pode então produzir um model inválido. Chame o fake primeiro apenas quando um evento de factory estiver sob teste e passe o nome da classe desse evento.
 
 ## Mocking
 
-Use `shouldReceive()` before the action to declare an expectation. Use `shouldHaveReceived()` after the action for a spy. If an equality check cannot state the expected argument, such as a check of one field of a value object, use `Mockery::on()` or `withArgs()`.
+Use `shouldReceive()` antes da ação para declarar uma expectativa. Use `shouldHaveReceived()` após a ação para um spy. Se uma verificação de igualdade não puder expressar o argumento esperado, como uma verificação de um campo de um value object, use `Mockery::on()` ou `withArgs()`.
 
-Use `$this->mock(Contract::class)` to put a mock in the container. Do not build a PHPUnit mock for a class that Mockery can double, because the project uses Mockery.
+Use `$this->mock(Contract::class)` para colocar um mock no contêiner. Não construa um mock do PHPUnit para uma classe que o Mockery pode dublar, porque o projeto usa Mockery.
 
-## Outbound HTTP testing
+## Testes de HTTP de saída
 
-Call `Http::preventStrayRequests()`. Any request without a matching fake then fails without reaching the network.
+Chame `Http::preventStrayRequests()`. Qualquer requisição sem um fake correspondente falha sem alcançar a rede.
 
-Fake the exact endpoint that each test calls. Do not call `Http::fake()` without an endpoint, because a fake without an endpoint accepts unexpected requests and can hide defects.
+Faça fake do endpoint exato que cada teste chama. Não chame `Http::fake()` sem um endpoint, porque um fake sem endpoint aceita requisições inesperadas e pode ocultar defeitos.
 
-## Time and randomness
+## Tempo e aleatoriedade
 
-- Freeze the time or move the time in each test that depends on a date, a period, or a timestamp.
-- Use the framework helpers `$this->freezeTime()`, `$this->travelTo()`, `$this->travel()`, and `$this->travelBack()`. Do not call `Carbon::setTestNow()`.
-- If the test asserts an identifier or a slug, use `Str::createRandomStringsUsing()` to fix the generated string.
-- Use `Sleep::fake()` instead of a real sleep, and assert the sleeps that the code requests.
-- If the suite does not restore the time and the randomness for every test, restore them after each test.
+- Congele o tempo ou avance o tempo em cada teste que dependa de uma data, um período ou um timestamp.
+- Use os helpers do framework `$this->freezeTime()`, `$this->travelTo()`, `$this->travel()` e `$this->travelBack()`. Não chame `Carbon::setTestNow()`.
+- Se o teste fizer asserção de um identificador ou slug, use `Str::createRandomStringsUsing()` para fixar a string gerada.
+- Use `Sleep::fake()` em vez de um sleep real e faça asserção dos sleeps que o código solicita.
+- Se a suíte não restaurar o tempo e a aleatoriedade para cada teste, restaure-os após cada teste.
 
-## Database
+## Banco de dados
 
-- Run real queries against the real records in the test database. Do not mock the query builder, because the test then asserts the mock.
-- If the shape of the serialized model is a contract, assert the exact keys of `toArray()`. The test then fails when the model exposes a new attribute.
-- Test application behavior caused by the schema, such as deleting dependent records through a cascade. Do not test the database engine's cascade implementation.
-- Use `LazilyRefreshDatabase` instead of `RefreshDatabase`. A test that does not use the database then does not run the migrations.
+- Execute consultas reais contra os registros reais no banco de dados de teste. Não faça mock do query builder, porque o teste então faz asserção do mock.
+- Se a estrutura do model serializado for um contrato, faça asserção das chaves exatas de `toArray()`. O teste então falha quando o model expõe um novo atributo.
+- Teste o comportamento da aplicação causado pelo esquema, como a exclusão de registros dependentes por meio de um cascade. Não teste a implementação de cascade do motor de banco de dados.
+- Use `LazilyRefreshDatabase` em vez de `RefreshDatabase`. Um teste que não usa o banco de dados então não executa as migrations.

@@ -1,8 +1,8 @@
-# Blade and view best practices
+# Boas práticas para Blade e views
 
-## Use `$attributes->merge()` in component templates
+## Use `$attributes->merge()` em templates de componentes
 
-Use the component attribute bag so callers can add attributes. `merge()` combines default attributes with caller-provided values. Class values receive special merging behavior.
+Use o attribute bag do componente para que os chamadores possam adicionar atributos. `merge()` combina atributos padrão com os valores fornecidos pelo chamador. Os valores de classe recebem um comportamento especial de mesclagem.
 
 ```blade
 <div {{ $attributes->merge(['class' => 'alert alert-'.$type]) }}>
@@ -10,27 +10,27 @@ Use the component attribute bag so callers can add attributes. `merge()` combine
 </div>
 ```
 
-## Use `@pushOnce` for per-component scripts
+## Use `@pushOnce` para scripts por componente
 
-If a component renders repeatedly, `@push` adds its script on every render. Use a consistently named `@pushOnce` block to add that content once per rendered response.
+Se um componente for renderizado repetidamente, `@push` adiciona seu script a cada renderização. Use um bloco `@pushOnce` nomeado de forma consistente para adicionar esse conteúdo apenas uma vez por resposta renderizada.
 
-## Prefer components for explicit interfaces
+## Prefira componentes para interfaces explícitas
 
-Use a Blade component when a reusable interface benefits from explicit props, an attribute bag, or slots. An include still suits a small partial that intentionally uses the current view data. Pass an explicit data array when implicit variable sharing would hide the partial's dependencies.
+Use um componente Blade quando uma interface reutilizável se beneficiar de props explícitas, um attribute bag ou slots. Um include ainda é adequado para um pequeno partial que intencionalmente usa os dados da view atual. Passe um array de dados explícito quando o compartilhamento implícito de variáveis ocultar as dependências do partial.
 
-## Share compatible view data with a view composer
+## Compartilhe dados de view compatíveis com um view composer
 
-Use a view composer to centralize the data that one or more named Blade views need every time Laravel renders them. Keep the composer compatible with every view it targets, and avoid broad wildcards when views require different data shapes. A view composer runs when Laravel renders the matching view. It does not supply data to JSON, streamed, or other non-view responses.
+Use um view composer para centralizar os dados de que uma ou mais views Blade nomeadas precisam sempre que o Laravel as renderiza. Mantenha o composer compatível com cada view que ele atende e evite curingas (wildcards) amplos quando as views exigirem formatos de dados diferentes. Um view composer é executado quando o Laravel renderiza a view correspondente. Ele não fornece dados para respostas JSON, streamed ou outras respostas que não sejam de view.
 
-## Return Blade fragments for partial rendering
+## Retorne fragmentos Blade para renderização parcial
 
-A route can return either a full view or a named fragment for clients such as htmx or Turbo.
+Uma rota pode retornar uma view completa ou um fragmento nomeado para clientes como htmx ou Turbo.
 
 ```php
 return view('dashboard', compact('users'))
     ->fragmentIf($request->hasHeader('HX-Request'), 'user-list');
 ```
 
-## Share parent component props with `@aware`
+## Compartilhe props de componentes pai com `@aware`
 
-Use `@aware` when a nested component needs a prop explicitly passed to an ancestor component. `@aware` does not expose an ancestor's default prop value unless that value was passed through the attribute bag.
+Use `@aware` quando um componente aninhado precisar de uma prop passada explicitamente para um componente ancestral. `@aware` não expõe o valor padrão de uma prop de um ancestral, a menos que esse valor tenha sido passado pelo attribute bag.

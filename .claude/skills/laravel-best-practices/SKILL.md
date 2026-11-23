@@ -1,59 +1,59 @@
 ---
 name: laravel-best-practices
-description: "Apply this skill whenever writing, reviewing, or refactoring Laravel PHP code. This includes creating or modifying controllers, models, migrations, form requests, policies, jobs, scheduled commands, service classes, and Eloquent queries. Triggers for N+1 and query performance issues, caching strategies, authorization and security patterns, validation, error handling, queue and job configuration, route definitions, and architectural decisions. Also use for Laravel code reviews and refactoring existing Laravel code to follow best practices. Covers any task involving Laravel backend PHP code patterns."
+description: "Aplique esta skill sempre que escrever, revisar ou refatorar código PHP Laravel. Isso inclui criar ou modificar controllers, models, migrations, form requests, policies, jobs, comandos agendados, classes de serviço e consultas Eloquent. Aciona para problemas de N+1 e performance de consultas, estratégias de cache, padrões de autorização e segurança, validação, tratamento de erros, configuração de filas e jobs, definições de rotas e decisões arquiteturais. Use também para revisões de código Laravel e refatoração de código Laravel existente para seguir boas práticas. Cobre qualquer tarefa envolvendo padrões de código PHP no backend Laravel."
 license: MIT
 metadata:
   author: laravel
 ---
 
-# Laravel best practices
+# Boas práticas do Laravel
 
-Best practices for Laravel, organized as an index of rule files. Each rule file teaches what to do and why. For exact API syntax, verify with `search-docs`.
+Boas práticas para Laravel, organizadas como um índice de arquivos de regras. Cada arquivo de regra ensina o que fazer e por quê. Para a sintaxe exata da API, verifique com `search-docs`.
 
-## Consistency first
+## Consistência em primeiro lugar
 
-Before applying any rule, check what the application already does. Laravel offers several valid approaches. The best choice is the one the codebase already uses, even if another pattern would be better in theory. Inconsistency is worse than a suboptimal pattern.
+Antes de aplicar qualquer regra, verifique o que a aplicação já faz. O Laravel oferece várias abordagens válidas. A melhor escolha é a que a base de código já utiliza, mesmo que outro padrão fosse melhor na teoria. Inconsistência é pior do que um padrão subótimo.
 
-Check sibling files and related controllers, models, or tests for established patterns. If one exists, follow it. Don't introduce a second way. These rules are defaults for when no pattern exists yet, not overrides.
+Verifique arquivos irmãos e controllers, models ou testes relacionados para encontrar padrões estabelecidos. Se existir um, siga-o. Não introduza uma segunda forma. Estas regras são padrões padrão para quando ainda não existe um padrão, não sobrescritas.
 
-## How to apply
+## Como aplicar
 
-1. Check the changed files, nearby code, project configuration, and relevant tests for established patterns. Deviate only for a correctness or security defect, and call the deviation out.
-2. Map every affected concern to the rule index below. Read each mapped rule file before editing. Skip unrelated rule files.
-3. Make the smallest coherent change. Keep the application's architecture and naming instead of introducing a second pattern for the same job.
-4. Verify version-sensitive Laravel APIs for the installed version with `search-docs`, or inspect the installed framework when `search-docs` is unavailable.
-5. Run the narrowest relevant tests first, then the project's formatting and static-analysis checks when the change warrants them.
-6. Re-read the diff against every mapped rule before finishing.
+1. Verifique os arquivos alterados, código próximo, configuração do projeto e testes relevantes para identificar padrões estabelecidos. Só desvie por um defeito de corretude ou segurança, e destaque o desvio.
+2. Mapeie cada preocupação afetada para o índice de regras abaixo. Leia cada arquivo de regra mapeado antes de editar. Pule arquivos de regras não relacionados.
+3. Faça a menor alteração coerente. Mantenha a arquitetura e a nomenclatura da aplicação em vez de introduzir um segundo padrão para a mesma tarefa.
+4. Verifique APIs do Laravel sensíveis à versão para a versão instalada com `search-docs`, ou inspecione o framework instalado quando `search-docs` estiver indisponível.
+5. Execute primeiro os testes relevantes mais restritos e, em seguida, as verificações de formatação e análise estática do projeto quando a alteração justificar.
+6. Releia o diff comparando com cada regra mapeada antes de finalizar.
 
-## Rule index
+## Índice de regras
 
-Cross-cutting changes often need more than one rule file.
+Alterações transversais frequentemente precisam de mais de um arquivo de regra.
 
-| Concern | Read |
+| Preocupação | Ler |
 | --- | --- |
-| Query count, eager loading, indexes, large datasets | [`rules/db-performance.md`](rules/db-performance.md) |
-| Subqueries, aggregates, complex ordering and query plans | [`rules/advanced-queries.md`](rules/advanced-queries.md) |
-| Models, relationships, scopes, casts | [`rules/eloquent.md`](rules/eloquent.md) |
-| Authentication, authorization, input safety, secrets, uploads | [`rules/security.md`](rules/security.md) |
-| Form Requests and validation rules | [`rules/validation.md`](rules/validation.md) |
+| Contagem de queries, eager loading, índices, grandes conjuntos de dados | [`rules/db-performance.md`](rules/db-performance.md) |
+| Subqueries, agregações, ordenação complexa e planos de query | [`rules/advanced-queries.md`](rules/advanced-queries.md) |
+| Models, relacionamentos, escopos, casts | [`rules/eloquent.md`](rules/eloquent.md) |
+| Autenticação, autorização, segurança de entrada, segredos, uploads | [`rules/security.md`](rules/security.md) |
+| Form Requests e regras de validação | [`rules/validation.md`](rules/validation.md) |
 | Controllers, route binding, resources, middleware | [`rules/routing.md`](rules/routing.md) |
-| Schema changes, columns, foreign keys, indexes | [`rules/migrations.md`](rules/migrations.md) |
-| Jobs, retries, uniqueness, batches, Horizon | [`rules/queue-jobs.md`](rules/queue-jobs.md) |
-| Cache lifetime, invalidation, locks, memoization | [`rules/caching.md`](rules/caching.md) |
-| Outbound requests, retries, timeouts, fakes | [`rules/http-client.md`](rules/http-client.md) |
-| Exceptions, reporting, rendering, log context | [`rules/error-handling.md`](rules/error-handling.md) |
-| Events and notifications | [`rules/events-notifications.md`](rules/events-notifications.md) |
-| Mailables and mail assertions | [`rules/mail.md`](rules/mail.md) |
-| Scheduled tasks and overlap protection | [`rules/scheduling.md`](rules/scheduling.md) |
-| Collections, lazy iteration, bulk operations | [`rules/collections.md`](rules/collections.md) |
-| Blade components, attributes, composers | [`rules/blade-views.md`](rules/blade-views.md) |
-| Environment values and application configuration | [`rules/config.md`](rules/config.md) |
-| Tests: coverage, factories, fakes, and assertions | the `testing-best-practices` skill |
-| Naming, helpers, file boundaries, PHP style | [`rules/style.md`](rules/style.md) |
-| Actions, services, dependencies, application structure | [`rules/architecture.md`](rules/architecture.md) |
+| Alterações de schema, colunas, chaves estrangeiras, índices | [`rules/migrations.md`](rules/migrations.md) |
+| Jobs, tentativas, unicidade, batches, Horizon | [`rules/queue-jobs.md`](rules/queue-jobs.md) |
+| Tempo de vida de cache, invalidação, locks, memoização | [`rules/caching.md`](rules/caching.md) |
+| Requisições externas, tentativas, timeouts, fakes | [`rules/http-client.md`](rules/http-client.md) |
+| Exceções, relato, renderização, contexto de log | [`rules/error-handling.md`](rules/error-handling.md) |
+| Eventos e notificações | [`rules/events-notifications.md`](rules/events-notifications.md) |
+| Mailables e asserções de e-mail | [`rules/mail.md`](rules/mail.md) |
+| Tarefas agendadas e proteção contra sobreposição | [`rules/scheduling.md`](rules/scheduling.md) |
+| Collections, iteração lazy, operações em lote | [`rules/collections.md`](rules/collections.md) |
+| Componentes Blade, atributos, composers | [`rules/blade-views.md`](rules/blade-views.md) |
+| Valores de ambiente e configuração da aplicação | [`rules/config.md`](rules/config.md) |
+| Testes: cobertura, factories, fakes e asserções | a skill `testing-best-practices` |
+| Nomenclatura, helpers, limites de arquivos, estilo PHP | [`rules/style.md`](rules/style.md) |
+| Actions, services, dependências, estrutura da aplicação | [`rules/architecture.md`](rules/architecture.md) |
 
-## Decision rules
+## Regras de decisão
 
-- Prefer framework features and existing application abstractions over new helpers or dependencies.
-- Avoid speculative abstractions. Extract code when it creates a clear domain boundary, removes meaningful duplication, or makes behavior independently testable.
-- Keep database access out of Blade views and prevent hidden N+1 queries across controllers, resources, jobs, and serialization.
+- Prefira recursos do framework e abstrações existentes da aplicação em vez de novos helpers ou dependências.
+- Evite abstrações especulativas. Extraia código quando isso criar uma fronteira de domínio clara, remover duplicação relevante ou tornar o comportamento testável de forma independente.
+- Mantenha o acesso ao banco de dados fora das views Blade e evite queries N+1 ocultas em controllers, resources, jobs e serialização.

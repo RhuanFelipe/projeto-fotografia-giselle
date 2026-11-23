@@ -1,10 +1,10 @@
-# Database performance best practices
+# Boas práticas de desempenho de banco de dados
 
-## Eager load relationships before iterating
+## Faça eager loading de relacionamentos antes de iterar
 
-When code accesses a relationship on many models, eager load the relationship with `with()`. Eager loading avoids the N+1 query pattern: one initial query plus one relationship query per model. Lazy loading is reasonable when the code may not need the relationship or when only one model is involved.
+Quando o código acessa um relacionamento em muitos modelos, faça o eager loading do relacionamento com `with()`. O eager loading evita o padrão de consulta N+1: uma consulta inicial mais uma consulta de relacionamento por modelo. O lazy loading é razoável quando o código pode não precisar do relacionamento ou quando apenas um modelo está envolvido.
 
-Lazy-loaded version:
+Versão com lazy loading:
 
 ```php
 $posts = Post::all();
@@ -13,7 +13,7 @@ foreach ($posts as $post) {
 }
 ```
 
-Eager-loaded version:
+Versão com eager loading:
 
 ```php
 $posts = Post::with('author')->get();
@@ -22,7 +22,7 @@ foreach ($posts as $post) {
 }
 ```
 
-Constrain an eager load when the code does not need the large columns. Include the related model's primary key and every column Eloquent needs to match the relationship. In this example, `users.id` and `posts.user_id` match posts to users, and selecting `posts.id` keeps each related model's primary key:
+Restrinja um eager load quando o código não precisar das colunas grandes. Inclua a chave primária do modelo relacionado e todas as colunas que o Eloquent precisa para corresponder ao relacionamento. Neste exemplo, `users.id` e `posts.user_id` correspondem posts a usuários, e selecionar `posts.id` mantém a chave primária de cada modelo relacionado:
 
 ```php
 $users = User::with(['posts' => function ($query) {
@@ -33,9 +33,9 @@ $users = User::with(['posts' => function ($query) {
 }])->get();
 ```
 
-## Prevent lazy loading in development
+## Previna lazy loading em desenvolvimento
 
-Enable lazy-loading prevention in `AppServiceProvider::boot()` to catch N+1 queries during development.
+Habilite a prevenção de lazy loading em `AppServiceProvider::boot()` para capturar consultas N+1 durante o desenvolvimento.
 
 ```php
 public function boot(): void
@@ -44,19 +44,19 @@ public function boot(): void
 }
 ```
 
-With prevention enabled, accessing an unloaded relationship throws a `LazyLoadingViolationException` by default. To customize violation handling, use `handleLazyLoadingViolationUsing()`.
+Com a prevenção habilitada, acessar um relacionamento não carregado lança uma `LazyLoadingViolationException` por padrão. Para personalizar o tratamento da violação, use `handleLazyLoadingViolationUsing()`.
 
-## Select only the columns you need
+## Selecione apenas as colunas necessárias
 
-When omitting large text, binary, or JSON columns gives a meaningful benefit, select only the columns the operation needs.
+Quando omitir colunas grandes de texto, binário ou JSON trouxer um benefício significativo, selecione apenas as colunas que a operação precisa.
 
-All columns:
+Todas as colunas:
 
 ```php
 $posts = Post::with('author')->get();
 ```
 
-Selected columns:
+Colunas selecionadas:
 
 ```php
 $posts = Post::select('id', 'title', 'user_id', 'created_at')
@@ -64,13 +64,13 @@ $posts = Post::select('id', 'title', 'user_id', 'created_at')
     ->get();
 ```
 
-When you limit the selected columns, keep every key Eloquent needs for matching. A `belongsTo` relationship needs its foreign key on the parent query and the owner's key on the related query. A `hasMany` relationship needs the parent's local key and the related model's foreign key.
+Quando você limitar as colunas selecionadas, mantenha todas as chaves que o Eloquent precisa para a correspondência. Um relacionamento `belongsTo` precisa de sua chave estrangeira na consulta pai e da chave do proprietário na consulta relacionada. Um relacionamento `hasMany` precisa da chave local do pai e da chave estrangeira do modelo relacionado.
 
-## Process large data sets incrementally
+## Processe grandes conjuntos de dados incrementalmente
 
-When loading the entire result set would exceed the application's practical memory budget, use chunking or lazy iteration.
+Quando carregar todo o conjunto de resultados exceder o orçamento prático de memória da aplicação, use chunking ou iteração lazy.
 
-Loads the complete result set:
+Carrega o conjunto completo de resultados:
 
 ```php
 $users = User::all();
@@ -79,7 +79,7 @@ foreach ($users as $user) {
 }
 ```
 
-Processes bounded chunks:
+Processa blocos (chunks) limitados:
 
 ```php
 User::where('subscribed', true)->chunk(200, function ($users) {
@@ -89,7 +89,7 @@ User::where('subscribed', true)->chunk(200, function ($users) {
 });
 ```
 
-Use `chunkById()` when updates can change which rows match the query. Standard `chunk()` uses offset pagination, so result positions can shift as rows change:
+Use `chunkById()` quando atualizações puderem alterar quais linhas correspondem à consulta. O `chunk()` padrão usa paginação por offset, então as posições dos resultados podem mudar conforme as linhas são alteradas:
 
 ```php
 User::where('active', false)->chunkById(200, function ($users) {
@@ -97,13 +97,13 @@ User::where('active', false)->chunkById(200, function ($users) {
 });
 ```
 
-For read-only iteration that uses only model attributes, `cursor()` runs one query and hydrates one model at a time. Some database drivers still buffer the raw results. Use `lazy()` when you need to eager load relationships in chunks. Use `lazyById()` or `chunkById()` when updates can change which rows match the query. See the collection rules for detailed tradeoffs.
+Para iteração somente leitura que usa apenas atributos do modelo, `cursor()` executa uma consulta e hidrata um modelo por vez. Alguns drivers de banco de dados ainda armazenam em buffer os resultados brutos. Use `lazy()` quando precisar fazer eager loading de relacionamentos em blocos. Use `lazyById()` ou `chunkById()` quando atualizações puderem alterar quais linhas correspondem à consulta. Consulte as regras de coleções para detalhes sobre essas escolhas.
 
-## Add indexes for measured query patterns
+## Adicione índices para padrões de consulta medidos
 
-Design indexes around frequent, performance-sensitive query patterns. A column's presence in `WHERE`, `ORDER BY`, `JOIN`, or `GROUP BY` does not by itself justify an index. Selectivity, write cost, existing indexes, and the database query plan all matter.
+Projete índices em torno de padrões de consulta frequentes e sensíveis a desempenho. A presença de uma coluna em `WHERE`, `ORDER BY`, `JOIN` ou `GROUP BY` não justifica por si só um índice. Seletividade, custo de escrita, índices existentes e o plano de execução do banco de dados são fatores importantes.
 
-Schema without an application-specific query index:
+Schema sem um índice de consulta específico da aplicação:
 
 ```php
 Schema::create('orders', function (Blueprint $table) {
@@ -114,7 +114,7 @@ Schema::create('orders', function (Blueprint $table) {
 });
 ```
 
-Schema optimized for `WHERE status = ? ORDER BY created_at`:
+Schema otimizado para `WHERE status = ? ORDER BY created_at`:
 
 ```php
 Schema::create('orders', function (Blueprint $table) {
@@ -126,13 +126,13 @@ Schema::create('orders', function (Blueprint $table) {
 });
 ```
 
-Use production-like data and the database's query-plan tools to confirm the column order of a composite index and whether the index helps. Before you add an index for a foreign key, check whether the database already created one.
+Use dados semelhantes aos de produção e as ferramentas de plano de consulta do banco de dados para confirmar a ordem das colunas de um índice composto e se o índice realmente ajuda. Antes de adicionar um índice para uma chave estrangeira, verifique se o banco de dados já criou um.
 
-## Count relationships without loading them
+## Conte relacionamentos sem carregá-los
 
-Use `withCount()` when you need only the relationship counts. Loading and hydrating every related model wastes memory.
+Use `withCount()` quando precisar apenas das contagens dos relacionamentos. Carregar e hidratar todos os modelos relacionados desperdiça memória.
 
-Loads related models:
+Carrega modelos relacionados:
 
 ```php
 $posts = Post::all();
@@ -141,7 +141,7 @@ foreach ($posts as $post) {
 }
 ```
 
-Selects relationship counts:
+Seleciona contagens de relacionamentos:
 
 ```php
 $posts = Post::withCount('comments')->get();
@@ -150,7 +150,7 @@ foreach ($posts as $post) {
 }
 ```
 
-Conditional counting:
+Contagem condicional:
 
 ```php
 $posts = Post::withCount([
@@ -161,11 +161,11 @@ $posts = Post::withCount([
 ])->get();
 ```
 
-## Keep queries out of Blade templates
+## Mantenha consultas fora dos templates Blade
 
-Prepare data before rendering a Blade template, for example in a controller, a query service, or a view composer. Queries outside the template stay visible and testable.
+Prepare os dados antes de renderizar um template Blade, por exemplo em um controller, em um serviço de consulta ou em um view composer. Consultas fora do template permanecem visíveis e testáveis.
 
-Query in the template:
+Consulta no template:
 
 ```blade
 @foreach (User::all() as $user)
@@ -173,7 +173,7 @@ Query in the template:
 @endforeach
 ```
 
-Data prepared before rendering:
+Dados preparados antes da renderização:
 
 ```php
 // Controller

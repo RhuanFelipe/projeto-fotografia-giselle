@@ -1,44 +1,44 @@
 ---
 name: tailwindcss-development
-description: "Always invoke when the user's message includes 'tailwind' in any form. Also invoke for: building responsive grid layouts (multi-column card grids, product grids), flex/grid page structures (dashboards with sidebars, fixed topbars, mobile-toggle navs), styling UI components (cards, tables, navbars, pricing sections, forms, inputs, badges), adding dark mode variants, fixing spacing or typography, and Tailwind v3/v4 work. The core use case: writing or fixing Tailwind utility classes in HTML templates (Blade, JSX, Vue). Skip for backend PHP logic, database queries, API routes, JavaScript with no HTML/CSS component, CSS file audits, build tool configuration, and vanilla CSS."
+description: "Sempre acionar quando a mensagem do usuário incluir 'tailwind' de qualquer forma. Acione também para: construir layouts responsivos em grid (grids de cards em múltiplas colunas, grids de produtos), estruturas de página flex/grid (dashboards com barras laterais, topbars fixas, navegação com toggle mobile), estilizar componentes de UI (cards, tabelas, navbars, seções de preços, formulários, inputs, badges), adicionar variantes de modo escuro, corrigir espaçamento ou tipografia e trabalho com Tailwind v3/v4. Caso de uso principal: escrever ou corrigir classes utilitárias do Tailwind em templates HTML (Blade, JSX, Vue). Pule para lógica PHP de backend, consultas de banco, rotas de API, JavaScript sem componente HTML/CSS, auditorias de arquivos CSS, configuração de ferramenta de build e CSS puro."
 license: MIT
 metadata:
   author: laravel
 ---
 
-# Tailwind CSS development
+# Desenvolvimento com Tailwind CSS
 
-## Documentation
+## Documentação
 
-Use `search-docs` for detailed Tailwind CSS v4 patterns and documentation.
+Use `search-docs` para padrões detalhados e documentação do Tailwind CSS v4.
 
-## Basic usage
+## Uso básico
 
-- Use Tailwind CSS classes to style HTML. Before introducing new patterns, check and follow the project's existing Tailwind conventions.
-- Offer to extract repeated patterns into components that match the project's conventions, such as Blade, JSX, or Vue components.
-- Consider class placement, order, priority, and defaults. Remove redundant classes, add classes to parent or child elements carefully to reduce repetition, and group elements logically.
+- Use classes do Tailwind CSS para estilizar HTML. Antes de introduzir novos padrões, verifique e siga as convenções de Tailwind já existentes no projeto.
+- Ofereça extrair padrões repetidos para componentes que sigam as convenções do projeto, como componentes Blade, JSX ou Vue.
+- Considere posicionamento, ordem, prioridade e padrões das classes. Remova classes redundantes, adicione classes aos elementos pai ou filho com cuidado para reduzir repetição e agrupe elementos logicamente.
 
-## Tailwind CSS v4 specifics
+## Especificidades do Tailwind CSS v4
 
-- Always use Tailwind CSS v4 and avoid deprecated utilities.
-- `corePlugins` is not supported in Tailwind v4.
+- Use sempre Tailwind CSS v4 e evite utilitários descontinuados.
+- `corePlugins` não é suportado no Tailwind v4.
 
-### CSS-first configuration
+### Configuração CSS-first
 
-In Tailwind v4, you configure Tailwind in CSS with the `@theme` directive. You don't need a separate `tailwind.config.js` file:
+No Tailwind v4, você configura o Tailwind no CSS com a diretiva `@theme`. Você não precisa de um arquivo `tailwind.config.js` separado:
 
-<!-- CSS-First Config -->
+<!-- Configuração CSS-First -->
 ```css
 @theme {
   --color-brand: oklch(0.72 0.11 178);
 }
 ```
 
-### Import syntax
+### Sintaxe de importação
 
-In Tailwind v4, import Tailwind with a regular CSS `@import` statement instead of the `@tailwind` directives used in v3:
+No Tailwind v4, importe o Tailwind com uma declaração CSS `@import` comum em vez das diretivas `@tailwind` usadas na v3:
 
-<!-- v4 Import Syntax -->
+<!-- Sintaxe de Importação v4 -->
 ```diff
 - @tailwind base;
 - @tailwind components;
@@ -46,12 +46,12 @@ In Tailwind v4, import Tailwind with a regular CSS `@import` statement instead o
 + @import "tailwindcss";
 ```
 
-### Replaced utilities
+### Utilitários substituídos
 
-Tailwind v4 removed deprecated utilities. Use the replacements shown below. For opacity, drop the `*-opacity-*` class and append the value as a modifier on the existing color: `bg-blue-500 bg-opacity-50` becomes `bg-blue-500/50`, `text-white text-opacity-75` becomes `text-white/75`.
+O Tailwind v4 removeu utilitários descontinuados. Use as substituições mostradas abaixo. Para opacidade, remova a classe `*-opacity-*` e adicione o valor como modificador na cor existente: `bg-blue-500 bg-opacity-50` vira `bg-blue-500/50`, `text-white text-opacity-75` vira `text-white/75`.
 
-| Deprecated | Replacement |
-|------------|-------------|
+| Descontinuado | Substituição |
+|---------------|--------------|
 | bg-opacity-* | bg-{color}/* |
 | text-opacity-* | text-{color}/* |
 | border-opacity-* | border-{color}/* |
@@ -64,11 +64,11 @@ Tailwind v4 removed deprecated utilities. Use the replacements shown below. For 
 | decoration-slice | box-decoration-slice |
 | decoration-clone | box-decoration-clone |
 
-## Spacing
+## Espaçamento
 
-Use `gap` utilities instead of margins for spacing between siblings:
+Use utilitários `gap` em vez de margens para espaçamento entre irmãos:
 
-<!-- Gap Utilities -->
+<!-- Utilitários Gap -->
 ```html
 <div class="flex gap-8">
     <div>Item 1</div>
@@ -76,21 +76,21 @@ Use `gap` utilities instead of margins for spacing between siblings:
 </div>
 ```
 
-## Dark mode
+## Modo escuro
 
-If existing pages and components support dark mode, new pages and components must support it the same way, typically using the `dark:` variant:
+Se as páginas e os componentes existentes suportarem modo escuro, novas páginas e componentes devem suportá-lo da mesma forma, normalmente usando a variante `dark:`:
 
-<!-- Dark Mode -->
+<!-- Modo Escuro -->
 ```html
 <div class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-    Content adapts to color scheme
+    O conteúdo se adapta ao esquema de cores
 </div>
 ```
 
-## Common pitfalls
+## Armadilhas comuns
 
-- Using deprecated v3 utilities, such as `bg-opacity-*` and `flex-shrink-*`
-- Using `@tailwind` directives instead of `@import "tailwindcss"`
-- Using `tailwind.config.js` instead of the CSS `@theme` directive
-- Using margins for spacing between siblings instead of gap utilities
-- Forgetting to add dark mode variants when the project uses dark mode
+- Usar utilitários descontinuados da v3, como `bg-opacity-*` e `flex-shrink-*`
+- Usar diretivas `@tailwind` em vez de `@import "tailwindcss"`
+- Usar `tailwind.config.js` em vez da diretiva CSS `@theme`
+- Usar margens para espaçamento entre irmãos em vez de utilitários `gap`
+- Esquecer de adicionar variantes de modo escuro quando o projeto utiliza modo escuro

@@ -1,8 +1,8 @@
-# Queue and job best practices
+# Boas práticas de filas e jobs
 
-## Keep reservation time longer than execution time
+## Mantenha o tempo de reserva maior que o tempo de execução
 
-For queue drivers that use Laravel's `retry_after` setting, configure it to exceed the longest worker or job timeout by a safety margin. When a reservation expires, another worker can reserve the same job while the first process is still running. Keep the worker's `--timeout` several seconds shorter than `retry_after`.
+Para drivers de fila que usam a configuração `retry_after` do Laravel, configure-a para exceder o maior timeout de worker ou job por uma margem de segurança. Quando uma reserva expira, outro worker pode reservar o mesmo job enquanto o primeiro processo ainda está em execução. Mantenha o `--timeout` do worker vários segundos menor que `retry_after`.
 
 ```php
 // Job
@@ -12,11 +12,11 @@ public $timeout = 120;
 'retry_after' => 150,
 ```
 
-Amazon Simple Queue Service uses its visibility timeout instead of Laravel's `retry_after`. Configure that timeout at the queue level. Because workers can also stop after side effects but before acknowledging a job, make important jobs idempotent even with correct timeout settings.
+O Amazon Simple Queue Service (SQS) usa seu próprio visibility timeout em vez do `retry_after` do Laravel. Configure esse timeout no nível da fila. Como os workers também podem parar após efeitos colaterais, mas antes de confirmar um job, torne jobs importantes idempotentes mesmo com configurações de timeout corretas.
 
-## Back off transient failures
+## Aplique backoff em falhas transitórias
 
-Use progressively longer delays when a dependency needs time to recover. Do not retry permanent validation or business-rule failures.
+Use atrasos progressivamente maiores quando uma dependência precisar de tempo para se recuperar. Não tente novamente falhas permanentes de validação ou de regra de negócio.
 
 ```php
 class SyncWithStripe implements ShouldQueue
@@ -27,11 +27,11 @@ class SyncWithStripe implements ShouldQueue
 }
 ```
 
-Rate-limiting and exception-throttling middleware can release jobs back to the queue. Released attempts may still count toward the maximum attempt limit, so configure `$tries` or `retryUntil()` to allow the intended retry window.
+Middlewares de limitação de taxa (rate-limiting) e de controle de exceções (exception-throttling) podem liberar jobs de volta para a fila. Tentativas liberadas ainda podem contar para o limite máximo de tentativas, portanto configure `$tries` ou `retryUntil()` para permitir a janela de novas tentativas pretendida.
 
-## Use unique jobs for dispatch deduplication
+## Use jobs únicos para deduplicação de despachos
 
-Implement `ShouldBeUnique` when only one queued instance of a logical job should exist. Uniqueness uses a cache lock. It does not replace idempotent processing or a database constraint.
+Implemente `ShouldBeUnique` quando apenas uma instância na fila de um job lógico dever existir. A unicidade usa um bloqueio de cache (cache lock). Ela não substitui o processamento idempotente nem uma restrição de banco de dados.
 
 ```php
 class GenerateInvoice implements ShouldQueue, ShouldBeUnique
@@ -45,9 +45,9 @@ class GenerateInvoice implements ShouldQueue, ShouldBeUnique
 }
 ```
 
-All dispatching processes must use a shared cache that supports locks. Unique-job constraints do not apply to jobs within batches.
+Todos os processos que despacham jobs devem usar um cache compartilhado que suporte bloqueios. Restrições de job único não se aplicam a jobs dentro de lotes (batches).
 
-Use `ShouldBeUniqueUntilProcessing` only when the lock should release immediately before processing begins. Another instance can then be dispatched while the first is running:
+Use `ShouldBeUniqueUntilProcessing` apenas quando o bloqueio dever ser liberado imediatamente antes do início do processamento. Outra instância pode então ser despachada enquanto a primeira está em execução:
 
 ```php
 class UpdateSearchIndex implements ShouldQueue, ShouldBeUniqueUntilProcessing
@@ -56,11 +56,11 @@ class UpdateSearchIndex implements ShouldQueue, ShouldBeUniqueUntilProcessing
 }
 ```
 
-## Handle terminal failure when needed
+## Trate falhas terminais quando necessário
 
-Implement `failed()` when the application must update state, alert an operator, or record domain-specific context after all attempts are exhausted. Logging every failure in each job may duplicate the queue system's failure reporting.
+Implemente `failed()` quando a aplicação precisar atualizar estado, alertar um operador ou registrar contexto específico do domínio após todas as tentativas se esgotarem. Registrar todas as falhas em cada job pode duplicar o relatório de falhas do sistema de filas.
 
-Laravel invokes `failed()` on a new job instance, so changes made to the job during `handle()` are not available in `failed()`.
+O Laravel invoca `failed()` em uma nova instância do job, portanto alterações feitas no job durante `handle()` não estarão disponíveis em `failed()`.
 
 ```php
 public function failed(?Throwable $exception): void
@@ -74,9 +74,9 @@ public function failed(?Throwable $exception): void
 }
 ```
 
-## Rate limit external calls
+## Limite a taxa de chamadas externas
 
-Use queue middleware such as `RateLimited` when jobs share a third-party API quota. Define the named limiter and choose release delays and attempt limits together.
+Use middlewares de fila como `RateLimited` quando jobs compartilharem uma cota de API de terceiros. Defina o limitador nomeado e escolha os atrasos de liberação e os limites de tentativas em conjunto.
 
 ```php
 public function middleware(): array
@@ -85,9 +85,9 @@ public function middleware(): array
 }
 ```
 
-## Batch jobs for group coordination
+## Agrupe jobs em lote para coordenação de grupo
 
-Use `Bus::batch()` to monitor a group of jobs and run callbacks when the batch completes or encounters failures. A batch is not a database transaction. Laravel does not roll back completed jobs when another job fails. By default, one failed job cancels the batch. Call `allowFailures()` only when partial failure is acceptable.
+Use `Bus::batch()` para monitorar um grupo de jobs e executar callbacks quando o lote for concluído ou encontrar falhas. Um lote não é uma transação de banco de dados. O Laravel não reverte jobs concluídos quando outro job falha. Por padrão, um job com falha cancela o lote. Chame `allowFailures()` apenas quando falha parcial for aceitável.
 
 ```php
 Bus::batch([
@@ -101,9 +101,9 @@ Bus::batch([
     ->dispatch();
 ```
 
-## Configure time-based retry limits deliberately
+## Configure limites de novas tentativas baseados em tempo deliberadamente
 
-Use `retryUntil()` as the time-based alternative to a maximum attempt count. Laravel may attempt the job any number of times until this deadline, subject to other failure conditions such as maximum exceptions. `retryUntil()` takes precedence over attempt-based limits, so you do not need to set `$tries = 0`.
+Use `retryUntil()` como alternativa baseada em tempo para uma contagem máxima de tentativas. O Laravel pode tentar executar o job quantas vezes forem necessárias até esse prazo limite, sujeito a outras condições de falha, como o máximo de exceções. `retryUntil()` tem precedência sobre limites baseados em tentativas, então você não precisa definir `$tries = 0`.
 
 ```php
 public function retryUntil(): DateTimeInterface
@@ -112,6 +112,6 @@ public function retryUntil(): DateTimeInterface
 }
 ```
 
-## Use Horizon for Redis queue operations
+## Use o Horizon para operações de fila com Redis
 
-Laravel Horizon provides monitoring, balancing, metrics, and supervisor configuration for Redis queues. It does not support non-Redis queue drivers.
+O Laravel Horizon fornece monitoramento, balanceamento, métricas e configuração de supervisor para filas Redis. Ele não oferece suporte a drivers de fila que não sejam Redis.

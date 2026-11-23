@@ -1,33 +1,33 @@
-# How to find test framework features
+# Como encontrar recursos do framework de testes
 
-PHPUnit and Laravel provide features for most testing needs. Find an existing feature before implementing the behavior by hand.
+O PHPUnit e o Laravel fornecem recursos para a maioria das necessidades de teste. Encontre um recurso existente antes de implementar o comportamento manualmente.
 
-- Give `search-docs` the capability you need rather than the name of a method you remember. It returns Laravel testing documentation for the installed version.
-- Fetch `https://phpunit.de/documentation.html` for version-specific PHPUnit attributes, assertions, and command-line options.
-- If a search returns no results, tell the user that the installed version does not provide the feature. Do not write an API that you have not confirmed.
+- Passe para `search-docs` a capacidade de que você precisa em vez do nome de um método de que você se lembra. Ele retorna a documentação de testes do Laravel para a versão instalada.
+- Consulte `https://phpunit.de/documentation.html` para atributos, asserções e opções de linha de comando específicos da versão do PHPUnit.
+- Se uma pesquisa não retornar resultados, informe ao usuário que a versão instalada não fornece o recurso. Não escreva uma API que você não confirmou.
 
-Search for a feature in this table before you write the code by hand.
+Procure um recurso nesta tabela antes de escrever o código manualmente.
 
-| Work that you need | Term to search for |
+| Trabalho necessário | Termo para pesquisar |
 | --- | --- |
-| Run one test method with many input values | data provider, `#[DataProvider]`, `#[TestWith]` |
-| Run one test only after another test passes | `#[Depends]` |
-| Select or skip a set of tests in one run | `#[Group]`, `--group`, `--exclude-group` |
-| Skip a test on a version or on a missing extension | `#[RequiresPhp]`, `#[RequiresPhpExtension]` |
-| Find a test that depends on the order of the run | `--order-by=random` |
-| Reduce the time of a slow suite | ParaTest, `--cache-result` |
-| Stop the run at the first failure while you debug | `--stop-on-failure`, `--filter` |
+| Executar um método de teste com muitos valores de entrada | data provider, `#[DataProvider]`, `#[TestWith]` |
+| Executar um teste apenas depois que outro teste passar | `#[Depends]` |
+| Selecionar ou pular um conjunto de testes em uma execução | `#[Group]`, `--group`, `--exclude-group` |
+| Pular um teste em uma versão ou na ausência de uma extensão | `#[RequiresPhp]`, `#[RequiresPhpExtension]` |
+| Encontrar um teste que depende da ordem da execução | `--order-by=random` |
+| Reduzir o tempo de uma suíte lenta | ParaTest, `--cache-result` |
+| Parar a execução na primeira falha enquanto você depura | `--stop-on-failure`, `--filter` |
 
-## Built-in Laravel assertion methods
+## Métodos de asserção integrados do Laravel
 
-Laravel provides assertions for each part of the framework. Fetch `https://laravel.com/framework/docs/testing` for the complete list, and search for an assertion before you build a check by hand. Examples include `assertDatabaseHas()`, `assertModelExists()`, `assertSoftDeleted()`, response assertions such as `assertRedirectToRoute()` and `assertJsonPath()`, and fake assertions such as `Queue::assertPushed()` and `Notification::assertSentTo()`.
+O Laravel fornece asserções para cada parte do framework. Consulte `https://laravel.com/framework/docs/testing` para a lista completa e procure uma asserção antes de construir uma verificação manualmente. Exemplos incluem `assertDatabaseHas()`, `assertModelExists()`, `assertSoftDeleted()`, asserções de resposta como `assertRedirectToRoute()` e `assertJsonPath()`, e asserções de fakes como `Queue::assertPushed()` e `Notification::assertSentTo()`.
 
-A hand-built check fails with `false is not true`. That message identifies nothing. A framework assertion names the incorrect table, value, or response, so the failure shows what to fix.
+Uma verificação construída manualmente falha com `false is not true`. Essa mensagem não identifica nada. Uma asserção do framework nomeia a tabela, o valor ou a resposta incorreta, de modo que a falha mostra o que corrigir.
 
 ```php
-// The failure says that false is not true. Instead of this...
+// A falha diz que false is not true. Em vez disso...
 $this->assertTrue(User::where('email', 'taylor@laravel.com')->exists());
 
-// Use this... the failure names the table and the attributes that it did not find...
+// Use isto... a falha nomeia a tabela e os atributos que não encontrou...
 $this->assertDatabaseHas('users', ['email' => 'taylor@laravel.com']);
 ```

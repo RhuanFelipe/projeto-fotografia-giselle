@@ -1,8 +1,8 @@
-# Validation and forms best practices
+# Boas práticas de validação e formulários
 
-## Extract validation when it improves the boundary
+## Extraia a validação quando isso melhorar a fronteira
 
-Use a form request when validation or authorization is substantial, reused, or clearer outside the controller. Inline `$request->validate()` remains appropriate for a small, endpoint-specific rule set.
+Use um form request quando a validação ou autorização for substancial, reutilizada ou mais clara fora do controller. `$request->validate()` inline continua apropriado para um conjunto pequeno de regras específico do endpoint.
 
 ```php
 public function store(StorePostRequest $request): RedirectResponse
@@ -13,43 +13,43 @@ public function store(StorePostRequest $request): RedirectResponse
 }
 ```
 
-A form request's `authorize()` method can enforce access to the operation. Validation checks the shape and values of the input. Validation alone does not authorize the user.
+O método `authorize()` de um form request pode impor acesso à operação. A validação verifica o formato e os valores da entrada. A validação por si só não autoriza o usuário.
 
-## Prefer readable rule syntax
+## Prefira uma sintaxe de regras legível
 
-Array syntax combines with rule objects and avoids delimiter problems. Prefer array syntax in new code when it improves readability, and keep the local style consistent.
+A sintaxe de array combina-se com objetos de regra e evita problemas de delimitadores. Prefira a sintaxe de array em código novo quando ela melhorar a legibilidade e mantenha o estilo local consistente.
 
 ```php
 'email' => ['required', 'email', Rule::unique('users')],
 ```
 
-String syntax remains valid for simple rules:
+A sintaxe de string continua válida para regras simples:
 
 ```php
 'email' => 'required|email|unique:users',
 ```
 
-## Use only the validated data you intend
+## Use apenas os dados validados pretendidos
 
-Use `validated()` or `safe()` instead of `$request->all()` when passing request data onward. When the validation rules also cover control fields or nested data, select only the fields intended for the operation.
+Use `validated()` ou `safe()` em vez de `$request->all()` ao repassar dados da requisição adiante. Quando as regras de validação também abrangerem campos de controle ou dados aninhados, selecione apenas os campos destinados à operação.
 
-Unsafe:
+Inseguro:
 
 ```php
 Post::create($request->all());
 ```
 
-Preferred:
+Preferido:
 
 ```php
 $post = Post::create($request->safe()->only(['title', 'body']));
 ```
 
-Validated data is not automatically safe for mass assignment. Keep model `$fillable` or `$guarded` rules aligned with the operation, and never add a sensitive attribute to validation only to make mass assignment convenient.
+Dados validados não são automaticamente seguros para mass assignment. Mantenha as regras `$fillable` ou `$guarded` do model alinhadas com a operação e nunca adicione um atributo sensível à validação apenas para tornar o mass assignment conveniente.
 
-## Express conditional rules clearly
+## Expresse regras condicionais com clareza
 
-Use conditional rules such as `Rule::when()`, `required_if`, or `exclude_unless` when they make the condition explicit. Choose the simplest form that remains easy to test.
+Use regras condicionais como `Rule::when()`, `required_if` ou `exclude_unless` quando elas tornarem a condição explícita. Escolha a forma mais simples que permaneça fácil de testar.
 
 ```php
 'company_name' => [
@@ -63,9 +63,9 @@ Use conditional rules such as `Rule::when()`, `required_if`, or `exclude_unless`
 ],
 ```
 
-## Add cross-field validation after base rules
+## Adicione validação cruzada de campos após as regras base
 
-Use a form request's `after()` method for validation that depends on multiple fields or application state. Skip expensive queries when prerequisite fields already failed validation.
+Use o método `after()` de um form request para validação que depende de múltiplos campos ou do estado da aplicação. Pule consultas custosas quando campos pré-requisito já tiverem falhado na validação.
 
 ```php
 public function after(): array
@@ -86,4 +86,4 @@ public function after(): array
 }
 ```
 
-Validation against mutable state does not prevent a race between validation and persistence. Enforce inventory, uniqueness, and similar invariants with database constraints, atomic updates, or a database transaction as appropriate.
+A validação contra estado mutável não impede uma condição de corrida (race condition) entre a validação e a persistência. Imponha estoque, unicidade e invariantes semelhantes com restrições de banco de dados, atualizações atômicas ou uma transação de banco de dados, conforme apropriado.

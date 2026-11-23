@@ -1,57 +1,57 @@
 ---
 name: testing-best-practices
-description: "Laravel test design and review. Use when selecting coverage, naming or structuring tests, choosing assertions or test data, isolating dependencies, testing HTTP or security boundaries, improving suite performance, or reviewing test value. Use framework guidance or search-docs for Pest and PHPUnit syntax."
+description: "Design e revisão de testes no Laravel. Use ao selecionar cobertura, nomear ou estruturar testes, escolher asserções ou dados de teste, isolar dependências, testar limites HTTP ou de segurança, melhorar a performance da suíte ou revisar o valor de testes. Use orientações do framework ou search-docs para sintaxe de Pest e PHPUnit."
 license: MIT
 metadata:
   author: laravel
 ---
 
-# Testing best practices
+# Boas práticas de testes
 
-This skill provides rules for designing Laravel tests. Each rule file explains what to do and why. Use `search-docs` for Laravel API syntax. Fetch the PHPUnit 12.5.42 documentation at `https://phpunit.de/documentation.html` for PHPUnit API syntax.
-This project uses PHPUnit. Follow the corresponding guidance in each rule.
+Esta skill fornece regras para projetar testes no Laravel. Cada arquivo de regra explica o que fazer e por quê. Use `search-docs` para sintaxe da API do Laravel. Consulte a documentação do PHPUnit 12.5.42 em `https://phpunit.de/documentation.html` para sintaxe da API do PHPUnit.
+Este projeto usa PHPUnit. Siga as orientações correspondentes em cada regra.
 
-## Consistency first
+## Consistência em primeiro lugar
 
-Read nearby tests before you choose syntax and organization.
+Leia testes próximos antes de escolher sintaxe e organização.
 
-A pattern repeated throughout the project is a convention, and project conventions take precedence over this skill. Follow them and give new tests the same structure.
+Um padrão repetido em todo o projeto é uma convenção, e convenções do projeto têm precedência sobre esta skill. Siga-as e dê aos novos testes a mesma estrutura.
 
-These rules govern the tests you write now. An existing test that follows a project convention is not defective merely because it conflicts with this skill. Do not delete or rewrite it. If the convention has drawbacks, explain them and let the user decide.
+Estas regras regem os testes que você escreve agora. Um teste existente que segue uma convenção do projeto não é defeituoso apenas por conflitar com esta skill. Não o exclua nem o reescreva. Se a convenção tiver desvantagens, explique-as e deixe o usuário decidir.
 
-## What to test
+## O que testar
 
-Read this section before you write a test.
+Leia esta seção antes de escrever um teste.
 
-- Test observable behavior and application contracts. A test must pass after an implementation change if the behavior stays the same.
-- Cover every changed decision and each applicable high-value failure mode. A decision is a branch, a validation, a calculation, or an authorization.
-- Exercise declarations through behavior instead of repeating their text.
-- Leave framework behavior to framework tests. Testing project configuration is not testing the framework. A constrained relationship, cast, scope, or validation rule belongs to this project.
-- Keep every test that can detect a distinct defect. When two tests detect the same defect, trim the higher-layer test to one case and report the duplication. Do not delete an existing test.
-- Write a feature test first. Write a unit test only for logic that does not use the framework.
-- Write a feature test for every behavior reachable through a request. Real-browser tests require `laravel/dusk` and a browser download, neither of which this project installs. Mention the package only if the user asks for a real-browser test.
-- Use the test tools that the project installs. Add a new test dependency, plugin, or browser only after the user asks for it.
+- Teste comportamento observável e contratos da aplicação. Um teste deve continuar passando após uma mudança de implementação se o comportamento permanecer o mesmo.
+- Cubra cada decisão alterada e cada modo de falha de alto valor aplicável. Uma decisão é uma ramificação, uma validação, um cálculo ou uma autorização.
+- Exercite declarações por meio do comportamento em vez de repetir o texto delas.
+- Deixe o comportamento do framework para os testes do framework. Testar configuração do projeto não é testar o framework. Um relacionamento com restrição, cast, escopo ou regra de validação pertence a este projeto.
+- Mantenha todo teste capaz de detectar um defeito distinto. Quando dois testes detectarem o mesmo defeito, reduza o teste da camada superior a um caso e relate a duplicação. Não exclua um teste existente.
+- Escreva um feature test primeiro. Escreva um unit test apenas para lógica que não usa o framework.
+- Escreva um feature test para todo comportamento acessível por uma requisição. Testes reais em navegador exigem `laravel/dusk` e download de navegador, nenhum dos quais este projeto instala. Mencione o pacote apenas se o usuário pedir um teste real em navegador.
+- Use as ferramentas de teste que o projeto instala. Adicione uma nova dependência de teste, plugin ou navegador somente depois que o usuário pedir.
 
-## How to apply
+## Como aplicar
 
-1. Read the code under test. Read the tests in the same directory. Identify every decision in the code.
-2. Select every applicable branch in the rule index. Read every selected rule file.
-3. Report each defect in the code before you write a test. Examples are a method with no body, a policy that no action calls, and a write action with no validation. Test the actual behavior. Report the defect to the user.
-4. Write the tests. Run the smallest set of tests that covers the change. The tests must pass.
-5. Check every applicable item in `rules/review.md` and every selected rule file. Resolve every mismatch before completion.
+1. Leia o código sob teste. Leia os testes no mesmo diretório. Identifique cada decisão no código.
+2. Selecione cada ramificação aplicável no índice de regras. Leia cada arquivo de regra selecionado.
+3. Relate cada defeito no código antes de escrever um teste. Exemplos são um método sem corpo, uma policy que nenhuma action chama e uma ação de escrita sem validação. Teste o comportamento real. Relate o defeito ao usuário.
+4. Escreva os testes. Execute o menor conjunto de testes que cobre a alteração. Os testes devem passar.
+5. Verifique cada item aplicável em `rules/review.md` e em cada arquivo de regra selecionado. Resolva toda divergência antes de concluir.
 
-## Rule index
+## Índice de regras
 
-Most changes need more than one rule file.
+A maioria das alterações precisa de mais de um arquivo de regra.
 
-| Subject | Rule file |
+| Assunto | Arquivo de regra |
 | --- | --- |
-| Test framework features that may already do the work | [`rules/finding-features.md`](rules/finding-features.md) |
-| File layout, test names, and groups | [`rules/naming.md`](rules/naming.md) |
-| Arrange-act-assert and choosing the correct assertion | [`rules/assertions.md`](rules/assertions.md) |
-| Endpoint coverage, authentication, authorization, tenant isolation, validation, and browser tests | [`rules/endpoint-tests.md`](rules/endpoint-tests.md) |
-| Factories, test data ownership, and repeated input values | [`rules/test-data.md`](rules/test-data.md) |
-| Fakes, mocks, outbound HTTP, time, randomness, and databases | [`rules/isolation.md`](rules/isolation.md) |
-| Escaping, injection, cross-tenant access, and privilege checks | [`rules/security.md`](rules/security.md) |
-| Environment and CI settings for a slow suite | [`rules/performance.md`](rules/performance.md) |
-| Reviewing a test or suite | [`rules/review.md`](rules/review.md) |
+| Recursos do framework de teste que podem já fazer o trabalho | [`rules/finding-features.md`](rules/finding-features.md) |
+| Estrutura de arquivos, nomes de testes e grupos | [`rules/naming.md`](rules/naming.md) |
+| Arrange-act-assert e escolha da asserção correta | [`rules/assertions.md`](rules/assertions.md) |
+| Cobertura de endpoints, autenticação, autorização, isolamento de tenant, validação e testes de navegador | [`rules/endpoint-tests.md`](rules/endpoint-tests.md) |
+| Factories, propriedade dos dados de teste e valores de entrada repetidos | [`rules/test-data.md`](rules/test-data.md) |
+| Fakes, mocks, HTTP externo, tempo, aleatoriedade e bancos de dados | [`rules/isolation.md`](rules/isolation.md) |
+| Escaping, injeção, acesso entre tenants e verificações de privilégio | [`rules/security.md`](rules/security.md) |
+| Configurações de ambiente e CI para uma suíte lenta | [`rules/performance.md`](rules/performance.md) |
+| Revisão de um teste ou suíte | [`rules/review.md`](rules/review.md) |

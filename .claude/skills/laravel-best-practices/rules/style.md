@@ -1,32 +1,32 @@
-# Convention and style best practices
+# Boas práticas de convenção e estilo
 
-## Follow project naming conventions
+## Siga as convenções de nomenclatura do projeto
 
-Prefer Laravel's conventions in new code, but preserve an established project convention unless a coordinated rename is worthwhile.
+Prefira as convenções do Laravel em código novo, mas preserve uma convenção estabelecida do projeto a menos que uma renomeação coordenada valha a pena.
 
-| Element | Convention | Example |
+| Elemento | Convenção | Exemplo |
 | --- | --- | --- |
-| Controller | Singular resource name | `ArticleController` |
-| Model | Singular StudlyCase | `User` |
-| Table | Plural snake_case | `article_comments` |
-| Pivot table | Singular model names in alphabetical order, in snake_case | `article_user` |
-| Column | snake_case | `meta_title` |
-| Conventional foreign key | Singular model name plus `_id`, in snake_case | `article_id` |
-| Resource URI | Plural resource | `articles/1` |
-| Route name | Dotted segments, with snake_case within a segment when needed | `users.show_active` |
-| Method | camelCase | `getAll` |
-| Variable | camelCase | `$articlesWithAuthor` |
-| Collection | Descriptive and plural | `$activeUsers` |
-| Object | Descriptive and singular | `$activeUser` |
+| Controller | Nome do recurso no singular | `ArticleController` |
+| Model | StudlyCase no singular | `User` |
+| Tabela | snake_case no plural | `article_comments` |
+| Tabela pivô | Nomes dos models no singular em ordem alfabética, em snake_case | `article_user` |
+| Coluna | snake_case | `meta_title` |
+| Chave estrangeira convencional | Nome do model no singular mais `_id`, em snake_case | `article_id` |
+| URI de recurso | Recurso no plural | `articles/1` |
+| Nome de rota | Segmentos separados por ponto, com snake_case dentro de um segmento quando necessário | `users.show_active` |
+| Método | camelCase | `getAll` |
+| Variável | camelCase | `$articlesWithAuthor` |
+| Coleção | Descritiva e no plural | `$activeUsers` |
+| Objeto | Descritivo e no singular | `$activeUser` |
 | View | kebab-case | `show-filtered.blade.php` |
-| Configuration file | snake_case | `google_calendar.php` |
-| Enumeration | Singular StudlyCase | `UserType` |
+| Arquivo de configuração | snake_case | `google_calendar.php` |
+| Enumeração | StudlyCase no singular | `UserType` |
 
-## Prefer clear, idiomatic syntax
+## Prefira sintaxe clara e idiomática
 
-Use Laravel helpers and query methods when they communicate intent more directly. Do not shorten code when the result is ambiguous or loses useful type information.
+Use helpers e métodos de consulta do Laravel quando eles comunicarem a intenção mais diretamente. Não encurte o código quando o resultado for ambíguo ou perder informações úteis de tipo.
 
-| More verbose | Idiomatic alternative |
+| Mais verboso | Alternativa idiomática |
 | --- | --- |
 | `Session::get('cart')` | `session('cart')` |
 | `$request->session()->get('cart')` | `session('cart')` |
@@ -35,13 +35,13 @@ Use Laravel helpers and query methods when they communicate intent more directly
 | `->where('column', '=', 1)` | `->where('column', 1)` |
 | `->orderBy('created_at', 'desc')` | `->latest()` |
 | `->orderBy('created_at', 'asc')` | `->oldest()` |
-| `->first()?->name` | `->value('name')` when only that value is needed |
+| `->first()?->name` | `->value('name')` quando apenas esse valor for necessário |
 
-Use typed request accessors such as `$request->string()`, `$request->integer()`, and `$request->boolean()` when their coercion matches the operation.
+Use acessores de requisição tipados como `$request->string()`, `$request->integer()` e `$request->boolean()` quando sua coerção corresponder à operação.
 
-## Use utilities when they clarify intent
+## Use utilitários quando eles esclarecerem a intenção
 
-Laravel's `Str`, `Arr`, `Number`, and `Uri` utilities provide expressive operations and framework-consistent behavior. Prefer them when they are clearer or safer than an equivalent PHP operation, not as a replacement for every built-in function.
+Os utilitários `Str`, `Arr`, `Number` e `Uri` do Laravel fornecem operações expressivas e comportamento consistente com o framework. Prefira-os quando forem mais claros ou mais seguros do que uma operação equivalente do PHP, não como substituição para toda função nativa.
 
 ```php
 $slug = Str::slug($title);
@@ -50,14 +50,14 @@ $class = class_basename(User::class);
 $result = Str::of($input)->trim()->replace('_', '-')->lower();
 ```
 
-Use `Arr` for dot notation and common transformations:
+Use `Arr` para notação de ponto (dot notation) e transformações comuns:
 
 ```php
 $name = Arr::get($array, 'user.name', 'default');
 $public = Arr::only($attributes, ['name', 'email']);
 ```
 
-Use `Number` for localized display formatting, not for values you store or calculate:
+Use `Number` para formatação de exibição localizada, não para valores que você armazena ou calcula:
 
 ```php
 Number::format(1000000);
@@ -65,20 +65,20 @@ Number::currency(1500, 'USD');
 Number::fileSize(1024 * 1024);
 ```
 
-Use `Uri` when a structured API helps you build or transform a uniform resource identifier (URI):
+Use `Uri` quando uma API estruturada ajudar você a construir ou transformar um uniform resource identifier (URI):
 
 ```php
 $uri = Uri::of('https://example.com/search')
     ->withQuery(['q' => 'laravel', 'page' => 1]);
 ```
 
-Before using newer utility classes or methods, check the documentation for the project's Laravel version.
+Antes de usar classes ou métodos utilitários mais recentes, verifique a documentação para a versão do Laravel do projeto.
 
-## Keep presentation code maintainable
+## Mantenha o código de apresentação sustentável
 
-Prefer the project's asset pipeline, components, and existing conventions for substantial JavaScript and Cascading Style Sheets (CSS). Small page-specific scripts or styles can be reasonable in Blade layouts or stacks. Avoid mixing large behavior and style blocks into templates.
+Prefira o pipeline de assets, os componentes e as convenções existentes do projeto para JavaScript e Cascading Style Sheets (CSS) substanciais. Pequenos scripts ou estilos específicos de página podem ser razoáveis em layouts Blade ou stacks. Evite misturar grandes blocos de comportamento e estilo nos templates.
 
-Pass server data with an encoding that fits its context. For example, Blade's `Js::from()` safely formats data for JavaScript:
+Passe dados do servidor com uma codificação adequada ao seu contexto. Por exemplo, `Js::from()` do Blade formata dados com segurança para JavaScript:
 
 ```blade
 <script>
@@ -86,13 +86,13 @@ Pass server data with an encoding that fits its context. For example, Blade's `J
 </script>
 ```
 
-Data attributes are useful for small scalar values, but serializing a large model into an attribute can expose unnecessary fields and complicate escaping.
+Atributos `data-*` são úteis para pequenos valores escalares, mas serializar um model grande em um atributo pode expor campos desnecessários e complicar o escape.
 
-## Write comments that explain why
+## Escreva comentários que expliquem o porquê
 
-Prefer clear names and small units of code over comments that restate an operation. Add concise comments for non-obvious constraints, tradeoffs, workarounds, regular expressions, or external behavior that the code cannot express by itself. Keep comments accurate when behavior changes.
+Prefira nomes claros e pequenas unidades de código em vez de comentários que apenas repetem uma operação. Adicione comentários concisos para restrições não óbvias, compromissos (tradeoffs), soluções alternativas, expressões regulares ou comportamento externo que o código não consegue expressar por si só. Mantenha os comentários precisos quando o comportamento mudar.
 
-Unhelpful:
+Pouco útil:
 
 ```php
 // Check whether the query has joins.
@@ -101,7 +101,7 @@ if (count((array) $builder->getQuery()->joins) > 0) {
 }
 ```
 
-Clearer:
+Mais claro:
 
 ```php
 if ($this->hasJoins()) {

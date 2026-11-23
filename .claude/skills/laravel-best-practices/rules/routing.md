@@ -1,10 +1,10 @@
-# Routing and controller best practices
+# Boas práticas de roteamento e controllers
 
 ## Use implicit route model binding
 
-Let Laravel resolve models from route parameters when the default lookup and missing-model behavior fit the endpoint.
+Deixe o Laravel resolver os models a partir dos parâmetros da rota quando a busca padrão e o comportamento para model ausente atenderem ao endpoint.
 
-Instead of manual lookup:
+Em vez de busca manual:
 
 ```php
 public function show(int $id): View
@@ -24,9 +24,9 @@ public function show(Post $post): View
 }
 ```
 
-## Scope nested bindings
+## Aplique escopo em bindings aninhados
 
-Use scoped bindings when a nested resource must belong to its parent. Scoped bindings constrain model resolution. They do not replace authorization.
+Use scoped bindings quando um recurso aninhado precisar pertencer ao seu recurso pai. Scoped bindings restringem a resolução do model. Eles não substituem a autorização.
 
 ```php
 Route::get('/users/{user}/posts/{post}', function (User $user, Post $post) {
@@ -34,9 +34,9 @@ Route::get('/users/{user}/posts/{post}', function (User $user, Post $post) {
 })->scopeBindings();
 ```
 
-## Use resource routes for resourceful actions
+## Use rotas de recurso para ações de recurso
 
-Use `Route::resource()` or `Route::apiResource()` when the endpoint follows Laravel's resource-controller actions. Define explicit routes when the behavior does not fit that vocabulary.
+Use `Route::resource()` ou `Route::apiResource()` quando o endpoint seguir as ações de resource-controller do Laravel. Defina rotas explícitas quando o comportamento não se encaixar nesse vocabulário.
 
 ```php
 Route::resource('posts', PostController::class);
@@ -45,21 +45,21 @@ Route::resource('posts', PostController::class);
 Route::apiResource('posts', ApiPostController::class);
 ```
 
-`apiResource()` omits the HTML-oriented `create` and `edit` routes. It does not add an `/api` prefix. That prefix comes from the application's API route configuration.
+`apiResource()` omite as rotas orientadas a HTML `create` e `edit`. Ele não adiciona um prefixo `/api`. Esse prefixo vem da configuração de rotas de API da aplicação.
 
-## Organize controllers around resources
+## Organize controllers em torno de recursos
 
-By default, organize each controller around one resource and use Laravel's standard resource actions: `index`, `show`, `create`, `store`, `edit`, `update`, and `destroy`. This convention keeps routes predictable and prevents controllers from accumulating unrelated behavior.
+Por padrão, organize cada controller em torno de um recurso e use as ações padrão de recurso do Laravel: `index`, `show`, `create`, `store`, `edit`, `update` e `destroy`. Essa convenção mantém as rotas previsíveis e evita que controllers acumulem comportamentos não relacionados.
 
-When a controller needs a custom action such as `publish`, `approve`, or `archive`, first consider whether that behavior represents a separate resource. A focused resource controller gives the behavior its own authorization, validation, and middleware boundary.
+Quando um controller precisar de uma ação personalizada como `publish`, `approve` ou `archive`, considere primeiro se esse comportamento representa um recurso separado. Um resource controller focado fornece ao comportamento seu próprio limite de autorização, validação e middleware.
 
-Custom action on the primary controller:
+Ação personalizada no controller principal:
 
 ```php
 Route::post('/podcasts/{podcast}/publish', [PodcastController::class, 'publish']);
 ```
 
-The published podcast modeled as a resource:
+O podcast publicado modelado como um recurso:
 
 ```php
 Route::post('/published-podcasts/{podcast}', [PublishedPodcastController::class, 'store'])
@@ -88,11 +88,11 @@ class PublishedPodcastController extends Controller
 }
 ```
 
-Treat a custom verb as a design signal, not proof that another controller is required. Use query parameters for simple filtering, and keep an explicit action route when modeling the operation as a resource would obscure the domain or conflict with established project conventions.
+Trate um verbo personalizado como um sinal de design, não como prova de que outro controller é necessário. Use parâmetros de query para filtragem simples e mantenha uma rota de ação explícita quando modelar a operação como um recurso obscureceria o domínio ou entraria em conflito com convenções estabelecidas do projeto.
 
-## Keep controllers focused on HTTP concerns
+## Mantenha os controllers focados em preocupações HTTP
 
-Controllers should coordinate HTTP input, authorization, validation, an application operation, and the response. Extract substantial or reusable business logic, but do not introduce an action or service only to satisfy an arbitrary line limit.
+Controllers devem coordenar entrada HTTP, autorização, validação, uma operação da aplicação e a resposta. Extraia lógica de negócio substancial ou reutilizável, mas não introduza uma action ou service apenas para satisfazer um limite arbitrário de linhas.
 
 ```php
 public function store(StorePostRequest $request, CreatePostAction $create): RedirectResponse
@@ -103,4 +103,4 @@ public function store(StorePostRequest $request, CreatePostAction $create): Redi
 }
 ```
 
-A form request can perform validation and authorization before the controller runs. Do not repeat its rules in the controller. Keep simple, endpoint-specific validation inline when extraction would not improve reuse or clarity. See the validation rules for details.
+Um form request pode realizar validação e autorização antes da execução do controller. Não repita suas regras no controller. Mantenha validação simples e específica do endpoint inline quando a extração não melhorar o reuso ou a clareza. Consulte as regras de validação para obter detalhes.

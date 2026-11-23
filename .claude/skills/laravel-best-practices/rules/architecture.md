@@ -1,8 +1,8 @@
-# Architecture best practices
+# Boas práticas de arquitetura
 
-## Extract focused business operations
+## Extraia operações de negócio focadas
 
-Extract a discrete business operation into an action class when doing so makes the operation easier to reuse or test. An action class has no special meaning to Laravel. Follow the project's naming and invocation conventions.
+Extraia uma operação de negócio discreta para uma classe de ação (action class) quando isso tornar a operação mais fácil de reutilizar ou testar. Uma classe de ação não tem significado especial para o Laravel. Siga as convenções de nomenclatura e invocação do projeto.
 
 ```php
 class CreateOrderAction
@@ -19,11 +19,11 @@ class CreateOrderAction
 }
 ```
 
-## Inject required dependencies
+## Injete dependências obrigatórias
 
-Prefer constructor injection for dependencies required throughout an object's lifetime. Use method injection for a dependency that one controller action, listener, job handler, or other container-invoked method needs. Avoid `app()` and `resolve()` when normal injection can make a dependency explicit.
+Prefira injeção via construtor para dependências necessárias durante todo o ciclo de vida de um objeto. Use injeção via método para uma dependência que apenas uma ação de controller, listener, manipulador de job ou outro método invocado pelo contêiner precise. Evite `app()` e `resolve()` quando a injeção normal puder tornar uma dependência explícita.
 
-Hidden dependency:
+Dependência oculta:
 
 ```php
 class OrderController extends Controller
@@ -37,7 +37,7 @@ class OrderController extends Controller
 }
 ```
 
-Injected dependency:
+Dependência injetada:
 
 ```php
 class OrderController extends Controller
@@ -49,11 +49,11 @@ class OrderController extends Controller
 }
 ```
 
-## Depend on contracts at boundaries
+## Dependa de contratos nas fronteiras
 
-Depend on contracts at system boundaries, such as payment gateways, notification channels, and external services, when testability or interchangeable implementations justify the abstraction.
+Dependa de contratos nas fronteiras do sistema, como gateways de pagamento, canais de notificação e serviços externos, quando a testabilidade ou implementações intercambiáveis justificarem a abstração.
 
-Concrete boundary dependency:
+Dependência concreta de fronteira:
 
 ```php
 class OrderService
@@ -62,7 +62,7 @@ class OrderService
 }
 ```
 
-Contract boundary dependency:
+Dependência de contrato de fronteira:
 
 ```php
 interface PaymentGateway
@@ -76,23 +76,23 @@ class OrderService
 }
 ```
 
-Bind in a service provider:
+Vincule em um service provider:
 
 ```php
 $this->app->bind(PaymentGateway::class, StripeGateway::class);
 ```
 
-## Specify a deterministic sort order
+## Especifique uma ordem de classificação determinística
 
-Without an explicit `ORDER BY`, row order is undefined. Choose an order that matches the feature, and add a unique tie-breaker when stable pagination matters.
+Sem um `ORDER BY` explícito, a ordem das linhas é indefinida. Escolha uma ordem que corresponda ao recurso e adicione um critério de desempate único quando uma paginação estável for importante.
 
-Unspecified order:
+Ordem não especificada:
 
 ```php
 $posts = Post::paginate();
 ```
 
-Newest first with a stable tie-breaker:
+Mais recentes primeiro com um critério de desempate estável:
 
 ```php
 $posts = Post::query()
@@ -101,9 +101,9 @@ $posts = Post::query()
     ->paginate();
 ```
 
-## Use atomic locks for race conditions
+## Use travas atômicas para condições de corrida
 
-Use a lock when concurrent processes must run one at a time. `Cache::lock()` provides an atomic lock when the configured cache store supports locks. `lockForUpdate()` locks selected database rows and must run inside a database transaction. These mechanisms solve different coordination problems. Set the lease (`10` below) longer than the callback can ever run. Once the lease expires, another process can acquire the lock while the first process is still working.
+Use uma trava (lock) quando processos concorrentes precisarem ser executados um de cada vez. `Cache::lock()` fornece uma trava atômica quando o armazenamento de cache configurado suporta travas. `lockForUpdate()` trava as linhas selecionadas no banco de dados e deve ser executado dentro de uma transação de banco de dados. Esses mecanismos resolvem problemas diferentes de coordenação. Defina o tempo de concessão (`10` abaixo) maior do que o callback jamais poderá levar para executar. Assim que o tempo expirar, outro processo poderá adquirir a trava enquanto o primeiro processo ainda estiver trabalhando.
 
 ```php
 Cache::lock('order-processing-'.$order->id, 10)->block(5, function () use ($order) {
@@ -118,18 +118,18 @@ DB::transaction(function () use ($id) {
 });
 ```
 
-## Use `mb_*` string functions
+## Use funções de string `mb_*`
 
-When no Laravel helper exists, prefer multibyte-aware functions such as `mb_strlen()` and `mb_strtolower()` for UTF-8 text. For example, `strlen()` counts bytes, while `strtolower()` is not multibyte-aware.
+Quando não existir um helper do Laravel, prefira funções compatíveis com multibyte, como `mb_strlen()` e `mb_strtolower()`, para texto UTF-8. Por exemplo, `strlen()` conta bytes, enquanto `strtolower()` não tem suporte a multibyte.
 
-Incorrect:
+Incorreto:
 
 ```php
 strlen('José');          // 5 bytes, not 4 characters
 strtolower('MÜNCHEN');  // Does not lowercase Ü
 ```
 
-Correct:
+Correto:
 
 ```php
 mb_strlen('José');         // 4 characters
@@ -140,27 +140,27 @@ Str::length('José');       // 4
 Str::lower('MÜNCHEN');     // 'münchen'
 ```
 
-## Use `defer()` for post-response work
+## Use `defer()` para trabalho pós-resposta
 
-For lightweight work that does not need retries or crash durability, consider `defer()` instead of dispatching a job. During an HTTP request, the callback normally runs after Laravel sends the response, but it still runs in the same PHP process.
+Para trabalhos leves que não precisam de novas tentativas ou durabilidade contra falhas, considere `defer()` em vez de despachar um job. Durante uma requisição HTTP, o callback normalmente é executado após o Laravel enviar a resposta, mas ainda é executado no mesmo processo PHP.
 
-Queued and durable:
+Enfileirado e durável:
 
 ```php
 dispatch(new LogPageView($page));
 ```
 
-Deferred in the current process:
+Adiado no processo atual:
 
 ```php
 defer(fn () => PageView::create(['page_id' => $page->id, 'user_id' => auth()->id()]));
 ```
 
-Use a queued job when the work needs retries, queue controls, or durability across process failures.
+Use um job em fila quando o trabalho precisar de novas tentativas, controles de fila ou durabilidade entre falhas de processo.
 
-## Use `Context` for request-scoped data
+## Use `Context` para dados no escopo da requisição
 
-The `Context` facade makes contextual data available across the current execution lifecycle without manually passing arguments through every layer.
+A facade `Context` disponibiliza dados contextuais em todo o ciclo de vida de execução atual sem passar argumentos manualmente por todas as camadas.
 
 ```php
 // In middleware
@@ -170,11 +170,11 @@ Context::add('tenant_id', $request->header('X-Tenant-ID'));
 $tenantId = Context::get('tenant_id');
 ```
 
-Laravel adds visible context to log context. It also captures both visible and hidden context and restores them for queued jobs. Use `Context::addHidden()` for data that should propagate to queued jobs without appearing in logs. Do not place secrets in context unless you intend that propagation.
+O Laravel adiciona o contexto visível ao contexto de log. Ele também captura tanto o contexto visível quanto o oculto e os restaura para jobs em fila. Use `Context::addHidden()` para dados que devem ser propagados para jobs em fila sem aparecer nos logs. Não coloque segredos no contexto, a menos que você pretenda essa propagação.
 
-## Use `Concurrency::run()` for parallel execution
+## Use `Concurrency::run()` para execução paralela
 
-Run independent operations concurrently through Laravel's configured concurrency driver.
+Execute operações independentes simultaneamente por meio do driver de concorrência configurado no Laravel.
 
 ```php
 use Illuminate\Support\Facades\Concurrency;
@@ -185,13 +185,13 @@ use Illuminate\Support\Facades\Concurrency;
 ]);
 ```
 
-With a process-based driver, each closure runs in a separate PHP process that boots the application. Use concurrency when independent database queries, HTTP client calls, or computations benefit enough to offset process and serialization overhead. The `sync` driver runs closures sequentially and is mainly useful during testing.
+Com um driver baseado em processos, cada closure é executada em um processo PHP separado que inicializa a aplicação. Use concorrência quando consultas independentes ao banco de dados, chamadas de cliente HTTP ou computações se beneficiarem o suficiente para compensar a sobrecarga de processo e serialização. O driver `sync` executa closures sequencialmente e é útil principalmente durante testes.
 
-## Follow framework conventions
+## Siga as convenções do framework
 
-Follow Laravel conventions unless the domain or an existing schema requires an override.
+Siga as convenções do Laravel, a menos que o domínio ou um esquema existente exija uma substituição.
 
-Customized schema:
+Esquema personalizado:
 
 ```php
 class Customer extends Model
@@ -206,7 +206,7 @@ class Customer extends Model
 }
 ```
 
-Conventional schema:
+Esquema convencional:
 
 ```php
 class Customer extends Model

@@ -1,16 +1,16 @@
-# HTTP client best practices
+# Boas práticas do cliente HTTP
 
-## Set explicit timeouts
+## Defina timeouts explícitos
 
-Laravel's HTTP client has a 30-second response timeout by default. Choose response and connection timeouts that fit the service and the calling request or job. Retries can multiply the total elapsed time.
+O cliente HTTP do Laravel possui um timeout de resposta de 30 segundos por padrão. Escolha timeouts de resposta e de conexão adequados ao serviço e à requisição ou job chamador. Tentativas de reenvio (retries) podem multiplicar o tempo total decorrido.
 
-Less resilient:
+Menos resiliente:
 
 ```php
 $response = Http::get('https://api.example.com/users');
 ```
 
-Preferred:
+Preferível:
 
 ```php
 $response = Http::connectTimeout(3)
@@ -18,7 +18,7 @@ $response = Http::connectTimeout(3)
     ->get('https://api.example.com/users');
 ```
 
-Define shared settings in a macro or a dedicated client:
+Defina configurações compartilhadas em uma macro ou em um cliente dedicado:
 
 ```php
 Http::macro('github', function () {
@@ -31,18 +31,18 @@ Http::macro('github', function () {
 $response = Http::github()->get('/repos/laravel/framework');
 ```
 
-## Retry only safe operations
+## Reenvie apenas operações seguras
 
-Retry transient connection failures, rate-limit responses, and server errors with an appropriate delay. Retry idempotent requests such as `GET` when the operation can safely run more than once. Retry a state-changing request only when the remote API supports an idempotency key or provides equivalent duplicate protection.
+Reenvie falhas transitórias de conexão, respostas de limite de taxa (rate-limit) e erros de servidor com um atraso apropriado. Reenvie requisições idempotentes, como `GET`, quando a operação puder ser executada com segurança mais de uma vez. Reenvie uma requisição que altera estado apenas quando a API remota suportar uma chave de idempotência ou fornecer proteção equivalente contra duplicidade.
 
-Unsafe without an idempotency guarantee:
+Inseguro sem garantia de idempotência:
 
 ```php
 $response = Http::retry([100, 500, 1000])
     ->post('https://api.example.com/v1/charges', $data);
 ```
 
-Safe for an idempotent request:
+Seguro para uma requisição idempotente:
 
 ```php
 $response = Http::connectTimeout(3)
@@ -55,7 +55,7 @@ $response = Http::connectTimeout(3)
     ->get('https://api.example.com/data');
 ```
 
-For a supported state-changing API, send a stable idempotency key for every attempt:
+Para uma API que altera estado com suporte a idempotência, envie uma chave de idempotência estável em todas as tentativas:
 
 ```php
 $response = Http::withHeaders(['Idempotency-Key' => $paymentAttempt->uuid])
@@ -69,17 +69,17 @@ $response = Http::withHeaders(['Idempotency-Key' => $paymentAttempt->uuid])
     ->post('https://api.example.com/v1/charges', $data);
 ```
 
-## Handle errors explicitly
+## Trate erros explicitamente
 
-By default, the HTTP client returns responses for `4xx` and `5xx` status codes instead of throwing. Inspect the expected statuses or call `throw()` before consuming a success payload.
+Por padrão, o cliente HTTP retorna respostas para códigos de status `4xx` e `5xx` em vez de lançar exceções. Inspecione os status esperados ou chame `throw()` antes de consumir um payload de sucesso.
 
-Unsafe when a success payload is expected:
+Inseguro quando um payload de sucesso é esperado:
 
 ```php
 $user = Http::get('https://api.example.com/users/1')->json();
 ```
 
-Preferred:
+Preferível:
 
 ```php
 $user = Http::connectTimeout(3)
@@ -89,7 +89,7 @@ $user = Http::connectTimeout(3)
     ->json();
 ```
 
-When graceful degradation is required, handle expected alternatives explicitly:
+Quando for necessária degradação graciosa, trate alternativas esperadas explicitamente:
 
 ```php
 $response = Http::connectTimeout(3)
@@ -107,9 +107,9 @@ if ($response->notFound()) {
 $response->throw();
 ```
 
-## Pool independent requests
+## Agrupe requisições independentes com pool
 
-Use `Http::pool()` when several independent requests can run concurrently. Pooling changes execution time, not error handling. Inspect or throw for each response as needed.
+Use `Http::pool()` quando várias requisições independentes puderem ser executadas simultaneamente. O pooling altera o tempo de execução, não o tratamento de erros. Inspecione ou chame `throw()` para cada resposta conforme necessário.
 
 ```php
 use Illuminate\Http\Client\Pool;
@@ -125,9 +125,9 @@ $users = $responses['users']->throw()->json();
 $posts = $responses['posts']->throw()->json();
 ```
 
-## Fake HTTP requests in tests
+## Simule requisições HTTP em testes
 
-Use `Http::fake()` for external integrations, and use `Http::preventStrayRequests()` when an unexpected real request should fail the test. Also test timeouts, connection failures, and error responses that the application handles.
+Use `Http::fake()` para integrações externas e use `Http::preventStrayRequests()` quando uma requisição real inesperada dever falhar o teste. Teste também timeouts, falhas de conexão e respostas de erro que a aplicação trata.
 
 ```php
 it('syncs a user from the API', function () {
@@ -148,7 +148,7 @@ it('syncs a user from the API', function () {
 });
 ```
 
-For example, to test the integration's failure path, fake a connection failure:
+Por exemplo, para testar o caminho de falha da integração, simule uma falha de conexão:
 
 ```php
 Http::fake([

@@ -1,19 +1,19 @@
-# Factories and test data
+# Factories e dados de teste
 
-## Each test makes its own data
+## Cada teste cria seus próprios dados
 
-Create mutable records inside each test or through a private helper that the test calls. The setup then stays visible, and each test can select its factory state.
+Crie registros mutáveis dentro de cada teste ou por meio de um helper privado que o teste chama. A preparação então permanece visível, e cada teste pode selecionar seu estado de factory.
 
-Use `setUp()` only for configuration that applies to every test in the class. Do not create records in it, because its objects remain in memory until the suite ends.
+Use `setUp()` apenas para configuração que se aplica a todos os testes da classe. Não crie registros nele, porque seus objetos permanecem em memória até o fim da suíte.
 
-## Record construction
+## Construção de registros
 
-- Use `create()` if the test needs the record in the database.
-- Use `make()` only if the test does not need the database. Examples include rendering a notification and testing a value object's behavior.
-- Use a named factory state instead of a raw attribute. `User::factory()->unverified()->create()` gives the state meaning. `create(['email_verified_at' => null])` gives only its value.
-- Use `for()` or the relationship helper of the project to declare the owner of a record.
-- If several records must share one parent record, use `recycle()`.
-- If several records need different attributes, use `sequence()`.
+- Use `create()` se o teste precisar do registro no banco de dados.
+- Use `make()` apenas se o teste não precisar do banco de dados. Exemplos incluem renderizar uma notificação e testar o comportamento de um value object.
+- Use um estado de factory nomeado em vez de um atributo bruto. `User::factory()->unverified()->create()` dá significado ao estado. `create(['email_verified_at' => null])` informa apenas seu valor.
+- Use `for()` ou o helper de relacionamento do projeto para declarar o dono de um registro.
+- Se vários registros precisarem compartilhar um registro pai, use `recycle()`.
+- Se vários registros precisarem de atributos diferentes, use `sequence()`.
 
 ```php
 $organization = Organization::factory()->onPlan(BillingPlan::PRO)->create();
@@ -29,11 +29,11 @@ $organizations = Organization::factory()
     ->create();
 ```
 
-Create only the records required to arrange the behavior or support an assertion.
+Crie apenas os registros necessários para preparar o comportamento ou dar suporte a uma asserção.
 
 ## Data providers
 
-Use a data provider when the setup, test body, and assertions remain the same across input values.
+Use um data provider quando a preparação, o corpo do teste e as asserções permanecerem os mesmos entre os valores de entrada.
 
 ```php
 public static function nonAdminRoles(): array
@@ -53,16 +53,16 @@ public function test_forbids_roles_other_than_admin(Role $role): void
 }
 ```
 
-Declare each data provider method as `public static`.
+Declare cada método de data provider como `public static`.
 
-Use parameterized tests for:
+Use testes parametrizados para:
 
-- enum cases
-- roles and plans
-- boundary values
-- input values that are invalid in the same way
-- input and output value pairs
+- casos de enum
+- papéis e planos
+- valores de limite
+- valores de entrada que são inválidos da mesma forma
+- pares de valores de entrada e saída
 
-If the cases need a different setup, a different behavior, or different assertions, write separate tests. One test function with a branch in the body is two tests in one function.
+Se os casos precisarem de uma preparação diferente, um comportamento diferente ou asserções diferentes, escreva testes separados. Uma função de teste com uma ramificação no corpo são dois testes em uma função.
 
-Give each data-provider case a key that states the difference. A failure then identifies the case without requiring you to count positions.
+Dê a cada caso do data provider uma chave que indique a diferença. Uma falha então identifica o caso sem exigir que você conte posições.

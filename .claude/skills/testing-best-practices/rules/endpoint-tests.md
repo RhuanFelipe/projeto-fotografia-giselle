@@ -1,47 +1,47 @@
-# Endpoint tests
+# Testes de endpoint
 
-## How to write the test
+## Como escrever o teste
 
-Fetch `https://laravel.com/framework/docs/http-tests` for the request helpers, the authentication helpers, and the response assertions. Confirm the name before you use it, and do not guess an assertion.
+Consulte `https://laravel.com/framework/docs/http-tests` para os helpers de requisição, os helpers de autenticação e as asserções de resposta. Confirme o nome antes de usá-lo e não adivinhe uma asserção.
 
-Choose an assertion based on the subject of the check: the status, a header, a redirect, the JSON body, the session, a validation error, or the view. Laravel provides a named assertion for each subject that identifies the incorrect value.
+Escolha uma asserção com base no sujeito da verificação: o status, um cabeçalho, um redirecionamento, o corpo JSON, a sessão, um erro de validação ou a view. O Laravel fornece uma asserção nomeada para cada sujeito que identifica o valor incorreto.
 
-## Endpoint coverage
+## Cobertura de endpoint
 
-Write a test for each applicable case:
+Escreva um teste para cada caso aplicável:
 
-- The request has missing or invalid authentication.
-- The request comes from a different tenant, team, or organization.
-- The user has an insufficient role or permission.
-- The request does not satisfy a route or scope constraint.
-- The request fails the validation.
-- The request is valid. Assert both the response and the persisted state.
+- A requisição tem autenticação ausente ou inválida.
+- A requisição vem de um tenant, equipe ou organização diferente.
+- O usuário tem um papel ou permissão insuficiente.
+- A requisição não satisfaz uma restrição de rota ou escopo.
+- A requisição falha na validação.
+- A requisição é válida. Faça asserção tanto da resposta quanto do estado persistido.
 
-Assert the application's actual behavior rather than a generic status code. An API returns `401` for a missing or invalid token, while a browser endpoint redirects to the sign-in route.
+Faça asserção do comportamento real da aplicação em vez de um código de status genérico. Uma API retorna `401` para um token ausente ou inválido, enquanto um endpoint de navegador redireciona para a rota de login.
 
-## Tenant isolation
+## Isolamento de tenant
 
-Assert the status code returned for a cross-tenant request. Use `404` rather than `403` when one tenant must not learn that another tenant's record exists, because `403` confirms its existence.
+Faça asserção do código de status retornado para uma requisição entre tenants. Use `404` em vez de `403` quando um tenant não deve saber que o registro de outro tenant existe, porque `403` confirma sua existência.
 
-## Test authorization at the policy level
+## Teste autorização no nível da policy
 
-An HTTP test shows that the endpoint performs authorization. It cannot identify which mechanism refused the request because middleware, a policy, and a call to `abort()` can all return `403`.
+Um teste HTTP mostra que o endpoint executa autorização. Ele não consegue identificar qual mecanismo recusou a requisição porque middleware, uma policy e uma chamada a `abort()` podem todos retornar `403`.
 
-- Assert the complete matrix of the permissions against the policy or the gate. A failure then names the rule that is not correct.
-- Write one HTTP test for one refused role, which shows that the endpoint calls the authorization.
-- If the project has a helper that asserts the ability and the arguments of the gate, use that helper.
+- Faça asserção da matriz completa de permissões contra a policy ou o gate. Uma falha então nomeia a regra que não está correta.
+- Escreva um teste HTTP para um papel recusado, o que mostra que o endpoint chama a autorização.
+- Se o projeto tiver um helper que faz asserção da habilidade e dos argumentos do gate, use esse helper.
 
-## Testing validation
+## Testando validação
 
-- Write one test for each validation rule when each failure represents a separate contract.
-- Write one test with an empty payload to assert several required fields together.
-- Assert the text of the message that the user gets. A message that is present but wrong is a defect.
-- Use a data provider with the `#[DataProvider]` attribute for input values that need the same setup and the same assertions. Use the `#[TestWith]` attribute for a small set of values.
+- Escreva um teste para cada regra de validação quando cada falha representar um contrato separado.
+- Escreva um teste com um payload vazio para fazer asserção de vários campos obrigatórios juntos.
+- Faça asserção do texto da mensagem que o usuário recebe. Uma mensagem que está presente mas errada é um defeito.
+- Use um data provider com o atributo `#[DataProvider]` para valores de entrada que precisam da mesma preparação e das mesmas asserções. Use o atributo `#[TestWith]` para um conjunto pequeno de valores.
 
-Send an input value that is not valid through the application, and assert the error. Do not assert that an array of rules contains a string, because that assertion tests the declaration and not the behavior. Use such an assertion only for a rule that no request can reach, and write the reason in the test.
+Envie um valor de entrada que não seja válido através da aplicação e faça asserção do erro. Não faça asserção de que um array de regras contém uma string, porque essa asserção testa a declaração e não o comportamento. Use esse tipo de asserção apenas para uma regra que nenhuma requisição consegue alcançar e escreva o motivo no teste.
 
-### Which layer owns which case
+### Qual camada é dona de qual caso
 
-The rule-class test owns the matrix of values that pass and fail. The endpoint test proves that the endpoint applies the rule and that the user receives the message.
+O teste da classe de regra é dono da matriz de valores que passam e falham. O teste de endpoint prova que o endpoint aplica a regra e que o usuário recebe a mensagem.
 
-When both tests contain the matrix, move it to the rule-class test and retain one case in the endpoint test. Never remove the last case, because the rule-class test still passes if the request omits the rule. The same division applies to policies, scopes, and other classes called by a request.
+Quando ambos os testes contiverem a matriz, mova-a para o teste da classe de regra e mantenha um caso no teste de endpoint. Nunca remova o último caso, porque o teste da classe de regra ainda passa se a requisição omitir a regra. A mesma divisão se aplica a policies, scopes e outras classes chamadas por uma requisição.

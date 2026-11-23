@@ -1,8 +1,8 @@
-# Advanced query best practices
+# Boas práticas para consultas avançadas
 
-## Select single relationship values with subqueries
+## Selecione valores únicos de relacionamento com subconsultas
 
-When you need only one value from a has-many relationship, consider a correlated subquery with `addSelect()` instead of loading the entire relationship. The subquery selects the value as part of the main query, without an additional relationship query.
+Quando precisar apenas de um único valor de um relacionamento has-many, considere uma subconsulta correlacionada com `addSelect()` em vez de carregar todo o relacionamento. A subconsulta seleciona o valor como parte da consulta principal, sem uma consulta adicional de relacionamento.
 
 ```php
 public function scopeWithLastLoginAt($query): void
@@ -16,9 +16,9 @@ public function scopeWithLastLoginAt($query): void
 }
 ```
 
-## Create dynamic relationships with a subquery foreign key
+## Crie relacionamentos dinâmicos com uma chave estrangeira de subconsulta
 
-The same pattern can select a foreign key and expose the selected model through a `belongsTo` relationship. Eager loading that relationship still runs a separate query, but the pattern avoids loading the full has-many collection.
+O mesmo padrão pode selecionar uma chave estrangeira e expor o modelo selecionado por meio de um relacionamento `belongsTo`. O carregamento antecipado (eager loading) desse relacionamento ainda executa uma consulta separada, mas o padrão evita carregar toda a coleção has-many.
 
 ```php
 public function lastLogin(): BelongsTo
@@ -37,9 +37,9 @@ public function scopeWithLastLogin($query): void
 }
 ```
 
-## Combine related counts with conditional aggregates
+## Combine contagens relacionadas com agregações condicionais
 
-Use conditional aggregates to combine several counts over the same filtered data set into one query. Use `toBase()` when you need only scalar values and model hydration adds nothing. Confirm the expression syntax against the application's database engine.
+Use agregações condicionais para combinar várias contagens sobre o mesmo conjunto de dados filtrado em uma única consulta. Use `toBase()` quando precisar apenas de valores escalares e a hidratação de modelos não agregar nada. Confirme a sintaxe da expressão em relação ao mecanismo de banco de dados da aplicação.
 
 ```php
 $statuses = Feature::toBase()
@@ -49,38 +49,38 @@ $statuses = Feature::toBase()
     ->first();
 ```
 
-## Reuse loaded parent models with `setRelation()`
+## Reutilize modelos pai carregados com `setRelation()`
 
-When a parent and its children are already loaded and code also accesses `$child->parent`, set the inverse relationship to the existing parent instance. Setting the inverse relationship avoids an extra lazy-loading query for each child.
+Quando um pai e seus filhos já estiverem carregados e o código também acessar `$child->parent`, defina o relacionamento inverso para a instância pai existente. Definir o relacionamento inverso evita uma consulta extra de carregamento preguiçoso (lazy loading) para cada filho.
 
 ```php
 $feature->load('comments.user');
 $feature->comments->each->setRelation('feature', $feature);
 ```
 
-## Compare `whereHas()` with an `IN` subquery
+## Compare `whereHas()` com uma subconsulta `IN`
 
-`whereHas()` typically produces an `EXISTS` subquery, while `whereIn()` can express the same filter with an `IN` subquery. Either form can be faster, depending on the database engine, indexes, cardinality, and query plan. Measure both forms with representative data. Neither subquery loads its result set into PHP memory.
+`whereHas()` normalmente produz uma subconsulta `EXISTS`, enquanto `whereIn()` pode expressar o mesmo filtro com uma subconsulta `IN`. Qualquer uma das formas pode ser mais rápida, dependendo do mecanismo de banco de dados, índices, cardinalidade e plano de consulta. Meça ambas as formas com dados representativos. Nenhuma das subconsultas carrega seu conjunto de resultados na memória do PHP.
 
-Option using `EXISTS`:
+Opção usando `EXISTS`:
 
 ```php
 $query->whereHas('company', fn ($q) => $q->where('name', 'like', $term));
 ```
 
-Option using `IN`:
+Opção usando `IN`:
 
 ```php
 $query->whereIn('company_id', Company::where('name', 'like', $term)->select('id'));
 ```
 
-## Measure two simple queries against one complex query
+## Compare duas consultas simples contra uma consulta complexa
 
-Two targeted queries can outperform one complex correlated subquery or join when the first query is highly selective. They also add a database round trip, can transfer a large identifier list, and do not provide a single-query consistency snapshot. Decide from query plans and production-like measurements.
+Duas consultas direcionadas podem superar uma subconsulta correlacionada complexa ou um join quando a primeira consulta é altamente seletiva. Elas também adicionam uma viagem de ida e volta (round trip) ao banco de dados, podem transferir uma grande lista de identificadores e não fornecem um snapshot de consistência de consulta única. Decida com base nos planos de consulta e em medições semelhantes às de produção.
 
-## Design composite indexes for the query
+## Projete índices compostos para a consulta
 
-For common multi-column sorts, consider a composite index whose column order supports the query's filters and ordering. Database engines may combine indexes or choose an explicit sort, so matching the `ORDER BY` list alone does not guarantee that the engine uses the index. Verify the query plan.
+Para ordenações comuns com múltiplas colunas, considere um índice composto cuja ordem das colunas dê suporte aos filtros e à ordenação da consulta. Os mecanismos de banco de dados podem combinar índices ou escolher uma ordenação explícita, portanto, apenas corresponder à lista do `ORDER BY` não garante que o mecanismo usará o índice. Verifique o plano de consulta.
 
 ```php
 // Migration
@@ -90,9 +90,9 @@ $table->index(['last_name', 'first_name']);
 User::query()->orderBy('last_name')->orderBy('first_name')->paginate();
 ```
 
-## Consider a correlated subquery for has-many ordering
+## Considere uma subconsulta correlacionada para ordenação has-many
 
-When sorting by one value from a has-many relationship, a direct join can duplicate parent rows unless it first reduces the related table to one row per parent. A correlated subquery in `orderBy()` is often simpler, but its performance depends on the query plan and supporting indexes.
+Ao ordenar por um valor de um relacionamento has-many, um join direto pode duplicar linhas pai, a menos que primeiro reduza a tabela relacionada a uma linha por pai. Uma subconsulta correlacionada em `orderBy()` costuma ser mais simples, mas seu desempenho depende do plano de consulta e dos índices de suporte.
 
 ```php
 public function scopeOrderByLastLogin($query): void

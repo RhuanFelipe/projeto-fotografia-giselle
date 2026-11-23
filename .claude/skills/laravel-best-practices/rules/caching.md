@@ -1,12 +1,12 @@
-# Caching best practices
+# Boas práticas de cache
 
-## Use `Cache::remember()` for cache-aside reads
+## Use `Cache::remember()` para leituras cache-aside
 
-`Cache::remember()` implements a cache-aside read without a separate truthiness check. It does not prevent concurrent requests from computing the same missing value. When you must prevent duplicate computation, use an atomic lock.
+`Cache::remember()` implementa uma leitura cache-aside sem uma verificação separada de veracidade (truthiness). Ele não impede que requisições concorrentes calculem o mesmo valor ausente. Quando você precisar evitar computação duplicada, use uma trava atômica.
 
-The manual version below treats valid falsy values, such as `false` or `0`, as cache misses.
+A versão manual abaixo trata valores falsy válidos, como `false` ou `0`, como falhas de cache (cache misses).
 
-Incorrect:
+Incorreto:
 
 ```php
 $val = Cache::get('stats');
@@ -16,53 +16,53 @@ if (! $val) {
 }
 ```
 
-Correct:
+Correto:
 
 ```php
 $val = Cache::remember('stats', 60, fn () => $this->computeStats());
 ```
 
-## Consider `Cache::flexible()` for stale-while-revalidate
+## Considere `Cache::flexible()` para stale-while-revalidate
 
-For frequently read keys, `Cache::flexible()` can serve stale data during a defined stale period and register a deferred refresh. During an HTTP request, that refresh normally runs after the response. The refresh is not a durable background job. After the stale period ends, the request recomputes the value synchronously.
+Para chaves lidas com frequência, `Cache::flexible()` pode servir dados obsoletos durante um período de obsolescência definido e registrar uma atualização adiada. Durante uma requisição HTTP, essa atualização normalmente ocorre após a resposta. A atualização não é um job em segundo plano durável. Após o término do período de obsolescência, a requisição recalcula o valor de forma síncrona.
 
-Synchronous expiration:
+Expiração síncrona:
 
 ```php
 Cache::remember('users', 300, fn () => User::all());
 ```
 
-Stale-while-revalidate tradeoff:
+Compromisso stale-while-revalidate:
 
 ```php
 Cache::flexible('users', [300, 600], fn () => User::all());
 ```
 
-In this example, the value is fresh for five minutes. Laravel may serve the stale value until ten minutes after it was cached.
+Neste exemplo, o valor fica atualizado (fresh) por cinco minutos. O Laravel pode servir o valor obsoleto até dez minutos após ter sido armazenado em cache.
 
-## Use `Cache::memo()` to avoid redundant hits within an execution
+## Use `Cache::memo()` para evitar acessos redundantes em uma execução
 
-When code reads the same cache key repeatedly during one request or job, `memo()` decorates a cache store and keeps resolved values in memory for that execution.
+Quando o código lê a mesma chave de cache repetidamente durante uma requisição ou job, `memo()` decora um armazenamento de cache e mantém os valores resolvidos em memória para essa execução.
 
 ```php
 $settings = Cache::memo()->get('settings');
 ```
 
-Repeated reads through the same memoized store avoid additional store lookups. Writes through the memoized store update or invalidate its in-memory values as appropriate.
+Leituras repetidas por meio do mesmo armazenamento memoizado evitam consultas adicionais ao armazenamento. Escritas por meio do armazenamento memoizado atualizam ou invalidam seus valores em memória conforme apropriado.
 
-## Use cache tags to invalidate related groups
+## Use tags de cache para invalidar grupos relacionados
 
-Tags group related entries for invalidation without tracking each key. The `file`, `dynamodb`, and `database` drivers do not support cache tags. Confirm that a store supports tags before you choose it.
+As tags agrupam entradas relacionadas para invalidação sem rastrear cada chave. Os drivers `file`, `dynamodb` e `database` não suportam tags de cache. Confirme se um armazenamento suporta tags antes de escolhê-lo.
 
 ```php
 Cache::tags(['user-1'])->flush();
 ```
 
-## Use `Cache::add()` for atomic conditional writes
+## Use `Cache::add()` para escritas condicionais atômicas
 
-`add()` atomically writes a value only when the key does not already exist.
+`add()` grava atomicamente um valor somente quando a chave ainda não existe.
 
-Incorrect:
+Incorreto:
 
 ```php
 if (! Cache::has('lock')) {
@@ -70,17 +70,17 @@ if (! Cache::has('lock')) {
 }
 ```
 
-Correct:
+Correto:
 
 ```php
 Cache::add('lock', true, 10);
 ```
 
-When you need lock ownership and safe release, use `Cache::lock()` instead of an ordinary cache key.
+Quando você precisar de propriedade da trava e liberação segura, use `Cache::lock()` em vez de uma chave de cache comum.
 
-## Use `once()` for in-process memoization
+## Use `once()` para memoização em processo
 
-`once()` memoizes a callback's return value for the current request or job. Calls made from an object instance are scoped to that instance. Unlike `Cache::memo()`, `once()` does not read from an external cache store.
+`once()` memoiza o valor de retorno de um callback para a requisição ou job atual. Chamadas feitas a partir de uma instância de objeto têm escopo limitado a essa instância. Diferentemente de `Cache::memo()`, `once()` não lê de um armazenamento de cache externo.
 
 ```php
 public function roles(): Collection
@@ -89,11 +89,11 @@ public function roles(): Collection
 }
 ```
 
-Repeated calls return the memoized result without rerunning the callback. Use `once()` for repeated computation within one execution. Use `Cache::memo()` to memoize access to an underlying store that can also persist values across executions.
+Chamadas repetidas retornam o resultado memoizado sem executar o callback novamente. Use `once()` para computações repetidas dentro de uma única execução. Use `Cache::memo()` para memoizar o acesso a um armazenamento subjacente que também possa persistir valores entre execuções.
 
-## Configure failover cache stores in production
+## Configure armazenamentos de cache de failover em produção
 
-The failover driver tries each configured store in order when a store operation throws an exception. It does not consult later stores for an ordinary cache miss, and it does not replicate data between stores.
+O driver de failover tenta cada armazenamento configurado em ordem quando uma operação de armazenamento lança uma exceção. Ele não consulta armazenamentos posteriores para uma falha de cache comum (cache miss) e não replica dados entre armazenamentos.
 
 ```php
 'failover' => ['driver' => 'failover', 'stores' => ['redis', 'database']],
