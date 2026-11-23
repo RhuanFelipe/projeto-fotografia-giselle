@@ -2315,6 +2315,50 @@ body.dark-mode .theme-toggle-btn .icon-moon {
     color: #FFFFFF;
 }
 
+/* Floating Scroll To Top Button */
+.scroll-top-float {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--color-surface);
+    color: var(--color-primary-dark);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(14px);
+    transition: var(--transition-smooth);
+}
+
+.scroll-top-float.above-whatsapp {
+    bottom: 94px;
+    right: 29px;
+}
+
+.scroll-top-float.visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.scroll-top-float:hover {
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    border-color: var(--color-primary);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+}
+
 /* Notification Toast */
 .toast-notification {
     position: fixed;
@@ -2775,6 +2819,18 @@ body.dark-mode .theme-toggle-btn .icon-moon {
         font-size: 1.5rem;
         bottom: 18px;
         right: 18px;
+    }
+
+    .scroll-top-float {
+        width: 44px;
+        height: 44px;
+        bottom: 18px;
+        right: 18px;
+    }
+
+    .scroll-top-float.above-whatsapp {
+        bottom: 78px;
+        right: 21px;
     }
 }
 

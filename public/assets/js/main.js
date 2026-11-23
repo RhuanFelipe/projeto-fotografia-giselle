@@ -1042,4 +1042,56 @@ document.addEventListener('DOMContentLoaded', () => {
       modalBookingForm.reset();
     });
   }
+
+  // Botão flutuante de voltar ao topo
+  setupScrollToTop();
 });
+
+function setupScrollToTop() {
+  if (document.getElementById('scrollTopBtn')) return;
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.id = 'scrollTopBtn';
+  btn.className = 'scroll-top-float';
+  if (document.querySelector('.whatsapp-float')) {
+    btn.classList.add('above-whatsapp');
+  }
+  btn.setAttribute('aria-label', 'Voltar ao topo');
+  btn.setAttribute('title', 'Voltar ao topo');
+  btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+
+  document.body.appendChild(btn);
+
+  const getScrollTop = () => Math.max(
+    window.scrollY || 0,
+    window.pageYOffset || 0,
+    document.documentElement ? document.documentElement.scrollTop : 0,
+    document.body ? document.body.scrollTop : 0
+  );
+
+  const toggleVisibility = () => {
+    if (getScrollTop() > 250) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  };
+
+  window.addEventListener('scroll', toggleVisibility, { passive: true });
+  document.addEventListener('scroll', toggleVisibility, { passive: true });
+  if (document.body) {
+    document.body.addEventListener('scroll', toggleVisibility, { passive: true });
+  }
+  toggleVisibility();
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (document.documentElement && document.documentElement.scrollTop > 0) {
+      document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    if (document.body && document.body.scrollTop > 0) {
+      document.body.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+}
